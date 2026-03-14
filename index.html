@@ -31,62 +31,105 @@ h1,h2,h3,h4{font-family:'Syne',sans-serif;}
 .toast{transition:all .35s cubic-bezier(.34,1.56,.64,1);}
 .toast.hide{opacity:0;transform:translateX(110%);}
 .modal-open{display:flex!important;}
-.progress-bar{transition:width .6s ease;}
+.progress-bar{transition:width .8s cubic-bezier(.4,0,.2,1);}
 .tab-btn{color:#64748b;transition:all .15s;}
 .tab-btn.active-tab{background:#1e293b;color:#fff;}
+@keyframes healthPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{box-shadow:0 0 0 8px rgba(34,197,94,0)}}
+.health-pulse{animation:healthPulse 2s infinite;}
+.sync-bar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--sync-color,#0ea5e9);z-index:200;transform:scaleX(0);transform-origin:left;transition:transform .4s ease,opacity .4s ease;}
+.sync-bar.active{transform:scaleX(1);}
+.sync-bar.done{transform:scaleX(1);opacity:0;}
+.sync-dot{width:8px;height:8px;border-radius:50%;transition:background .3s;}
+.sync-dot.ok{background:#34d399;}
+.sync-dot.syncing{background:#fbbf24;animation:pulseSoft 1s infinite;}
+.sync-dot.error{background:#f87171;}
 </style>
 </head>
 <body class="dark bg-slate-950 text-slate-300 min-h-screen antialiased">
 
-<div id="toasts" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
+<div class="sync-bar" id="sync-bar"></div>
+<div id="toasts" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
 
 <!-- HEADER -->
-<header class="bg-slate-900/80 backdrop-blur border-b border-slate-800 sticky top-0 z-40">
-  <div class="max-w-screen-xl mx-auto px-4 py-3 flex flex-wrap items-center gap-4">
-    <div class="flex items-center gap-2.5 mr-auto">
-      <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center">
-        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+<header class="bg-slate-900/95 backdrop-blur border-b border-slate-800 sticky top-0 z-40">
+  <div class="max-w-screen-xl mx-auto px-4 py-3">
+    <div class="flex flex-wrap items-center gap-3 mb-3">
+      <div class="flex items-center gap-2.5 mr-auto">
+        <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-lg shadow-sky-500/30">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div>
+          <span class="font-display font-bold text-white text-sm block leading-tight">Asistente Pro</span>
+          <div class="flex items-center gap-1.5">
+            <div class="sync-dot" id="sync-dot"></div>
+            <span id="sync-label" class="text-xs text-slate-500 font-mono">Conectando...</span>
+          </div>
+        </div>
       </div>
-      <div>
-        <span class="font-display font-bold text-white text-sm block leading-tight">Asistente Pro</span>
-        <span class="text-xs text-slate-500 font-mono">v2.0</span>
+      <div class="flex gap-2">
+        <button onclick="openModal('modal-task')" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-lg shadow-sky-500/20">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nueva Tarea
+        </button>
+        <button onclick="openModal('modal-project')" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Proyecto
+        </button>
+        <button onclick="exportData()" title="Exportar JSON" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+        <label title="Importar JSON" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <input type="file" accept=".json" onchange="importData(event)" class="hidden">
+        </label>
+        <button onclick="requestNotifPerm()" id="notif-btn" title="Notificaciones" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
       </div>
     </div>
-    <div class="flex items-center gap-3 text-xs">
-      <span class="text-slate-500">Hoy completadas:</span>
-      <span id="hdr-done" class="font-mono text-emerald-400 font-semibold">0</span>
-      <div class="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-        <div id="hdr-bar" class="progress-bar h-full bg-gradient-to-r from-sky-500 to-emerald-400 rounded-full" style="width:0%"></div>
+    <!-- Estadísticas del día -->
+    <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-3 grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-500 font-mono">AVANCE TOTAL</span>
+          <span id="hdr-pct" class="text-xs font-mono font-bold text-sky-400">0%</span>
+        </div>
+        <div class="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+          <div id="hdr-bar" class="progress-bar h-full bg-gradient-to-r from-sky-500 to-emerald-400 rounded-full" style="width:0%"></div>
+        </div>
+        <span class="text-xs text-slate-500"><span id="hdr-done" class="text-emerald-400 font-semibold">0</span>/<span id="hdr-total" class="text-slate-400">0</span> tareas</span>
       </div>
-      <span id="hdr-pct" class="font-mono text-slate-400">0%</span>
-      <span class="flex items-center gap-1 ml-2">
-        <svg class="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        <span id="hdr-pts" class="font-mono text-yellow-400 font-semibold">0</span>
-        <span class="text-slate-600">pts</span>
-      </span>
-    </div>
-    <div class="flex gap-2">
-      <button onclick="openModal('modal-task')" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Nueva Tarea
-      </button>
-      <button onclick="exportData()" title="Exportar JSON" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </button>
-      <label title="Importar JSON" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <input type="file" accept=".json" onchange="importData(event)" class="hidden">
-      </label>
-      <button onclick="requestNotifPerm()" id="notif-btn" title="Notificaciones" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      </button>
+      <div class="flex flex-col justify-center">
+        <span class="text-xs text-slate-500 font-mono mb-0.5">HOY</span>
+        <span id="hdr-today" class="text-sm font-bold text-white">0 completadas</span>
+        <div class="flex items-center gap-1 mt-0.5">
+          <div id="health-dot" class="w-2 h-2 rounded-full bg-slate-600"></div>
+          <span id="health-label" class="text-xs text-slate-500">Sin actividad</span>
+        </div>
+      </div>
+      <div class="flex flex-col justify-center">
+        <span class="text-xs text-slate-500 font-mono mb-0.5">SALUD ENTREGA</span>
+        <div class="flex items-center gap-2">
+          <div class="flex-1 h-2 bg-slate-700 rounded-full overflow-hidden">
+            <div id="health-bar" class="progress-bar h-full rounded-full bg-emerald-500" style="width:0%"></div>
+          </div>
+          <span id="health-pct" class="text-xs font-mono text-emerald-400">0%</span>
+        </div>
+        <span class="text-xs text-slate-500 mt-0.5"><span id="health-on-time" class="text-emerald-400 font-semibold">0</span> a tiempo · <span id="health-late" class="text-red-400 font-semibold">0</span> tarde</span>
+      </div>
+      <div class="flex flex-col justify-center border-l border-slate-700/50 pl-3">
+        <span class="text-xs text-slate-500 font-mono mb-0.5">MOTIVACIÓN</span>
+        <p id="motivational-msg" class="text-xs text-slate-300 leading-snug">¡Comienza el día con energía! 💪</p>
+        <div class="flex items-center gap-1 mt-1">
+          <svg class="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <span id="hdr-pts" class="text-xs font-mono text-yellow-400 font-bold">0</span>
+          <span class="text-xs text-slate-600">puntos</span>
+        </div>
+      </div>
     </div>
   </div>
 </header>
 
 <!-- MAIN -->
 <div class="max-w-screen-xl mx-auto px-4 py-5">
-  <!-- Tabs -->
   <div class="flex gap-1 mb-5 bg-slate-900 p-1 rounded-xl w-fit">
     <button onclick="showSection('kanban')" data-tab="kanban" class="tab-btn active-tab px-4 py-1.5 rounded-lg text-sm font-medium">Kanban</button>
     <button onclick="showSection('projects')" data-tab="projects" class="tab-btn px-4 py-1.5 rounded-lg text-sm font-medium">Proyectos</button>
@@ -96,6 +139,11 @@ h1,h2,h3,h4{font-family:'Syne',sans-serif;}
 
   <!-- KANBAN -->
   <div id="sec-kanban" class="section-content">
+    <div class="flex items-center gap-2 mb-4 flex-wrap">
+      <span class="text-xs text-slate-500 font-mono">FILTRAR:</span>
+      <button onclick="filterProject('')" data-pf="" class="pf-btn text-xs px-3 py-1 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors font-semibold">Todos</button>
+      <div id="project-filters" class="flex gap-2 flex-wrap"></div>
+    </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
         <div class="px-4 py-3 border-b border-slate-800 flex items-center gap-2">
@@ -126,14 +174,16 @@ h1,h2,h3,h4{font-family:'Syne',sans-serif;}
 
   <!-- PROYECTOS -->
   <div id="sec-projects" class="section-content hidden">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="font-display font-bold text-white">Proyectos Activos</h2>
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h2 class="font-display font-bold text-white text-lg">Proyectos</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Barra de progreso en tiempo real</p>
+      </div>
       <button onclick="openModal('modal-project')" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Nuevo Proyecto
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo Proyecto
       </button>
     </div>
-    <div id="projects-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    <div id="projects-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
   </div>
 
   <!-- IDEAS -->
@@ -159,74 +209,67 @@ h1,h2,h3,h4{font-family:'Syne',sans-serif;}
 
   <!-- ESTADÍSTICAS -->
   <div id="sec-stats" class="section-content hidden">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">TOTAL TAREAS</p><p id="st-total" class="font-display font-bold text-2xl text-white">0</p></div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">COMPLETADAS</p><p id="st-done" class="font-display font-bold text-2xl text-emerald-400">0</p></div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">EXCELENTE</p><p id="st-excel" class="font-display font-bold text-2xl text-yellow-400">0</p></div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">PUNTOS</p><p id="st-pts" class="font-display font-bold text-2xl text-sky-400">0</p></div>
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">TOTAL</p><p id="st-total" class="font-display font-bold text-2xl text-white">0</p><p class="text-xs text-slate-600 mt-0.5">tareas</p></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">COMPLETADAS</p><p id="st-done" class="font-display font-bold text-2xl text-emerald-400">0</p><p class="text-xs text-slate-600 mt-0.5">finalizadas</p></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">A TIEMPO</p><p id="st-ontime" class="font-display font-bold text-2xl text-sky-400">0</p><p class="text-xs text-slate-600 mt-0.5">antes deadline</p></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">EXCELENTE</p><p id="st-excel" class="font-display font-bold text-2xl text-yellow-400">0</p><p class="text-xs text-slate-600 mt-0.5">rendimiento</p></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">PUNTOS</p><p id="st-pts" class="font-display font-bold text-2xl text-violet-400">0</p><p class="text-xs text-slate-600 mt-0.5">acumulados</p></div>
     </div>
-    <div id="stats-projects" class="space-y-3"></div>
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-5">
+      <h3 class="font-display font-bold text-white text-sm mb-3">Salud de Entrega General</h3>
+      <div class="flex items-center gap-4">
+        <div class="flex-1">
+          <div class="flex justify-between text-xs text-slate-500 mb-1.5">
+            <span>Rendimiento de entrega</span>
+            <span id="st-health-pct" class="font-mono font-bold text-emerald-400">0%</span>
+          </div>
+          <div class="h-3 bg-slate-800 rounded-full overflow-hidden">
+            <div id="st-health-bar" class="progress-bar h-full rounded-full" style="width:0%;background:linear-gradient(90deg,#10b981,#34d399)"></div>
+          </div>
+        </div>
+        <div id="st-health-badge" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-400">–</div>
+      </div>
+    </div>
+    <div id="stats-projects"></div>
   </div>
 </div>
 
 <!-- MODAL: NUEVA TAREA -->
 <div id="modal-task" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-  <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl fade-in">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800">
+  <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl fade-in max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 sticky top-0 bg-slate-900 z-10">
       <h3 class="font-display font-bold text-white" id="modal-task-heading">Nueva Tarea</h3>
       <button onclick="closeModal('modal-task')" class="text-slate-500 hover:text-white transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="px-6 py-5 space-y-4">
       <input type="hidden" id="task-edit-id">
+      <div><label class="text-xs text-slate-400 font-medium mb-1.5 block">Título *</label><input id="task-title" type="text" placeholder="¿Qué hay que hacer?" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"></div>
+      <div><label class="text-xs text-slate-400 font-medium mb-1.5 block">Descripción / Notas</label><textarea id="task-desc" rows="2" placeholder="Contexto, notas..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 resize-none"></textarea></div>
       <div>
-        <label class="text-xs text-slate-400 font-medium mb-1.5 block">Título *</label>
-        <input id="task-title" type="text" placeholder="¿Qué hay que hacer?" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500">
-      </div>
-      <div>
-        <label class="text-xs text-slate-400 font-medium mb-1.5 block">Descripción / Notas</label>
-        <textarea id="task-desc" rows="2" placeholder="Contexto, notas de reunión..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 resize-none"></textarea>
+        <label class="text-xs text-slate-400 font-medium mb-1.5 block">Proyecto</label>
+        <select id="task-project" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-sky-500"><option value="">Sin proyecto</option></select>
+        <div id="autodetect-hint" class="hidden mt-2 bg-sky-500/10 border border-sky-500/20 rounded-xl px-3 py-2 text-xs text-sky-300"><span class="font-medium">✨ Auto-detectado:</span> <span id="autodetect-text"></span></div>
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="text-xs text-slate-400 font-medium mb-1.5 block">Proyecto (auto-detectado)</label>
-          <select id="task-project" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-sky-500"><option value="">Sin proyecto</option></select>
-        </div>
-        <div>
-          <label class="text-xs text-slate-400 font-medium mb-1.5 block">Categoría</label>
+        <div><label class="text-xs text-slate-400 font-medium mb-1.5 block">Categoría</label>
           <select id="task-category" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-sky-500">
-            <option value="desarrollo">🖥️ Desarrollo</option>
-            <option value="diseño">🎨 Diseño</option>
-            <option value="marketing">📣 Marketing</option>
-            <option value="reunion">📋 Reunión</option>
-            <option value="ventas">💼 Ventas</option>
-            <option value="otro">📌 Otro</option>
+            <option value="desarrollo">🖥️ Desarrollo</option><option value="diseño">🎨 Diseño</option><option value="marketing">📣 Marketing</option><option value="reunion">📋 Reunión</option><option value="ventas">💼 Ventas</option><option value="otro">📌 Otro</option>
+          </select>
+        </div>
+        <div><label class="text-xs text-slate-400 font-medium mb-1.5 block">Prioridad</label>
+          <select id="task-priority" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-sky-500">
+            <option value="low">🟢 Baja</option><option value="medium" selected>🟡 Media</option><option value="high">🔴 Alta</option>
           </select>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="text-xs text-slate-400 font-medium mb-1.5 block">Estado</label>
+        <div><label class="text-xs text-slate-400 font-medium mb-1.5 block">Estado</label>
           <select id="task-status" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-sky-500">
-            <option value="pending">Pendiente</option>
-            <option value="process">En Proceso</option>
-            <option value="done">Finalizado</option>
+            <option value="pending">Pendiente</option><option value="process">En Proceso</option><option value="done">Finalizado</option>
           </select>
         </div>
-        <div>
-          <label class="text-xs text-slate-400 font-medium mb-1.5 block">Prioridad</label>
-          <select id="task-priority" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-sky-500">
-            <option value="low">🟢 Baja</option>
-            <option value="medium" selected>🟡 Media</option>
-            <option value="high">🔴 Alta</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <label class="text-xs text-slate-400 font-medium mb-1.5 block">Fecha y Hora de Entrega</label>
-        <input id="task-deadline" type="datetime-local" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-sky-500">
-      </div>
-      <div id="autodetect-hint" class="hidden bg-sky-500/10 border border-sky-500/20 rounded-xl px-4 py-2.5 text-xs text-sky-300">
-        <span class="font-medium">Detección automática:</span> <span id="autodetect-text"></span>
+        <div><label class="text-xs text-slate-400 font-medium mb-1.5 block">Fecha y Hora de Entrega</label><input id="task-deadline" type="datetime-local" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-sky-500"></div>
       </div>
     </div>
     <div class="px-6 py-4 border-t border-slate-800 flex gap-3 justify-end">
@@ -240,94 +283,192 @@ h1,h2,h3,h4{font-family:'Syne',sans-serif;}
 <div id="modal-project" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
   <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl fade-in">
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800">
-      <h3 class="font-display font-bold text-white">Nuevo Proyecto</h3>
+      <h3 class="font-display font-bold text-white" id="modal-proj-heading">Nuevo Proyecto</h3>
       <button onclick="closeModal('modal-project')" class="text-slate-500 hover:text-white transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="px-6 py-5 space-y-4">
-      <div>
-        <label class="text-xs text-slate-400 font-medium mb-1.5 block">Nombre del Proyecto *</label>
-        <input id="proj-name" type="text" placeholder="Ej: Cliente X, Web Corporativa..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500">
-      </div>
+      <input type="hidden" id="proj-edit-id">
+      <div><label class="text-xs text-slate-400 font-medium mb-1.5 block">Nombre *</label><input id="proj-name" type="text" placeholder="Ej: Cliente X, Web Corporativa..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"></div>
+      <div><label class="text-xs text-slate-400 font-medium mb-1.5 block">Descripción</label><input id="proj-desc" type="text" placeholder="Breve descripción..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"></div>
       <div>
         <label class="text-xs text-slate-400 font-medium mb-1.5 block">Palabras clave (autodetección)</label>
-        <input id="proj-keywords" type="text" placeholder="Ej: web, cliente, ventas (separadas por coma)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500">
+        <input id="proj-keywords" type="text" placeholder="web, cliente, ventas (separar con comas)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500">
         <p class="text-xs text-slate-600 mt-1">Si el título de la tarea contiene estas palabras, se asignará automáticamente.</p>
       </div>
       <div>
         <label class="text-xs text-slate-400 font-medium mb-1.5 block">Color</label>
-        <div class="flex gap-2" id="color-picker">
-          <button onclick="selectColor('#0ea5e9')" data-color="#0ea5e9" class="color-btn w-7 h-7 rounded-full bg-sky-500 ring-2 ring-white ring-offset-2 ring-offset-slate-900"></button>
-          <button onclick="selectColor('#8b5cf6')" data-color="#8b5cf6" class="color-btn w-7 h-7 rounded-full bg-violet-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button onclick="selectColor('#10b981')" data-color="#10b981" class="color-btn w-7 h-7 rounded-full bg-emerald-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button onclick="selectColor('#f59e0b')" data-color="#f59e0b" class="color-btn w-7 h-7 rounded-full bg-amber-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button onclick="selectColor('#ef4444')" data-color="#ef4444" class="color-btn w-7 h-7 rounded-full bg-red-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button onclick="selectColor('#ec4899')" data-color="#ec4899" class="color-btn w-7 h-7 rounded-full bg-pink-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+        <div class="flex gap-2 flex-wrap" id="color-picker">
+          <button onclick="selectColor('#0ea5e9')" data-color="#0ea5e9" class="color-btn w-8 h-8 rounded-full bg-sky-500 ring-2 ring-white ring-offset-2 ring-offset-slate-900 transition-all"></button>
+          <button onclick="selectColor('#8b5cf6')" data-color="#8b5cf6" class="color-btn w-8 h-8 rounded-full bg-violet-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button onclick="selectColor('#10b981')" data-color="#10b981" class="color-btn w-8 h-8 rounded-full bg-emerald-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button onclick="selectColor('#f59e0b')" data-color="#f59e0b" class="color-btn w-8 h-8 rounded-full bg-amber-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button onclick="selectColor('#ef4444')" data-color="#ef4444" class="color-btn w-8 h-8 rounded-full bg-red-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button onclick="selectColor('#ec4899')" data-color="#ec4899" class="color-btn w-8 h-8 rounded-full bg-pink-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button onclick="selectColor('#06b6d4')" data-color="#06b6d4" class="color-btn w-8 h-8 rounded-full bg-cyan-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button onclick="selectColor('#f97316')" data-color="#f97316" class="color-btn w-8 h-8 rounded-full bg-orange-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
         </div>
       </div>
     </div>
     <div class="px-6 py-4 border-t border-slate-800 flex gap-3 justify-end">
       <button onclick="closeModal('modal-project')" class="text-sm text-slate-400 hover:text-white px-4 py-2 transition-colors">Cancelar</button>
-      <button onclick="saveProject()" class="bg-sky-500 hover:bg-sky-600 text-white font-medium px-6 py-2 rounded-xl text-sm transition-colors">Crear Proyecto</button>
+      <button onclick="saveProject()" class="bg-sky-500 hover:bg-sky-600 text-white font-medium px-6 py-2 rounded-xl text-sm transition-colors" id="proj-save-btn">Crear Proyecto</button>
     </div>
   </div>
 </div>
 
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-// ── STATE ──
-let tasks    = JSON.parse(localStorage.getItem('ap_tasks')    || '[]');
-let projects = JSON.parse(localStorage.getItem('ap_projects') || '[]');
-let ideas    = JSON.parse(localStorage.getItem('ap_ideas')    || '[]');
-let points   = parseInt(localStorage.getItem('ap_points')     || '0');
+// ══════════════════════════════════════════
+//  FIREBASE INIT
+// ══════════════════════════════════════════
+firebase.initializeApp({
+  apiKey:            "AIzaSyDIAF5luVXZ3tyNdIurhqxT_aug6RxOtOI",
+  authDomain:        "asistente-digital-f17b4.firebaseapp.com",
+  databaseURL:       "https://asistente-digital-f17b4-default-rtdb.firebaseio.com",
+  projectId:         "asistente-digital-f17b4",
+  storageBucket:     "asistente-digital-f17b4.firebasestorage.app",
+  messagingSenderId: "942215288164",
+  appId:             "1:942215288164:web:9e7a6ad635a06852489671"
+});
+
+const db       = firebase.database();
+const tasksRef = db.ref('ap2/tasks');
+const projsRef = db.ref('ap2/projects');
+const ideasRef = db.ref('ap2/ideas');
+const ptsRef   = db.ref('ap2/points');
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let tasks       = [];
+let projects    = [];
+let ideas       = [];
+let points      = 0;
 let notifiedIds = JSON.parse(localStorage.getItem('ap_notified') || '[]');
 let selectedColor = '#0ea5e9';
-let dragId = null;
+let activeFilter  = '';
+let dragId        = null;
 const today = new Date().toDateString();
 
-function persist() {
-  localStorage.setItem('ap_tasks',    JSON.stringify(tasks));
-  localStorage.setItem('ap_projects', JSON.stringify(projects));
-  localStorage.setItem('ap_ideas',    JSON.stringify(ideas));
-  localStorage.setItem('ap_points',   String(points));
-  localStorage.setItem('ap_notified', JSON.stringify(notifiedIds));
-}
 function uid() { return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); }
 
-// ── NAVIGATION ──
+// ══════════════════════════════════════════
+//  SYNC STATUS UI
+// ══════════════════════════════════════════
+function setSyncStatus(status) {
+  const dot   = document.getElementById('sync-dot');
+  const label = document.getElementById('sync-label');
+  const bar   = document.getElementById('sync-bar');
+  if (status === 'ok') {
+    dot.className = 'sync-dot ok';
+    label.textContent = 'Sincronizado';
+    label.className = 'text-xs text-emerald-400 font-mono';
+    bar.className = 'sync-bar done';
+    setTimeout(() => bar.className = 'sync-bar', 800);
+  } else if (status === 'syncing') {
+    dot.className = 'sync-dot syncing';
+    label.textContent = 'Sincronizando...';
+    label.className = 'text-xs text-yellow-400 font-mono';
+    bar.className = 'sync-bar active';
+  } else {
+    dot.className = 'sync-dot error';
+    label.textContent = 'Sin conexión';
+    label.className = 'text-xs text-red-400 font-mono';
+  }
+}
+
+// ══════════════════════════════════════════
+//  FIREBASE LISTENERS (tiempo real)
+// ══════════════════════════════════════════
+tasksRef.on('value', snap => {
+  const data = snap.val() || {};
+  tasks = Object.entries(data).map(([id,v]) => ({id,...v})).sort((a,b) => (a.createdAt||0)-(b.createdAt||0));
+  setSyncStatus('ok');
+  renderAll();
+  checkDeadlineNotifications();
+}, () => setSyncStatus('error'));
+
+projsRef.on('value', snap => {
+  const data = snap.val() || {};
+  projects = Object.entries(data).map(([id,v]) => ({id,...v})).sort((a,b) => (a.createdAt||0)-(b.createdAt||0));
+  renderAll();
+  renderProjectFilters();
+});
+
+ideasRef.on('value', snap => {
+  const data = snap.val() || {};
+  ideas = Object.entries(data).map(([id,v]) => ({id,...v})).sort((a,b) => (b.createdAt||0)-(a.createdAt||0));
+  const active = document.querySelector('.section-content:not(.hidden)');
+  if (active && active.id === 'sec-ideas') renderIdeas();
+});
+
+ptsRef.on('value', snap => {
+  points = snap.val() || 0;
+  updateHeader();
+});
+
+// ══════════════════════════════════════════
+//  DB HELPERS
+// ══════════════════════════════════════════
+function dbSetTask(t)    { setSyncStatus('syncing'); const{id,...d}=t; tasksRef.child(id).set(d); }
+function dbDelTask(id)   { setSyncStatus('syncing'); tasksRef.child(id).remove(); }
+function dbSetProj(p)    { setSyncStatus('syncing'); const{id,...d}=p; projsRef.child(id).set(d); }
+function dbDelProj(id)   { setSyncStatus('syncing'); projsRef.child(id).remove(); }
+function dbSetIdea(i)    { const{id,...d}=i; ideasRef.child(id).set(d); }
+function dbDelIdea(id)   { ideasRef.child(id).remove(); }
+function dbAddPoints(n)  { ptsRef.transaction(cur => (cur || 0) + n); }
+
+// ══════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════
 function showSection(name) {
   document.querySelectorAll('.section-content').forEach(el => el.classList.add('hidden'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active-tab'));
   document.getElementById('sec-' + name).classList.remove('hidden');
   const btn = document.querySelector('[data-tab="' + name + '"]');
   if (btn) btn.classList.add('active-tab');
-  if (name === 'kanban')   renderKanban();
+  if (name === 'kanban')   { renderKanban(); renderProjectFilters(); }
   if (name === 'projects') renderProjects();
   if (name === 'ideas')    renderIdeas();
   if (name === 'stats')    renderStats();
 }
 
-// ── MODALS ──
+// ══════════════════════════════════════════
+//  MODALS
+// ══════════════════════════════════════════
 function openModal(id) {
-  const el = document.getElementById(id);
-  el.classList.remove('hidden');
-  el.classList.add('modal-open');
+  document.getElementById(id).classList.remove('hidden');
+  document.getElementById(id).classList.add('modal-open');
   if (id === 'modal-task') populateProjectSelect();
 }
 function closeModal(id) {
   document.getElementById(id).classList.add('hidden');
   document.getElementById(id).classList.remove('modal-open');
-  if (id === 'modal-task') resetTaskForm();
+  if (id === 'modal-task')    resetTaskForm();
+  if (id === 'modal-project') resetProjectForm();
 }
 function resetTaskForm() {
   ['task-edit-id','task-title','task-desc','task-deadline'].forEach(i => document.getElementById(i).value = '');
   document.getElementById('task-status').value   = 'pending';
   document.getElementById('task-priority').value = 'medium';
   document.getElementById('task-category').value = 'otro';
+  document.getElementById('task-project').value  = '';
   document.getElementById('modal-task-heading').textContent = 'Nueva Tarea';
   document.getElementById('task-save-btn').textContent      = 'Crear Tarea';
   document.getElementById('autodetect-hint').classList.add('hidden');
 }
+function resetProjectForm() {
+  ['proj-edit-id','proj-name','proj-desc','proj-keywords'].forEach(i => document.getElementById(i).value = '');
+  document.getElementById('modal-proj-heading').textContent = 'Nuevo Proyecto';
+  document.getElementById('proj-save-btn').textContent      = 'Crear Proyecto';
+  selectColor('#0ea5e9');
+}
 
-// ── AUTO-DETECT PROJECT ──
+// ══════════════════════════════════════════
+//  AUTO-DETECT PROJECT
+// ══════════════════════════════════════════
 function autoDetectProject(text) {
   if (!text || !projects.length) return null;
   const lower = text.toLowerCase();
@@ -338,27 +479,29 @@ function autoDetectProject(text) {
   }
   return null;
 }
-
-function onTextChange() {
+function onTaskTextChange() {
   const text = (document.getElementById('task-title').value + ' ' + document.getElementById('task-desc').value).trim();
   const projId = autoDetectProject(text);
-  if (projId) {
+  if (projId && !document.getElementById('task-edit-id').value) {
     const proj = projects.find(p => p.id === projId);
     document.getElementById('task-project').value = projId;
-    document.getElementById('autodetect-text').textContent = 'Proyecto asignado: "' + proj.name + '"';
+    document.getElementById('autodetect-text').textContent = 'Proyecto "' + proj.name + '" asignado automáticamente';
     document.getElementById('autodetect-hint').classList.remove('hidden');
   } else {
     document.getElementById('autodetect-hint').classList.add('hidden');
   }
 }
-
 function populateProjectSelect() {
   const sel = document.getElementById('task-project');
+  const cur = sel.value;
   sel.innerHTML = '<option value="">Sin proyecto</option>';
   projects.forEach(p => { sel.innerHTML += '<option value="' + p.id + '">' + esc(p.name) + '</option>'; });
+  if (cur) sel.value = cur;
 }
 
-// ── TASKS CRUD ──
+// ══════════════════════════════════════════
+//  TASKS CRUD
+// ══════════════════════════════════════════
 function saveTask() {
   const title = document.getElementById('task-title').value.trim();
   if (!title) { shake('task-title'); return; }
@@ -375,26 +518,36 @@ function saveTask() {
     deadline: document.getElementById('task-deadline').value,
     updatedAt: now,
   };
+
   if (editId) {
-    const idx = tasks.findIndex(t => t.id === editId);
-    if (idx !== -1) {
-      const old = tasks[idx];
-      if (status === 'done' && old.status !== 'done') {
-        data.completedAt = now;
-        data.createdAt   = old.createdAt;
-        if (old.deadline && now < new Date(old.deadline).getTime()) {
-          data.excellence = true; points += 10;
-          showToast('🌟 ¡Completada antes del deadline! +10 pts', 'success');
-        } else { points += 3; showToast('✅ Tarea completada. +3 pts', 'success'); }
+    const old = tasks.find(t => t.id === editId) || {};
+    if (status === 'done' && old.status !== 'done') {
+      data.completedAt = now;
+      data.createdAt   = old.createdAt || now;
+      if (old.deadline && now < new Date(old.deadline).getTime()) {
+        data.excellence = true; data.onTime = true;
+        dbAddPoints(10);
+        showToast('🌟 ¡Completada ANTES del deadline! +10 pts', 'success');
+      } else {
+        data.onTime = false;
+        dbAddPoints(3);
+        showToast('✅ Tarea completada. +3 pts', 'success');
       }
-      tasks[idx] = { ...old, ...data };
     }
+    dbSetTask({ ...old, ...data, id: editId });
     showToast('✏️ Tarea actualizada', 'info');
   } else {
-    tasks.push({ id: uid(), createdAt: now, ...data });
+    const newTask = { id: uid(), createdAt: now, ...data };
+    if (status === 'done') {
+      newTask.completedAt = now;
+      newTask.onTime = newTask.deadline ? now < new Date(newTask.deadline).getTime() : false;
+      if (newTask.onTime) { newTask.excellence = true; dbAddPoints(10); }
+      else dbAddPoints(3);
+    }
+    dbSetTask(newTask);
     showToast('✅ Tarea creada', 'success');
   }
-  persist(); closeModal('modal-task'); renderAll();
+  closeModal('modal-task');
 }
 
 function editTask(id) {
@@ -414,8 +567,8 @@ function editTask(id) {
 }
 
 function deleteTask(id) {
-  tasks = tasks.filter(t => t.id !== id);
-  persist(); renderAll(); showToast('🗑️ Tarea eliminada', 'info');
+  dbDelTask(id);
+  showToast('🗑️ Tarea eliminada', 'info');
 }
 
 function moveTask(id, dir) {
@@ -423,59 +576,107 @@ function moveTask(id, dir) {
   const t = tasks.find(t => t.id === id); if (!t) return;
   const ni = cols.indexOf(t.status) + dir;
   if (ni < 0 || ni >= cols.length) return;
-  const prev = t.status;
-  t.status = cols[ni]; t.updatedAt = Date.now();
-  if (t.status === 'done' && prev !== 'done') {
-    t.completedAt = Date.now();
+  const prev    = t.status;
+  const updated = { ...t, status: cols[ni], updatedAt: Date.now() };
+  if (cols[ni] === 'done' && prev !== 'done') {
+    updated.completedAt = Date.now();
     if (t.deadline && Date.now() < new Date(t.deadline).getTime()) {
-      t.excellence = true; points += 10;
+      updated.excellence = true; updated.onTime = true;
+      dbAddPoints(10);
       showToast('🌟 ¡Completada antes del deadline! +10 pts', 'success');
-    } else { points += 3; }
+    } else {
+      updated.onTime = false;
+      dbAddPoints(3);
+    }
   }
-  persist(); renderAll();
+  if (cols[ni] !== 'done' && prev === 'done') {
+    updated.completedAt = null; updated.excellence = false; updated.onTime = false;
+  }
+  dbSetTask(updated);
 }
 
-// ── PROJECTS CRUD ──
+// ══════════════════════════════════════════
+//  PROJECTS CRUD
+// ══════════════════════════════════════════
 function selectColor(color) {
   selectedColor = color;
   document.querySelectorAll('.color-btn').forEach(btn => {
-    const sel = btn.dataset.color === color;
-    btn.classList.toggle('ring-white', sel);
-    btn.classList.toggle('ring-transparent', !sel);
+    btn.classList.toggle('ring-white', btn.dataset.color === color);
+    btn.classList.toggle('ring-transparent', btn.dataset.color !== color);
   });
 }
-
 function saveProject() {
   const name = document.getElementById('proj-name').value.trim();
   if (!name) { shake('proj-name'); return; }
-  projects.push({ id: uid(), name, keywords: document.getElementById('proj-keywords').value, color: selectedColor, createdAt: Date.now() });
-  persist(); closeModal('modal-project'); renderProjects();
-  showToast('📁 Proyecto creado', 'success');
+  const editId = document.getElementById('proj-edit-id').value;
+  const data = { name, desc: document.getElementById('proj-desc').value.trim(), keywords: document.getElementById('proj-keywords').value.trim(), color: selectedColor };
+  if (editId) {
+    const old = projects.find(p => p.id === editId) || {};
+    dbSetProj({ ...old, ...data, id: editId });
+    showToast('✏️ Proyecto actualizado', 'info');
+  } else {
+    dbSetProj({ id: uid(), createdAt: Date.now(), ...data });
+    showToast('📁 Proyecto creado', 'success');
+  }
+  closeModal('modal-project');
 }
-
+function editProject(id) {
+  const p = projects.find(p => p.id === id); if (!p) return;
+  document.getElementById('proj-edit-id').value  = id;
+  document.getElementById('proj-name').value     = p.name;
+  document.getElementById('proj-desc').value     = p.desc || '';
+  document.getElementById('proj-keywords').value = p.keywords || '';
+  selectColor(p.color || '#0ea5e9');
+  document.getElementById('modal-proj-heading').textContent = 'Editar Proyecto';
+  document.getElementById('proj-save-btn').textContent      = 'Guardar Cambios';
+  openModal('modal-project');
+}
 function deleteProject(id) {
-  projects = projects.filter(p => p.id !== id);
-  tasks.forEach(t => { if (t.project === id) t.project = ''; });
-  persist(); renderProjects(); showToast('🗑️ Proyecto eliminado', 'info');
+  if (!confirm('¿Eliminar este proyecto? Las tareas quedarán sin proyecto.')) return;
+  dbDelProj(id);
+  // Desvincular tareas
+  tasks.filter(t => t.project === id).forEach(t => dbSetTask({ ...t, project: '' }));
+  showToast('🗑️ Proyecto eliminado', 'info');
 }
 
-// ── IDEAS CRUD ──
+// ══════════════════════════════════════════
+//  PROJECT FILTERS
+// ══════════════════════════════════════════
+function renderProjectFilters() {
+  const el = document.getElementById('project-filters');
+  if (!el) return;
+  el.innerHTML = projects.map(p =>
+    `<button onclick="filterProject('${p.id}')" data-pf="${p.id}" class="pf-btn text-xs px-3 py-1 rounded-lg border transition-colors" style="border-color:${p.color};color:${p.color};background:${p.color}18">${esc(p.name)}</button>`
+  ).join('');
+  updateFilterButtons();
+}
+function filterProject(id) {
+  activeFilter = id;
+  updateFilterButtons();
+  renderKanban();
+}
+function updateFilterButtons() {
+  document.querySelectorAll('.pf-btn').forEach(btn => {
+    btn.style.fontWeight = btn.dataset.pf === activeFilter ? '700' : '400';
+    btn.style.opacity    = btn.dataset.pf === activeFilter ? '1' : '0.6';
+  });
+  const allBtn = document.querySelector('[data-pf=""]');
+  if (allBtn) { allBtn.style.fontWeight = activeFilter === '' ? '700' : '400'; allBtn.style.opacity = activeFilter === '' ? '1' : '0.6'; }
+}
+
+// ══════════════════════════════════════════
+//  IDEAS CRUD
+// ══════════════════════════════════════════
 function addIdea() {
   const title = document.getElementById('idea-title').value.trim();
   const body  = document.getElementById('idea-body').value.trim();
   if (!title && !body) { shake('idea-title'); return; }
-  ideas.unshift({ id: uid(), title: title || 'Sin título', body, tag: document.getElementById('idea-tag').value, createdAt: Date.now() });
-  persist();
+  dbSetIdea({ id: uid(), title: title || 'Sin título', body, tag: document.getElementById('idea-tag').value, createdAt: Date.now() });
   document.getElementById('idea-title').value = '';
   document.getElementById('idea-body').value  = '';
-  renderIdeas(); showToast('💡 Idea guardada', 'success');
+  showToast('💡 Idea guardada', 'success');
 }
-
-function deleteIdea(id) {
-  ideas = ideas.filter(i => i.id !== id);
-  persist(); renderIdeas();
-}
-
+function deleteIdea(id) { dbDelIdea(id); }
 function convertIdeaToTask(id) {
   const idea = ideas.find(i => i.id === id); if (!idea) return;
   populateProjectSelect();
@@ -486,7 +687,9 @@ function convertIdeaToTask(id) {
   openModal('modal-task');
 }
 
-// ── DRAG & DROP ──
+// ══════════════════════════════════════════
+//  DRAG & DROP
+// ══════════════════════════════════════════
 function dragStart(e, id) {
   dragId = id;
   setTimeout(() => { const el = document.getElementById('card-' + id); if (el) el.classList.add('dragging'); }, 0);
@@ -506,21 +709,27 @@ function drop(e, col) {
   document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
   if (!dragId) return;
   const t = tasks.find(t => t.id === dragId); if (!t || t.status === col) return;
-  const prev = t.status; t.status = col; t.updatedAt = Date.now();
+  const prev    = t.status;
+  const updated = { ...t, status: col, updatedAt: Date.now() };
   if (col === 'done' && prev !== 'done') {
-    t.completedAt = Date.now();
+    updated.completedAt = Date.now();
     if (t.deadline && Date.now() < new Date(t.deadline).getTime()) {
-      t.excellence = true; points += 10;
+      updated.excellence = true; updated.onTime = true;
+      dbAddPoints(10);
       showToast('🌟 ¡Completada antes del deadline! +10 pts', 'success');
-    } else { points += 3; }
+    } else { updated.onTime = false; dbAddPoints(3); }
   }
-  persist(); renderAll();
+  if (col !== 'done' && prev === 'done') { updated.completedAt = null; updated.excellence = false; updated.onTime = false; }
+  dbSetTask(updated);
 }
 
-// ── RENDER KANBAN ──
+// ══════════════════════════════════════════
+//  RENDER KANBAN
+// ══════════════════════════════════════════
 function renderKanban() {
+  const filtered = activeFilter ? tasks.filter(t => t.project === activeFilter) : tasks;
   const cols = { pending:[], process:[], done:[] };
-  tasks.forEach(t => { if (cols[t.status]) cols[t.status].push(t); });
+  filtered.forEach(t => { if (cols[t.status]) cols[t.status].push(t); });
   Object.entries(cols).forEach(([col, arr]) => {
     document.getElementById('cnt-' + col).textContent = arr.length;
     const el = document.getElementById('col-' + col);
@@ -530,75 +739,149 @@ function renderKanban() {
 }
 
 function buildTaskCard(t) {
-  const now = Date.now();
-  const dl  = t.deadline ? new Date(t.deadline).getTime() : null;
+  const now  = Date.now();
+  const dl   = t.deadline ? new Date(t.deadline).getTime() : null;
   const diff = dl ? dl - now : null;
   const isOverdue  = diff !== null && diff < 0 && t.status !== 'done';
   const isCritical = diff !== null && diff < 3600000 && diff >= 0 && t.status !== 'done';
   const isWarning  = diff !== null && diff < 86400000 && diff >= 3600000 && t.status !== 'done';
-  const urgCls = isOverdue ? 'border-red-500/50 bg-red-500/5 urgent-pulse' : isCritical ? 'border-red-400/30 bg-red-500/5' : isWarning ? 'border-yellow-500/25 bg-yellow-500/5' : 'border-slate-700/60';
+  const urgCls = isOverdue  ? 'border-red-500/50 bg-red-500/5 urgent-pulse'
+               : isCritical ? 'border-orange-400/40 bg-orange-500/5'
+               : isWarning  ? 'border-yellow-500/30 bg-yellow-500/5'
+               : 'border-slate-700/60';
   const prioCls = { low:'bg-emerald-500/15 text-emerald-400', medium:'bg-yellow-500/15 text-yellow-400', high:'bg-red-500/15 text-red-400' };
-  const prioLbl = { low:'↓ Baja', medium:'= Media', high:'↑ Alta' };
-  const catEm = { desarrollo:'🖥️', diseño:'🎨', marketing:'📣', reunion:'📋', ventas:'💼', otro:'📌' };
-  const proj = t.project ? projects.find(p => p.id === t.project) : null;
-  const cols = ['pending','process','done'];
-  const ci   = cols.indexOf(t.status);
+  const prioLbl = { low:'↓', medium:'=', high:'↑' };
+  const catEm   = { desarrollo:'🖥️', diseño:'🎨', marketing:'📣', reunion:'📋', ventas:'💼', otro:'📌' };
+  const proj    = t.project ? projects.find(p => p.id === t.project) : null;
   const dlColor = isOverdue ? 'text-red-400' : isCritical ? 'text-orange-400' : isWarning ? 'text-yellow-400' : 'text-slate-500';
+  const colArr  = ['pending','process','done'];
+  const ci      = colArr.indexOf(t.status);
+
   return `<div id="card-${t.id}" class="task-card bg-slate-800/60 border ${urgCls} rounded-xl p-3 fade-in" draggable="true" ondragstart="dragStart(event,'${t.id}')" ondragend="dragEnd(event)">
+    ${proj ? `<div class="h-0.5 rounded-t-xl mb-2.5 -mx-3 -mt-3 mt-0 pt-3" style="background:${proj.color}"></div>` : ''}
     <div class="flex items-start justify-between gap-2 mb-2">
       <p class="text-sm font-medium text-slate-200 leading-snug flex-1 cursor-pointer hover:text-white" onclick="editTask('${t.id}')">${esc(t.title)}</p>
-      <span class="text-xs px-1.5 py-0.5 rounded-md font-mono shrink-0 ${prioCls[t.priority]||prioCls.medium}">${prioLbl[t.priority]||prioLbl.medium}</span>
+      <span class="text-xs px-1.5 py-0.5 rounded-md font-bold shrink-0 ${prioCls[t.priority]||prioCls.medium}">${prioLbl[t.priority]||'='}</span>
     </div>
     ${t.desc ? `<p class="text-xs text-slate-500 mb-2 line-clamp-2">${esc(t.desc)}</p>` : ''}
     <div class="flex flex-wrap items-center gap-1.5 mb-2">
-      <span class="text-xs bg-slate-700/60 text-slate-400 px-2 py-0.5 rounded-md">${catEm[t.category]||'📌'} ${t.category}</span>
+      <span class="text-xs bg-slate-700/60 text-slate-400 px-2 py-0.5 rounded-md">${catEm[t.category]||'📌'}</span>
       ${proj ? `<span class="text-xs px-2 py-0.5 rounded-md font-medium" style="background:${proj.color}22;color:${proj.color}">${esc(proj.name)}</span>` : ''}
       ${t.excellence ? `<span class="text-xs bg-yellow-500/15 text-yellow-400 px-2 py-0.5 rounded-md">🌟 Excelente</span>` : ''}
+      ${t.status==='done'&&t.onTime===false ? `<span class="text-xs bg-red-500/15 text-red-400 px-2 py-0.5 rounded-md">⏰ Tarde</span>` : ''}
     </div>
-    ${dl ? `<div class="flex items-center gap-1.5 mb-2 text-xs font-mono ${dlColor}"><svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg><span>${t.status !== 'done' ? timeRemaining(t.deadline) : formatDate(t.deadline)}</span></div>` : ''}
+    ${dl ? `<div class="flex items-center gap-1.5 mb-2 text-xs font-mono ${dlColor}"><svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg><span>${t.status !== 'done' ? timeRemaining(t.deadline) : '✓ '+formatDate(t.deadline)}</span></div>` : ''}
     <div class="flex items-center gap-1 pt-2 border-t border-slate-700/50">
-      <button onclick="moveTask('${t.id}',-1)" class="p-1 rounded text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${ci===0?'opacity-25 pointer-events-none':''}" title="Mover atrás"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <button onclick="moveTask('${t.id}',1)" class="p-1 rounded text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${ci===2?'opacity-25 pointer-events-none':''}" title="Mover adelante"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button onclick="moveTask('${t.id}',-1)" class="p-1 rounded text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${ci===0?'opacity-20 pointer-events-none':''}" title="Mover atrás"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button onclick="moveTask('${t.id}',1)" class="p-1 rounded text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${ci===2?'opacity-20 pointer-events-none':''}" title="Mover adelante"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="flex-1"></div>
-      <button onclick="editTask('${t.id}')" class="p-1 rounded text-slate-600 hover:text-sky-400 hover:bg-slate-700 transition-all" title="Editar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-      <button onclick="deleteTask('${t.id}')" class="p-1 rounded text-slate-600 hover:text-red-400 hover:bg-slate-700 transition-all" title="Eliminar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+      <button onclick="editTask('${t.id}')" class="p-1 rounded text-slate-600 hover:text-sky-400 hover:bg-slate-700 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      <button onclick="deleteTask('${t.id}')" class="p-1 rounded text-slate-600 hover:text-red-400 hover:bg-slate-700 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
     </div>
   </div>`;
 }
 
-// ── RENDER PROJECTS ──
+// ══════════════════════════════════════════
+//  RENDER PROJECTS (barra de progreso)
+// ══════════════════════════════════════════
 function renderProjects() {
   const el = document.getElementById('projects-list');
-  if (!projects.length) { el.innerHTML = '<div class="col-span-3 border-2 border-dashed border-slate-800 rounded-2xl p-10 text-center"><p class="text-slate-600 text-sm">No hay proyectos. Crea uno para organizar tus tareas.</p></div>'; return; }
+  if (!projects.length) {
+    el.innerHTML = `<div class="col-span-2 border-2 border-dashed border-slate-800 rounded-2xl p-12 text-center">
+      <svg class="w-12 h-12 text-slate-700 mx-auto mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      <p class="text-slate-500 text-sm mb-1">No hay proyectos todavía</p>
+      <button onclick="openModal('modal-project')" class="mt-4 bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium px-4 py-2 rounded-lg transition-colors">+ Crear primer proyecto</button>
+    </div>`;
+    return;
+  }
   el.innerHTML = projects.map(proj => {
-    const pt   = tasks.filter(t => t.project === proj.id);
-    const done = pt.filter(t => t.status === 'done').length;
-    const pct  = pt.length ? Math.round((done / pt.length) * 100) : 0;
-    const excl = pt.filter(t => t.excellence).length;
-    return `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-colors">
-      <div class="flex items-start justify-between mb-3">
-        <div class="flex items-center gap-2.5"><div class="w-3 h-3 rounded-full" style="background:${proj.color}"></div><h4 class="font-display font-bold text-white text-sm">${esc(proj.name)}</h4></div>
-        <button onclick="deleteProject('${proj.id}')" class="text-slate-700 hover:text-red-400 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+    const pt      = tasks.filter(t => t.project === proj.id);
+    const pending = pt.filter(t => t.status === 'pending').length;
+    const process = pt.filter(t => t.status === 'process').length;
+    const done    = pt.filter(t => t.status === 'done').length;
+    const total   = pt.length;
+    const pct     = total ? Math.round((done / total) * 100) : 0;
+    const onTime  = pt.filter(t => t.onTime === true).length;
+    const late    = pt.filter(t => t.onTime === false && t.status === 'done').length;
+    const hPct    = (onTime+late) > 0 ? Math.round((onTime/(onTime+late))*100) : 0;
+    const excl    = pt.filter(t => t.excellence).length;
+    const badge   = pct===100 ? '<span class="text-xs bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full">✓ Completado</span>'
+                  : pct > 50  ? '<span class="text-xs bg-sky-500/15 text-sky-400 px-2 py-0.5 rounded-full">En progreso</span>'
+                  :              '<span class="text-xs bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full">Iniciado</span>';
+    return `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-colors fade-in">
+      <div class="flex items-start justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:${proj.color}20"><div class="w-4 h-4 rounded-full" style="background:${proj.color}"></div></div>
+          <div><h4 class="font-display font-bold text-white text-sm">${esc(proj.name)}</h4>${proj.desc?`<p class="text-xs text-slate-500">${esc(proj.desc)}</p>`:''}</div>
+        </div>
+        <div class="flex items-center gap-2">${badge}
+          <button onclick="editProject('${proj.id}')" class="p-1.5 rounded-lg text-slate-600 hover:text-sky-400 hover:bg-slate-800 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button onclick="deleteProject('${proj.id}')" class="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-slate-800 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div>
       </div>
-      ${proj.keywords ? `<p class="text-xs text-slate-600 mb-3">🔑 ${esc(proj.keywords)}</p>` : ''}
-      <div class="flex justify-between text-xs text-slate-500 mb-1.5"><span>${done}/${pt.length} tareas</span><span class="font-mono">${pct}%</span></div>
-      <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-3"><div class="progress-bar h-full rounded-full" style="width:${pct}%;background:${proj.color}"></div></div>
-      ${excl ? `<div class="text-xs text-yellow-400">🌟 ${excl} tarea${excl>1?'s':''} con Rendimiento Excelente</div>` : ''}
+      <!-- BARRA PROGRESO -->
+      <div class="mb-4">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-xs text-slate-500 font-mono">PROGRESO</span>
+          <span class="text-sm font-bold font-mono" style="color:${proj.color}">${pct}%</span>
+        </div>
+        <div class="h-3 bg-slate-800 rounded-full overflow-hidden">
+          <div class="progress-bar h-full rounded-full relative overflow-hidden" style="width:${pct}%;background:${proj.color}">
+            <div class="absolute inset-0 bg-white/10"></div>
+          </div>
+        </div>
+        <div class="flex justify-between mt-1.5 text-xs text-slate-600">
+          <span>${done} de ${total} tareas finalizadas</span>
+          ${pct===100?'<span class="text-emerald-400 font-medium">🎉 ¡Completado!</span>':''}
+        </div>
+      </div>
+      <!-- Task breakdown -->
+      <div class="grid grid-cols-3 gap-2 mb-4">
+        <div class="bg-slate-800/50 rounded-lg p-2 text-center"><p class="text-xs text-slate-500 mb-0.5">Pendiente</p><p class="font-bold text-slate-300">${pending}</p></div>
+        <div class="bg-slate-800/50 rounded-lg p-2 text-center"><p class="text-xs text-slate-500 mb-0.5">En Proceso</p><p class="font-bold text-sky-400">${process}</p></div>
+        <div class="bg-slate-800/50 rounded-lg p-2 text-center"><p class="text-xs text-slate-500 mb-0.5">Finalizado</p><p class="font-bold text-emerald-400">${done}</p></div>
+      </div>
+      <!-- Salud -->
+      ${(onTime+late)>0?`<div class="border-t border-slate-800 pt-3">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-xs text-slate-500 font-mono">SALUD DE ENTREGA</span>
+          <span class="text-xs font-mono ${hPct>=80?'text-emerald-400':hPct>=50?'text-yellow-400':'text-red-400'}">${hPct}%</span>
+        </div>
+        <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+          <div class="progress-bar h-full rounded-full ${hPct>=80?'bg-emerald-500':hPct>=50?'bg-yellow-500':'bg-red-500'}" style="width:${hPct}%"></div>
+        </div>
+        <div class="flex gap-3 mt-1.5 text-xs">
+          <span class="text-emerald-400">✓ ${onTime} a tiempo</span>
+          <span class="text-red-400">✗ ${late} tarde</span>
+          ${excl>0?`<span class="text-yellow-400">🌟 ${excl} excelente${excl>1?'s':''}</span>`:''}
+        </div>
+      </div>`:`<div class="border-t border-slate-800 pt-3 text-xs text-slate-600">Sin tareas completadas con deadline</div>`}
+      ${proj.keywords?`<div class="mt-3 text-xs text-slate-600">🔑 ${esc(proj.keywords)}</div>`:''}
     </div>`;
   }).join('');
 }
 
-// ── RENDER IDEAS ──
+// ══════════════════════════════════════════
+//  RENDER IDEAS
+// ══════════════════════════════════════════
 function renderIdeas() {
   const el = document.getElementById('ideas-list');
   const tagEm = { idea:'💡', reunion:'📋', nota:'📝', recordatorio:'🔔' };
-  if (!ideas.length) { el.innerHTML = '<div class="border-2 border-dashed border-slate-800 rounded-2xl p-10 text-center"><p class="text-slate-600 text-sm">Sin ideas aún. ¡Empieza a anotar!</p></div>'; return; }
-  el.innerHTML = ideas.map(i => `<div class="bg-slate-900 border border-slate-800 border-l-4 rounded-xl p-4 group hover:border-l-sky-500 transition-all fade-in" style="border-left-color:#0ea5e9">
+  const tagColor = { idea:'#0ea5e9', reunion:'#8b5cf6', nota:'#10b981', recordatorio:'#f59e0b' };
+  if (!ideas.length) {
+    el.innerHTML = '<div class="border-2 border-dashed border-slate-800 rounded-2xl p-10 text-center"><p class="text-slate-600 text-sm">Sin ideas aún.</p></div>';
+    return;
+  }
+  el.innerHTML = ideas.map(i => `
+  <div class="bg-slate-900 border border-l-4 border-slate-800 rounded-xl p-4 group fade-in" style="border-left-color:${tagColor[i.tag]||'#0ea5e9'}">
     <div class="flex items-start justify-between gap-2">
       <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 mb-1"><span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">${tagEm[i.tag]||'💡'} ${i.tag}</span><span class="text-xs text-slate-600 font-mono">${formatDateShort(i.createdAt)}</span></div>
-        <p class="text-sm font-medium text-slate-200">${esc(i.title)}</p>
-        ${i.body ? `<p class="text-xs text-slate-500 mt-1 leading-relaxed">${esc(i.body)}</p>` : ''}
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">${tagEm[i.tag]||'💡'} ${i.tag}</span>
+          <span class="text-xs text-slate-600 font-mono">${formatDateShort(i.createdAt)}</span>
+        </div>
+        <p class="text-sm font-medium text-slate-200 mb-1">${esc(i.title)}</p>
+        ${i.body?`<p class="text-xs text-slate-500 leading-relaxed">${esc(i.body)}</p>`:''}
       </div>
       <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
         <button onclick="convertIdeaToTask('${i.id}')" title="Convertir en tarea" class="p-1.5 rounded-lg bg-slate-800 hover:bg-sky-500/20 text-slate-500 hover:text-sky-400 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button>
@@ -608,147 +891,213 @@ function renderIdeas() {
   </div>`).join('');
 }
 
-// ── RENDER STATS ──
+// ══════════════════════════════════════════
+//  RENDER STATS
+// ══════════════════════════════════════════
 function renderStats() {
-  const total = tasks.length;
-  const done  = tasks.filter(t => t.status === 'done').length;
-  const excl  = tasks.filter(t => t.excellence).length;
-  document.getElementById('st-total').textContent = total;
-  document.getElementById('st-done').textContent  = done;
-  document.getElementById('st-excel').textContent = excl;
-  document.getElementById('st-pts').textContent   = points;
+  const total  = tasks.length;
+  const done   = tasks.filter(t => t.status==='done').length;
+  const onTime = tasks.filter(t => t.onTime===true).length;
+  const late   = tasks.filter(t => t.onTime===false&&t.status==='done').length;
+  const excl   = tasks.filter(t => t.excellence).length;
+  const hPct   = (onTime+late)>0 ? Math.round((onTime/(onTime+late))*100) : 0;
+  document.getElementById('st-total').textContent  = total;
+  document.getElementById('st-done').textContent   = done;
+  document.getElementById('st-ontime').textContent = onTime;
+  document.getElementById('st-excel').textContent  = excl;
+  document.getElementById('st-pts').textContent    = points;
+  document.getElementById('st-health-pct').textContent  = hPct+'%';
+  document.getElementById('st-health-bar').style.width  = hPct+'%';
+  const badge = document.getElementById('st-health-badge');
+  if      (hPct>=90) { badge.textContent='🌟 Excelente'; badge.className='px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/15 text-emerald-400'; }
+  else if (hPct>=70) { badge.textContent='👍 Bueno';    badge.className='px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-500/15 text-sky-400'; }
+  else if (hPct>=50) { badge.textContent='⚠️ Regular'; badge.className='px-3 py-1.5 rounded-xl text-xs font-bold bg-yellow-500/15 text-yellow-400'; }
+  else if (hPct>0)   { badge.textContent='❌ Mejorar'; badge.className='px-3 py-1.5 rounded-xl text-xs font-bold bg-red-500/15 text-red-400'; }
+  else               { badge.textContent='— Sin datos'; badge.className='px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-400'; }
+
   const el = document.getElementById('stats-projects');
-  if (!projects.length) { el.innerHTML = '<p class="text-slate-600 text-sm">Crea proyectos para ver su progreso aquí.</p>'; return; }
+  if (!projects.length) { el.innerHTML='<p class="text-slate-600 text-sm">Crea proyectos para ver estadísticas.</p>'; return; }
   el.innerHTML = '<h3 class="font-display font-bold text-white mb-3">Progreso por Proyecto</h3>' +
     projects.map(proj => {
-      const pt   = tasks.filter(t => t.project === proj.id);
-      const pdone = pt.filter(t => t.status === 'done').length;
-      const pct  = pt.length ? Math.round((pdone / pt.length) * 100) : 0;
+      const pt    = tasks.filter(t => t.project===proj.id);
+      const pd    = pt.filter(t => t.status==='done').length;
+      const pPct  = pt.length ? Math.round((pd/pt.length)*100) : 0;
+      const pot   = pt.filter(t => t.onTime===true).length;
+      const pl    = pt.filter(t => t.onTime===false&&t.status==='done').length;
+      const phPct = (pot+pl)>0 ? Math.round((pot/(pot+pl))*100) : 0;
       return `<div class="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-3">
-        <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full" style="background:${proj.color}"></div><span class="text-sm font-medium text-slate-200">${esc(proj.name)}</span></div>
-          <span class="text-xs font-mono text-slate-400">${pdone}/${pt.length} · ${pct}%</span>
+        <div class="flex items-center justify-between mb-2.5">
+          <div class="flex items-center gap-2.5"><div class="w-3 h-3 rounded-full" style="background:${proj.color}"></div><span class="text-sm font-medium text-slate-200">${esc(proj.name)}</span></div>
+          <span class="text-xs font-mono font-bold" style="color:${proj.color}">${pd}/${pt.length} · ${pPct}%</span>
         </div>
-        <div class="h-2 bg-slate-800 rounded-full overflow-hidden"><div class="progress-bar h-full rounded-full" style="width:${pct}%;background:${proj.color}"></div></div>
+        <div class="h-2.5 bg-slate-800 rounded-full overflow-hidden mb-2"><div class="progress-bar h-full rounded-full" style="width:${pPct}%;background:${proj.color}"></div></div>
+        ${(pot+pl)>0?`<div class="flex gap-3 text-xs"><span class="text-emerald-400">✓ ${pot} a tiempo</span><span class="text-red-400">✗ ${pl} tarde</span><span class="text-slate-500">Salud: ${phPct}%</span></div>`:''}
       </div>`;
     }).join('');
 }
 
-// ── HEADER STATS ──
+// ══════════════════════════════════════════
+//  HEADER STATS (Estadísticas del Día)
+// ══════════════════════════════════════════
 function updateHeader() {
-  const todayDone  = tasks.filter(t => t.status === 'done' && t.completedAt && new Date(t.completedAt).toDateString() === today).length;
-  const todayTotal = tasks.filter(t => t.createdAt && new Date(t.createdAt).toDateString() === today).length;
-  const pct = todayTotal ? Math.round((todayDone / todayTotal) * 100) : 0;
-  document.getElementById('hdr-done').textContent = todayDone;
-  document.getElementById('hdr-bar').style.width  = pct + '%';
-  document.getElementById('hdr-pct').textContent  = pct + '%';
-  document.getElementById('hdr-pts').textContent  = points;
+  const total     = tasks.length;
+  const done      = tasks.filter(t => t.status==='done').length;
+  const pct       = total ? Math.round((done/total)*100) : 0;
+  const todayDone = tasks.filter(t => t.status==='done' && t.completedAt && new Date(t.completedAt).toDateString()===today).length;
+  const onTime    = tasks.filter(t => t.onTime===true).length;
+  const late      = tasks.filter(t => t.onTime===false&&t.status==='done').length;
+  const hPct      = (onTime+late)>0 ? Math.round((onTime/(onTime+late))*100) : 0;
+
+  document.getElementById('hdr-done').textContent  = done;
+  document.getElementById('hdr-total').textContent = total;
+  document.getElementById('hdr-bar').style.width   = pct+'%';
+  document.getElementById('hdr-pct').textContent   = pct+'%';
+  document.getElementById('hdr-today').textContent = todayDone+(todayDone===1?' completada':' completadas');
+  document.getElementById('health-bar').style.width  = hPct+'%';
+  document.getElementById('health-pct').textContent  = hPct+'%';
+  document.getElementById('health-on-time').textContent = onTime;
+  document.getElementById('health-late').textContent    = late;
+  document.getElementById('hdr-pts').textContent = points;
+
+  // Color barra progreso según salud
+  document.getElementById('hdr-bar').style.background = hPct>=70
+    ? 'linear-gradient(90deg,#10b981,#34d399)'
+    : hPct>=40 ? 'linear-gradient(90deg,#f59e0b,#fbbf24)'
+    : 'linear-gradient(90deg,#ef4444,#f87171)';
+
+  // Health dot
+  const dot = document.getElementById('health-dot'), lbl = document.getElementById('health-label');
+  if (!done)        { dot.className='w-2 h-2 rounded-full bg-slate-600'; lbl.textContent='Sin actividad'; lbl.className='text-xs text-slate-500'; }
+  else if (hPct>=80){ dot.className='w-2 h-2 rounded-full bg-emerald-400 health-pulse'; lbl.textContent='Salud excelente'; lbl.className='text-xs text-emerald-400'; }
+  else if (hPct>=50){ dot.className='w-2 h-2 rounded-full bg-yellow-400'; lbl.textContent='Salud regular'; lbl.className='text-xs text-yellow-400'; }
+  else              { dot.className='w-2 h-2 rounded-full bg-red-400'; lbl.textContent='Salud baja'; lbl.className='text-xs text-red-400'; }
+
+  // Mensaje motivador
+  const msg = document.getElementById('motivational-msg');
+  if      (todayDone===0)  msg.textContent='¡Comienza el día con energía! 💪';
+  else if (todayDone===1)  msg.textContent='¡Primera tarea cerrada! Sigue así 🚀';
+  else if (todayDone<4)    msg.textContent=`¡Vas por buen camino, ${todayDone} tareas cerradas hoy! 🔥`;
+  else if (todayDone<7)    msg.textContent=`¡Increíble ritmo! ${todayDone} tareas hoy 🌟`;
+  else                     msg.textContent=`¡Máquina imparable! ${todayDone} tareas hoy 🏆`;
 }
 
-// ── RENDER ALL ──
+// ══════════════════════════════════════════
+//  RENDER ALL
+// ══════════════════════════════════════════
 function renderAll() {
-  renderKanban(); updateHeader();
+  updateHeader();
   const active = document.querySelector('.section-content:not(.hidden)');
-  if (active) {
-    if (active.id === 'sec-projects') renderProjects();
-    if (active.id === 'sec-ideas')    renderIdeas();
-    if (active.id === 'sec-stats')    renderStats();
-  }
+  if (!active) return;
+  if (active.id==='sec-kanban')   { renderKanban(); renderProjectFilters(); }
+  if (active.id==='sec-projects') renderProjects();
+  if (active.id==='sec-ideas')    renderIdeas();
+  if (active.id==='sec-stats')    renderStats();
 }
 
-// ── NOTIFICATIONS ──
+// ══════════════════════════════════════════
+//  NOTIFICATIONS
+// ══════════════════════════════════════════
 function requestNotifPerm() {
-  if (!('Notification' in window)) { showToast('Tu navegador no soporta notificaciones', 'error'); return; }
+  if (!('Notification' in window)) { showToast('Tu navegador no soporta notificaciones','error'); return; }
   Notification.requestPermission().then(p => {
-    if (p === 'granted') { showToast('🔔 Notificaciones activadas', 'success'); document.getElementById('notif-btn').classList.add('text-sky-400'); }
-    else showToast('Notificaciones bloqueadas', 'error');
+    if (p==='granted') { showToast('🔔 Notificaciones activadas','success'); document.getElementById('notif-btn').classList.add('text-sky-400'); }
+    else showToast('Notificaciones bloqueadas','error');
   });
 }
-
 function checkDeadlineNotifications() {
   const now = Date.now();
   tasks.forEach(t => {
-    if (!t.deadline || t.status === 'done') return;
-    const diff = new Date(t.deadline).getTime() - now;
-    const k1h = t.id + '_1h', kDue = t.id + '_due';
-    if (diff > 0 && diff < 3600000 && !notifiedIds.includes(k1h)) {
-      notifiedIds.push(k1h);
-      showToast('⏰ "' + t.title + '" vence en menos de 1 hora', 'warning');
-      if (Notification.permission === 'granted') new Notification('⏰ Deadline próximo', { body: '"' + t.title + '" vence en menos de 1 hora' });
+    if (!t.deadline||t.status==='done') return;
+    const diff = new Date(t.deadline).getTime()-now;
+    const k1h=t.id+'_1h', kDue=t.id+'_due';
+    if (diff>0&&diff<3600000&&!notifiedIds.includes(k1h)) {
+      notifiedIds.push(k1h); localStorage.setItem('ap_notified',JSON.stringify(notifiedIds));
+      showToast('⏰ "'+t.title+'" vence en menos de 1 hora','warning');
+      if (Notification.permission==='granted') new Notification('⏰ Deadline próximo',{body:'"'+t.title+'" vence en menos de 1 hora'});
     }
-    if (diff < 0 && diff > -300000 && !notifiedIds.includes(kDue)) {
-      notifiedIds.push(kDue);
-      showToast('🚨 VENCIDA: "' + t.title + '"', 'error');
-      if (Notification.permission === 'granted') new Notification('🚨 Deadline vencido', { body: t.title });
+    if (diff<0&&diff>-300000&&!notifiedIds.includes(kDue)) {
+      notifiedIds.push(kDue); localStorage.setItem('ap_notified',JSON.stringify(notifiedIds));
+      showToast('🚨 VENCIDA: "'+t.title+'"','error');
+      if (Notification.permission==='granted') new Notification('🚨 Deadline vencido',{body:t.title});
     }
   });
-  persist();
 }
 
-// ── EXPORT / IMPORT ──
+// ══════════════════════════════════════════
+//  EXPORT / IMPORT
+// ══════════════════════════════════════════
 function exportData() {
-  const data = { tasks, projects, ideas, points, exportedAt: new Date().toISOString() };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const data = { tasks, projects, ideas, points, exportedAt: new Date().toISOString(), version:'2.1' };
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href = url; a.download = 'asistente_pro_' + new Date().toISOString().slice(0,10) + '.json'; a.click();
+  a.href=url; a.download='asistente_pro_'+new Date().toISOString().slice(0,10)+'.json'; a.click();
   URL.revokeObjectURL(url);
-  showToast('📤 Datos exportados', 'success');
+  showToast('📤 Datos exportados','success');
 }
-
 function importData(event) {
-  const file = event.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
+  const file=event.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
     try {
-      const data = JSON.parse(e.target.result);
-      if (!data.tasks) { showToast('Archivo no válido', 'error'); return; }
-      tasks = data.tasks || []; projects = data.projects || [];
-      ideas = data.ideas || []; points  = data.points  || 0;
-      persist(); renderAll();
-      showToast('📥 Datos importados correctamente', 'success');
-    } catch { showToast('Error al leer el archivo', 'error'); }
+      const data=JSON.parse(e.target.result);
+      if(!data.tasks){showToast('Archivo no válido','error');return;}
+      if(!confirm('¿Importar datos? Esto reemplazará los datos actuales en la nube.'))return;
+      (data.tasks||[]).forEach(t=>{const{id,...d}=t;tasksRef.child(id).set(d);});
+      (data.projects||[]).forEach(p=>{const{id,...d}=p;projsRef.child(id).set(d);});
+      (data.ideas||[]).forEach(i=>{const{id,...d}=i;ideasRef.child(id).set(d);});
+      ptsRef.set(data.points||0);
+      showToast('📥 Datos importados a la nube','success');
+    } catch { showToast('Error al leer el archivo','error'); }
   };
-  reader.readAsText(file); event.target.value = '';
+  reader.readAsText(file); event.target.value='';
 }
 
-// ── TOASTS ──
+// ══════════════════════════════════════════
+//  TOASTS
+// ══════════════════════════════════════════
 function showToast(msg, type) {
-  const c = { success:'bg-emerald-500/15 border-emerald-500/30 text-emerald-300', error:'bg-red-500/15 border-red-500/30 text-red-300', warning:'bg-yellow-500/15 border-yellow-500/30 text-yellow-300', info:'bg-sky-500/15 border-sky-500/30 text-sky-300' };
-  const t = document.createElement('div');
-  t.className = 'toast pointer-events-auto ' + (c[type]||c.info) + ' border backdrop-blur-sm rounded-xl px-4 py-3 text-sm font-medium shadow-xl';
-  t.textContent = msg;
+  const c={success:'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',error:'bg-red-500/15 border-red-500/30 text-red-300',warning:'bg-yellow-500/15 border-yellow-500/30 text-yellow-300',info:'bg-sky-500/15 border-sky-500/30 text-sky-300'};
+  const t=document.createElement('div');
+  t.className='toast pointer-events-auto '+(c[type]||c.info)+' border backdrop-blur-sm rounded-xl px-4 py-3 text-sm font-medium shadow-xl';
+  t.textContent=msg;
   document.getElementById('toasts').appendChild(t);
-  setTimeout(() => { t.classList.add('hide'); setTimeout(() => t.remove(), 400); }, 4000);
+  setTimeout(()=>{t.classList.add('hide');setTimeout(()=>t.remove(),400);},4500);
 }
 
-// ── HELPERS ──
+// ══════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════
 function timeRemaining(deadline) {
-  const diff = new Date(deadline).getTime() - Date.now();
-  if (diff < 0) return '⚠ Vencida';
-  const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000), m = Math.floor((diff % 3600000) / 60000);
-  if (d > 0) return d + 'd ' + h + 'h restantes';
-  if (h > 0) return h + 'h ' + m + 'm restantes';
-  return m + 'm restantes';
+  const diff=new Date(deadline).getTime()-Date.now();
+  if(diff<0)return'⚠ Vencida';
+  const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000);
+  if(d>0)return d+'d '+h+'h';
+  if(h>0)return h+'h '+m+'m';
+  return m+'m restantes';
 }
-function formatDate(dt) { if (!dt) return '—'; return new Date(dt).toLocaleString('es-ES', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }); }
-function formatDateShort(ts) { return new Date(ts).toLocaleDateString('es-ES', { day:'2-digit', month:'short' }); }
-function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function shake(id) { const el = document.getElementById(id); if (!el) return; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); el.addEventListener('animationend', () => el.classList.remove('shake'), { once: true }); el.focus(); }
+function formatDate(dt){if(!dt)return'—';return new Date(dt).toLocaleString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function formatDateShort(ts){return new Date(ts).toLocaleDateString('es-ES',{day:'2-digit',month:'short'});}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function shake(id){const el=document.getElementById(id);if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');el.addEventListener('animationend',()=>el.classList.remove('shake'),{once:true});el.focus();}
 
-// ── KEYBOARD SHORTCUTS ──
+// ══════════════════════════════════════════
+//  KEYBOARD SHORTCUTS
+// ══════════════════════════════════════════
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeModal('modal-task'); closeModal('modal-project'); }
-  if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); openModal('modal-task'); }
+  if(e.key==='Escape'){closeModal('modal-task');closeModal('modal-project');}
+  if((e.ctrlKey||e.metaKey)&&e.key==='n'){e.preventDefault();openModal('modal-task');}
+  if((e.ctrlKey||e.metaKey)&&e.key==='p'){e.preventDefault();openModal('modal-project');}
 });
 
-// ── INIT ──
-document.getElementById('task-title').addEventListener('input', onTextChange);
-document.getElementById('task-desc').addEventListener('input', onTextChange);
-if (Notification.permission === 'granted') document.getElementById('notif-btn').classList.add('text-sky-400');
-renderAll();
-checkDeadlineNotifications();
-setInterval(() => { checkDeadlineNotifications(); updateHeader(); renderKanban(); }, 30000);
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+document.getElementById('task-title').addEventListener('input', onTaskTextChange);
+document.getElementById('task-desc').addEventListener('input',  onTaskTextChange);
+if(Notification.permission==='granted') document.getElementById('notif-btn').classList.add('text-sky-400');
+setSyncStatus('syncing');
+setInterval(()=>{ checkDeadlineNotifications(); updateHeader(); }, 30000);
 </script>
 </body>
 </html>
