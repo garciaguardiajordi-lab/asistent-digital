@@ -3,121 +3,141 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Asistente 360 Pro</title>
+<title>AI Executive Copilot · Papelería</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* ── Base ── */
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: 'DM Sans', sans-serif; }
-  h1,h2,h3,h4,h5 { font-family: 'Syne', sans-serif; }
-  .mono { font-family: 'JetBrains Mono', monospace; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#050b1a;}
+h1,h2,h3,h4,h5{font-family:'Syne',sans-serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
 
-  /* ── Scrollbar ── */
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: #0f172a; }
-  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9px; }
+/* ── Glass ── */
+.glass{background:rgba(255,255,255,0.04);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);}
+.glass-strong{background:rgba(10,20,50,0.75);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.12);}
+.glass-card{background:rgba(255,255,255,0.03);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.07);transition:border-color .2s,background .2s;}
+.glass-card:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.14);}
 
-  /* ── Kanban drag ── */
-  .task-card { cursor: grab; user-select: none; transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s; }
-  .task-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
-  .task-card.is-dragging { opacity: 0.25; cursor: grabbing; transform: scale(0.97); }
-  .kanban-col { transition: background 0.2s, outline 0.2s; min-height: 140px; }
-  .kanban-col.drag-over { outline: 2px dashed #38bdf8; background: rgba(14,165,233,0.05); border-radius: 14px; }
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#1e3a5f;border-radius:9px;}
 
-  /* ── Animations ── */
-  @keyframes fadeUp   { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes popIn    { from { opacity:0; transform:scale(0.94); } to { opacity:1; transform:scale(1); } }
-  @keyframes urgPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); } 50% { box-shadow: 0 0 0 10px rgba(239,68,68,0); } }
-  @keyframes shake    { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
-  @keyframes toastIn  { from{opacity:0;transform:translateX(110%)} to{opacity:1;transform:translateX(0)} }
-  .fade-up  { animation: fadeUp  0.3s ease-out; }
-  .pop-in   { animation: popIn   0.35s cubic-bezier(0.34,1.56,0.64,1); }
-  .urg-pulse{ animation: urgPulse 2s infinite; }
-  .shake    { animation: shake 0.4s ease-in-out; }
-  .toast-in { animation: toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+/* ── Dept colors ── */
+.dept-producto    {--dc:#f0abfc;--dcb:rgba(240,171,252,.18);--dcbr:rgba(240,171,252,.35);}
+.dept-comercial-f {--dc:#4ade80;--dcb:rgba(74,222,128,.15);--dcbr:rgba(74,222,128,.35);}
+.dept-comercial-o {--dc:#22d3ee;--dcb:rgba(34,211,238,.15);--dcbr:rgba(34,211,238,.35);}
+.dept-logistica   {--dc:#fb923c;--dcb:rgba(251,146,60,.15); --dcbr:rgba(251,146,60,.35);}
+.dept-gestion     {--dc:#94a3b8;--dcb:rgba(148,163,184,.12);--dcbr:rgba(148,163,184,.3);}
+.d-tag{background:var(--dcb);color:var(--dc);border:1px solid var(--dcbr);}
+.d-bar{background:var(--dc);}
+.d-border-l{border-left:3px solid var(--dc);}
+.d-pct{color:var(--dc);}
 
-  /* ── Notes expand ── */
-  .notes-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, opacity 0.2s; opacity: 0; }
-  .notes-body.open { max-height: 600px; opacity: 1; }
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes bellRing{0%,100%{transform:rotate(0)}15%{transform:rotate(18deg)}30%{transform:rotate(-16deg)}45%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}75%{transform:rotate(4deg)}}
+@keyframes neonPulse{0%,100%{box-shadow:0 0 6px #f97316,0 0 12px #f97316}50%{box-shadow:0 0 14px #f97316,0 0 28px #f97316}}
+@keyframes urgPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes semGreen{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes toastSlide{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+.fade-up{animation:fadeUp .32s ease-out;}
+.pop-in{animation:popIn .38s cubic-bezier(.34,1.56,.64,1);}
+.bell-ring{animation:bellRing .8s ease-in-out;}
+.neon-orange{animation:neonPulse 2s infinite;}
+.urg-pulse{animation:urgPulse 2s infinite;}
+.sem-blink{animation:semGreen 1.2s infinite;}
+.shake{animation:shake .4s ease-in-out;}
+.toast-slide{animation:toastSlide .35s cubic-bezier(.34,1.56,.64,1);}
 
-  /* ── Progress bar ── */
-  .prog-bar { transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+/* ── Progress ── */
+.prog{transition:width .8s cubic-bezier(.4,0,.2,1);}
 
-  /* ── Dept themes ── */
-  .dept-rrhh      { --dc:#e879f9; --dcd:rgba(232,121,249,0.14); --dcb:rgba(232,121,249,0.35); }
-  .dept-ventas    { --dc:#4ade80; --dcd:rgba(74,222,128,0.14);  --dcb:rgba(74,222,128,0.35);  }
-  .dept-it        { --dc:#60a5fa; --dcd:rgba(96,165,250,0.14);  --dcb:rgba(96,165,250,0.35);  }
-  .dept-marketing { --dc:#fb923c; --dcd:rgba(251,146,60,0.14);  --dcb:rgba(251,146,60,0.35);  }
-  .dept-none      { --dc:#94a3b8; --dcd:rgba(148,163,184,0.1);  --dcb:rgba(148,163,184,0.25); }
-  .dept-tag  { background: var(--dcd); color: var(--dc); border: 1px solid var(--dcb); }
-  .dept-line { background: var(--dc); }
-  .dept-pct  { color: var(--dc); }
-  .dept-fill { background: var(--dc); }
+/* ── Notes expand ── */
+.notes-body{max-height:0;overflow:hidden;transition:max-height .35s ease,opacity .2s;opacity:0;}
+.notes-body.open{max-height:800px;opacity:1;}
 
-  /* ── Tab active ── */
-  .tab.active { background: #1e293b; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+/* ── Task card ── */
+.task-card{cursor:grab;user-select:none;transition:transform .15s,box-shadow .15s,opacity .15s;}
+.task-card:hover{transform:translateY(-2px);}
+.task-card.dragging{opacity:.22;cursor:grabbing;transform:scale(.96);}
+.kanban-col{transition:background .2s,outline .2s;min-height:160px;}
+.kanban-col.drag-over{outline:2px dashed #22d3ee;background:rgba(34,211,238,.04);border-radius:14px;}
 
-  /* ── Modal backdrop ── */
-  .backdrop { background: rgba(0,0,0,0.78); backdrop-filter: blur(8px); }
+/* ── Field ── */
+.fld{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:.75rem;padding:.6rem 1rem;font-size:.875rem;color:#e2e8f0;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s,box-shadow .15s;}
+.fld:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.18);}
+.fld::placeholder{color:#475569;}
+.fld option{background:#0f172a;}
+label.lbl{display:block;font-size:.68rem;font-weight:600;color:#94a3b8;margin-bottom:.3rem;letter-spacing:.04em;}
 
-  /* ── Field styles ── */
-  .field { width:100%; background:#1e293b; border:1px solid #334155; border-radius:.75rem; padding:.6rem 1rem; font-size:.875rem; color:#f1f5f9; font-family:'DM Sans',sans-serif; outline:none; transition:border-color .15s, box-shadow .15s; }
-  .field:focus { border-color:#38bdf8; box-shadow:0 0 0 2px rgba(56,189,248,0.2); }
-  .field::placeholder { color:#475569; }
-  .field option { background:#1e293b; }
-  label.lbl { display:block; font-size:.7rem; font-weight:600; color:#94a3b8; margin-bottom:.3rem; letter-spacing:.04em; }
+/* ── Tab active ── */
+.tab.active{background:rgba(56,189,248,.15);color:#38bdf8;border-color:rgba(56,189,248,.4);}
+
+/* ── Semáforo ── */
+.sem{width:12px;height:12px;border-radius:50%;}
+.sem-red{background:#ef4444;box-shadow:0 0 8px #ef4444;}
+.sem-yellow{background:#fbbf24;box-shadow:0 0 8px #fbbf24;}
+.sem-green{background:#4ade80;box-shadow:0 0 8px #4ade80;}
+
+/* ── Bg gradient ── */
+.bg-mesh{background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(14,165,233,.09) 0,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 90%,rgba(139,92,246,.07) 0,transparent 60%),#050b1a;}
 </style>
 </head>
-<body class="bg-slate-950 text-slate-300 min-h-screen antialiased">
+<body class="bg-mesh text-slate-300 min-h-screen antialiased">
 
 <!-- ════════════════════════════════════════
      TOASTS
 ════════════════════════════════════════ -->
-<div id="toasts" class="fixed top-4 right-4 z-[300] flex flex-col gap-2 pointer-events-none max-w-xs w-full"></div>
+<div id="toasts" class="fixed top-4 right-4 z-[500] flex flex-col gap-2 pointer-events-none max-w-xs w-full"></div>
 
 <!-- ════════════════════════════════════════
-     POPUP MATUTINO
+     POP-UP MATUTINO / RADAR
 ════════════════════════════════════════ -->
-<div id="popup" class="fixed inset-0 z-[200] backdrop hidden items-center justify-center p-4">
-  <div class="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-lg shadow-2xl pop-in overflow-hidden">
-    <!-- Header gradient -->
-    <div class="bg-gradient-to-br from-sky-600/30 via-violet-600/20 to-fuchsia-600/20 px-7 pt-7 pb-5">
-      <div class="flex items-start justify-between">
+<div id="popup-radar" class="fixed inset-0 z-[400] bg-black/70 backdrop-blur-md hidden items-center justify-center p-4">
+  <div class="glass-strong rounded-3xl w-full max-w-2xl shadow-2xl pop-in max-h-[92vh] overflow-y-auto">
+    <!-- Header -->
+    <div class="relative overflow-hidden rounded-t-3xl px-7 pt-7 pb-5 bg-gradient-to-br from-sky-900/40 via-violet-900/30 to-transparent">
+      <div class="flex items-start justify-between gap-4">
         <div>
-          <p id="pu-greeting" class="text-2xl font-bold text-white leading-tight"></p>
-          <p id="pu-motto" class="text-sm text-slate-300 mt-1 italic"></p>
+          <p id="radar-greeting" class="text-2xl font-bold text-white leading-tight"></p>
+          <p id="radar-motto" class="text-sm text-slate-300 mt-1 italic"></p>
         </div>
-        <button onclick="cerrarPopup()" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 hover:text-white transition-all shrink-0 mt-0.5">
+        <button onclick="cerrarRadar()" class="shrink-0 w-9 h-9 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white transition-all">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <p id="pu-fecha" class="text-xs text-slate-400 mt-1 mono"></p>
+      <p id="radar-fecha" class="text-xs text-slate-500 mt-1 mono"></p>
     </div>
-    <!-- Stats row -->
-    <div class="grid grid-cols-3 gap-3 px-7 py-4 border-b border-slate-800">
-      <div class="text-center">
-        <p id="pu-urg" class="font-bold text-xl text-red-400">0</p>
+
+    <!-- KPIs row -->
+    <div class="grid grid-cols-3 gap-3 px-7 py-4 border-b border-white/5">
+      <div class="glass rounded-2xl p-3 text-center">
+        <p id="r-urg" class="font-bold text-xl text-red-400">0</p>
         <p class="text-xs text-slate-500">Urgentes</p>
       </div>
-      <div class="text-center">
-        <p id="pu-hoy" class="font-bold text-xl text-yellow-400">0</p>
-        <p class="text-xs text-slate-500">Para hoy</p>
+      <div class="glass rounded-2xl p-3 text-center">
+        <p id="r-48h" class="font-bold text-xl text-yellow-400">0</p>
+        <p class="text-xs text-slate-500">Vencen 48h</p>
       </div>
-      <div class="text-center">
-        <p id="pu-done" class="font-bold text-xl text-emerald-400">0</p>
+      <div class="glass rounded-2xl p-3 text-center">
+        <p id="r-done" class="font-bold text-xl text-emerald-400">0</p>
         <p class="text-xs text-slate-500">Completadas</p>
       </div>
     </div>
-    <!-- Body -->
-    <div id="pu-body" class="px-7 py-4 max-h-64 overflow-y-auto space-y-3"></div>
+
+    <!-- Body sections -->
+    <div id="radar-body" class="px-7 py-4 space-y-4 max-h-80 overflow-y-auto"></div>
+
     <!-- Footer -->
-    <div class="px-7 py-4 border-t border-slate-800 flex gap-3">
-      <button onclick="copiarInformePopup()" class="flex-1 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
+    <div class="px-7 py-4 border-t border-white/5 flex gap-3">
+      <button onclick="copiarInformeRadar()" class="flex-1 flex items-center justify-center gap-2 bg-emerald-500/90 hover:bg-emerald-500 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition-all">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copiar para Email
+        Copiar Informe Email
       </button>
-      <button onclick="cerrarPopup()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all">
+      <button onclick="cerrarRadar()" class="glass hover:bg-white/10 text-slate-300 font-bold text-sm px-6 py-2.5 rounded-xl transition-all">
         Empezar →
       </button>
     </div>
@@ -127,68 +147,86 @@
 <!-- ════════════════════════════════════════
      MODAL TAREA
 ════════════════════════════════════════ -->
-<div id="modal-tarea" class="fixed inset-0 z-[100] backdrop hidden items-center justify-center p-4">
-  <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl pop-in max-h-[92vh] overflow-y-auto">
-    <div class="sticky top-0 bg-slate-900 z-10 flex items-center justify-between px-6 py-4 border-b border-slate-800">
-      <h3 id="mt-titulo" class="font-bold text-white text-lg">Nueva Tarea</h3>
-      <button onclick="cerrarModal('modal-tarea')" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-500 hover:text-white transition-all">
+<div id="modal-tarea" class="fixed inset-0 z-[300] bg-black/70 backdrop-blur-md hidden items-center justify-center p-4">
+  <div class="glass-strong rounded-2xl w-full max-w-2xl shadow-2xl pop-in max-h-[94vh] overflow-y-auto">
+    <div class="sticky top-0 glass-strong z-10 flex items-center justify-between px-6 py-4 border-b border-white/5">
+      <h3 id="mt-heading" class="font-bold text-white text-lg">Nueva Tarea</h3>
+      <button onclick="cerrarModal('modal-tarea')" class="w-8 h-8 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white transition-all">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
+
     <div class="px-6 py-5 space-y-4">
       <input type="hidden" id="mt-id">
-      <!-- URGENTE toggle -->
-      <div class="flex items-center justify-between bg-red-950/40 border border-red-800/40 rounded-xl px-4 py-3">
+      <!-- Urgente -->
+      <div class="flex items-center justify-between glass rounded-xl px-4 py-3 border border-red-500/20">
         <div>
-          <p class="text-sm font-bold text-red-400">🚨 Marcar como URGENTE</p>
-          <p class="text-xs text-slate-500 mt-0.5">Sube al inicio · Retrasa otras tareas +2 días</p>
+          <p class="text-sm font-bold text-red-400">🚨 URGENTE</p>
+          <p class="text-xs text-slate-500 mt-0.5">Sube al inicio · Retrasa otras +2 días</p>
         </div>
         <label class="relative inline-flex cursor-pointer items-center">
           <input type="checkbox" id="mt-urgente" class="sr-only peer">
           <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-red-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
         </label>
       </div>
+
+      <!-- Alerta 24h -->
+      <div class="flex items-center justify-between glass rounded-xl px-4 py-3 border border-orange-500/20">
+        <div>
+          <p class="text-sm font-bold text-orange-400">🔔 Alerta 24h</p>
+          <p class="text-xs text-slate-500 mt-0.5">Aparecerá en el Radar mañana</p>
+        </div>
+        <label class="relative inline-flex cursor-pointer items-center">
+          <input type="checkbox" id="mt-alerta24" class="sr-only peer">
+          <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-orange-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+        </label>
+      </div>
+
       <div>
         <label class="lbl">Título *</label>
-        <input id="mt-titulo-inp" type="text" placeholder="¿Qué hay que hacer?" class="field" oninput="autodetectarDept()">
+        <input id="mt-titulo" type="text" placeholder="¿Qué hay que hacer?" class="fld" oninput="autodetectarDept()">
       </div>
       <div>
-        <label class="lbl">Descripción / Notas</label>
-        <textarea id="mt-desc" rows="3" placeholder="Contexto, puntos de reunión, detalles..." class="field resize-none"></textarea>
+        <label class="lbl">Descripción / Notas de reunión</label>
+        <textarea id="mt-desc" rows="3" placeholder="Contexto, puntos de reunión, detalles..." class="fld resize-none"></textarea>
       </div>
+
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="lbl">Departamento</label>
-          <select id="mt-dept" class="field" onchange="actualizarCategorias()">
-            <option value="rrhh">💜 RRHH</option>
-            <option value="ventas">💚 Ventas</option>
-            <option value="it">💙 IT</option>
-            <option value="marketing">🧡 Marketing</option>
+          <select id="mt-dept" class="fld" onchange="actualizarCats()">
+            <option value="producto">🟣 Producto</option>
+            <option value="comercial-f">🟢 Comercial Físico</option>
+            <option value="comercial-o">🩵 Comercial Online</option>
+            <option value="logistica">🟠 Logística/Compras</option>
+            <option value="gestion">⚪ Gestión</option>
           </select>
         </div>
         <div>
           <label class="lbl">Categoría</label>
-          <select id="mt-cat" class="field"></select>
+          <select id="mt-cat" class="fld"></select>
         </div>
       </div>
+
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="lbl">Proyecto</label>
-          <select id="mt-proyecto" class="field"><option value="">Sin proyecto</option></select>
+          <select id="mt-proy" class="fld"><option value="">Sin proyecto</option></select>
         </div>
         <div>
           <label class="lbl">Prioridad</label>
-          <select id="mt-prio" class="field">
+          <select id="mt-prio" class="fld">
             <option value="baja">🟢 Baja</option>
             <option value="media" selected>🟡 Media</option>
             <option value="alta">🔴 Alta</option>
           </select>
         </div>
       </div>
+
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="lbl">Estado</label>
-          <select id="mt-estado" class="field">
+          <select id="mt-estado" class="fld">
             <option value="pendiente">Pendiente</option>
             <option value="proceso">En Proceso</option>
             <option value="finalizado">Finalizado</option>
@@ -196,16 +234,51 @@
         </div>
         <div>
           <label class="lbl">Deadline</label>
-          <input id="mt-deadline" type="datetime-local" class="field">
+          <input id="mt-deadline" type="datetime-local" class="fld">
         </div>
       </div>
-      <div id="hint-autodetect" class="hidden bg-sky-950/50 border border-sky-800/50 rounded-xl px-3 py-2 text-xs text-sky-300">
+
+      <!-- Recurrencia -->
+      <div class="glass rounded-xl px-4 py-3 border border-white/5">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-sm font-bold text-sky-400">🔁 Reunión Cíclica</p>
+          <label class="relative inline-flex cursor-pointer items-center">
+            <input type="checkbox" id="mt-ciclica" class="sr-only peer" onchange="toggleCiclica()">
+            <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-sky-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+          </label>
+        </div>
+        <div id="ciclica-opts" class="hidden grid grid-cols-2 gap-3">
+          <div>
+            <label class="lbl">Repetir cada (días)</label>
+            <input id="mt-frec" type="number" min="1" max="365" placeholder="21" class="fld">
+          </div>
+          <div>
+            <label class="lbl">Asistentes</label>
+            <input id="mt-asistentes" type="text" placeholder="Ana, Luis, Sara..." class="fld">
+          </div>
+        </div>
+      </div>
+
+      <!-- Cómo se hizo (notas de cierre) -->
+      <div>
+        <label class="lbl">📋 Procedimiento / Cómo se hizo</label>
+        <textarea id="mt-como" rows="2" placeholder="Guarda el procedimiento para futuras tareas similares..." class="fld resize-none"></textarea>
+      </div>
+
+      <!-- Siguiente paso -->
+      <div>
+        <label class="lbl">➡️ Siguiente Paso / Acuerdo</label>
+        <textarea id="mt-siguiente" rows="2" placeholder="Próxima acción acordada..." class="fld resize-none"></textarea>
+      </div>
+
+      <div id="hint-auto" class="hidden glass rounded-xl px-3 py-2 text-xs text-sky-400 border border-sky-500/20">
         ✨ Departamento detectado automáticamente
       </div>
     </div>
-    <div class="px-6 py-4 border-t border-slate-800 flex gap-3 justify-end">
+
+    <div class="px-6 py-4 border-t border-white/5 flex gap-3 justify-end">
       <button onclick="cerrarModal('modal-tarea')" class="text-sm text-slate-400 hover:text-white px-4 py-2 transition-colors">Cancelar</button>
-      <button onclick="guardarTarea()" id="mt-btn" class="bg-sky-500 hover:bg-sky-600 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition-all">Crear Tarea</button>
+      <button onclick="guardarTarea()" id="mt-btn" class="bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-sky-500/20">Crear Tarea</button>
     </div>
   </div>
 </div>
@@ -213,47 +286,81 @@
 <!-- ════════════════════════════════════════
      MODAL PROYECTO
 ════════════════════════════════════════ -->
-<div id="modal-proyecto" class="fixed inset-0 z-[100] backdrop hidden items-center justify-center p-4">
-  <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl pop-in">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800">
-      <h3 id="mp-titulo" class="font-bold text-white text-lg">Nuevo Proyecto</h3>
-      <button onclick="cerrarModal('modal-proyecto')" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-500 hover:text-white transition-all">
+<div id="modal-proy" class="fixed inset-0 z-[300] bg-black/70 backdrop-blur-md hidden items-center justify-center p-4">
+  <div class="glass-strong rounded-2xl w-full max-w-md shadow-2xl pop-in">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+      <h3 id="mp-heading" class="font-bold text-white text-lg">Nuevo Proyecto</h3>
+      <button onclick="cerrarModal('modal-proy')" class="w-8 h-8 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white transition-all">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div class="px-6 py-5 space-y-4">
       <input type="hidden" id="mp-id">
-      <div><label class="lbl">Nombre del Proyecto *</label><input id="mp-nombre" type="text" placeholder="Ej: Campaña Q1, Plan Onboarding..." class="field"></div>
+      <div><label class="lbl">Nombre *</label><input id="mp-nombre" type="text" placeholder="Nombre del proyecto..." class="fld"></div>
       <div>
         <label class="lbl">Departamento</label>
-        <select id="mp-dept" class="field">
-          <option value="rrhh">💜 RRHH</option>
-          <option value="ventas">💚 Ventas</option>
-          <option value="it">💙 IT</option>
-          <option value="marketing">🧡 Marketing</option>
+        <select id="mp-dept" class="fld">
+          <option value="producto">🟣 Producto</option>
+          <option value="comercial-f">🟢 Comercial Físico</option>
+          <option value="comercial-o">🩵 Comercial Online</option>
+          <option value="logistica">🟠 Logística/Compras</option>
+          <option value="gestion">⚪ Gestión</option>
         </select>
       </div>
       <div><label class="lbl">Palabras clave (autoasignación)</label>
-        <input id="mp-keys" type="text" placeholder="onboarding, contratación, nómina" class="field">
-        <p class="text-xs text-slate-600 mt-1">Separadas por coma. Detecta el proyecto al escribir el título de la tarea.</p>
+        <input id="mp-keys" type="text" placeholder="erp, web, catálogo..." class="fld">
+        <p class="text-xs text-slate-600 mt-1">Al escribir el título de una tarea, se asignará automáticamente.</p>
       </div>
       <div>
         <label class="lbl">Color</label>
-        <div id="color-picker" class="flex gap-2 flex-wrap mt-1">
-          <button type="button" onclick="selColor('#0ea5e9')" data-c="#0ea5e9" class="cpick w-8 h-8 rounded-full bg-sky-500 ring-2 ring-white ring-offset-2 ring-offset-slate-900 transition-all"></button>
-          <button type="button" onclick="selColor('#8b5cf6')" data-c="#8b5cf6" class="cpick w-8 h-8 rounded-full bg-violet-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button type="button" onclick="selColor('#e879f9')" data-c="#e879f9" class="cpick w-8 h-8 rounded-full bg-fuchsia-400 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button type="button" onclick="selColor('#4ade80')" data-c="#4ade80" class="cpick w-8 h-8 rounded-full bg-green-400 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button type="button" onclick="selColor('#fb923c')" data-c="#fb923c" class="cpick w-8 h-8 rounded-full bg-orange-400 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button type="button" onclick="selColor('#f43f5e')" data-c="#f43f5e" class="cpick w-8 h-8 rounded-full bg-rose-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button type="button" onclick="selColor('#fbbf24')" data-c="#fbbf24" class="cpick w-8 h-8 rounded-full bg-amber-400 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button type="button" onclick="selColor('#06b6d4')" data-c="#06b6d4" class="cpick w-8 h-8 rounded-full bg-cyan-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+        <div id="cpicker" class="flex gap-2 flex-wrap mt-1">
+          <button type="button" onclick="selColor('#0ea5e9')" data-c="#0ea5e9" class="cpk w-8 h-8 rounded-full bg-sky-500 ring-2 ring-white ring-offset-2 ring-offset-[#0f172a] transition-all"></button>
+          <button type="button" onclick="selColor('#8b5cf6')" data-c="#8b5cf6" class="cpk w-8 h-8 rounded-full bg-violet-500 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
+          <button type="button" onclick="selColor('#f0abfc')" data-c="#f0abfc" class="cpk w-8 h-8 rounded-full bg-fuchsia-300 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
+          <button type="button" onclick="selColor('#4ade80')" data-c="#4ade80" class="cpk w-8 h-8 rounded-full bg-green-400 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
+          <button type="button" onclick="selColor('#22d3ee')" data-c="#22d3ee" class="cpk w-8 h-8 rounded-full bg-cyan-400 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
+          <button type="button" onclick="selColor('#fb923c')" data-c="#fb923c" class="cpk w-8 h-8 rounded-full bg-orange-400 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
+          <button type="button" onclick="selColor('#f43f5e')" data-c="#f43f5e" class="cpk w-8 h-8 rounded-full bg-rose-500 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
+          <button type="button" onclick="selColor('#fbbf24')" data-c="#fbbf24" class="cpk w-8 h-8 rounded-full bg-amber-400 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
         </div>
       </div>
     </div>
-    <div class="px-6 py-4 border-t border-slate-800 flex gap-3 justify-end">
-      <button onclick="cerrarModal('modal-proyecto')" class="text-sm text-slate-400 hover:text-white px-4 py-2 transition-colors">Cancelar</button>
-      <button onclick="guardarProyecto()" id="mp-btn" class="bg-sky-500 hover:bg-sky-600 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition-all">Crear Proyecto</button>
+    <div class="px-6 py-4 border-t border-white/5 flex gap-3 justify-end">
+      <button onclick="cerrarModal('modal-proy')" class="text-sm text-slate-400 hover:text-white px-4 py-2 transition-colors">Cancelar</button>
+      <button onclick="guardarProyecto()" id="mp-btn" class="bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm px-6 py-2.5 rounded-xl transition-all">Crear Proyecto</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MODAL ACTA / HISTORIAL
+════════════════════════════════════════ -->
+<div id="modal-acta" class="fixed inset-0 z-[300] bg-black/70 backdrop-blur-md hidden items-center justify-center p-4">
+  <div class="glass-strong rounded-2xl w-full max-w-2xl shadow-2xl pop-in max-h-[94vh] overflow-y-auto">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+      <h3 class="font-bold text-white text-lg">📋 Acta / Historial de Sesiones</h3>
+      <button onclick="cerrarModal('modal-acta')" class="w-8 h-8 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="px-6 py-5 space-y-4">
+      <p id="acta-tarea-titulo" class="font-bold text-sky-400 text-sm"></p>
+      <!-- Nueva sesión -->
+      <div class="glass rounded-xl p-4 border border-white/5">
+        <p class="text-xs font-bold text-slate-400 mb-3">+ NUEVA SESIÓN</p>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div><label class="lbl">Fecha sesión</label><input id="acta-fecha" type="date" class="fld"></div>
+          <div><label class="lbl">Asistentes</label><input id="acta-asist" type="text" placeholder="Ana, Luis..." class="fld"></div>
+        </div>
+        <div class="mb-3"><label class="lbl">Acuerdos / Notas</label><textarea id="acta-notas" rows="3" placeholder="Puntos acordados, decisiones tomadas..." class="fld resize-none"></textarea></div>
+        <div class="mb-3"><label class="lbl">Próximo deadline intermedio</label><input id="acta-nextdl" type="datetime-local" class="fld"></div>
+        <div class="flex gap-2">
+          <button onclick="guardarSesion()" class="flex-1 bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm py-2 rounded-xl transition-all">Guardar Sesión</button>
+          <button onclick="generarActaEmail()" class="glass hover:bg-white/10 text-emerald-400 font-bold text-sm px-4 py-2 rounded-xl transition-all border border-emerald-500/30">📤 Copiar Acta</button>
+        </div>
+      </div>
+      <!-- Historial -->
+      <div id="acta-historial" class="space-y-3"></div>
     </div>
   </div>
 </div>
@@ -261,71 +368,73 @@
 <!-- ════════════════════════════════════════
      HEADER
 ════════════════════════════════════════ -->
-<header class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
+<header class="glass-strong sticky top-0 z-[200] border-b border-white/5">
   <div class="max-w-screen-xl mx-auto px-4 py-3">
     <div class="flex flex-wrap items-center gap-3 mb-3">
       <!-- Logo -->
       <div class="flex items-center gap-3 mr-auto">
-        <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-sky-500 via-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-sky-500 via-violet-600 to-fuchsia-600 flex items-center justify-center shadow-xl">
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
         <div>
-          <h1 class="font-bold text-white text-sm leading-tight">Asistente 360 Pro</h1>
-          <p class="text-xs text-slate-500 mono">v4.0 · Estable</p>
+          <h1 class="font-bold text-white text-sm leading-tight">AI Executive Copilot</h1>
+          <p class="text-xs text-slate-500 mono">Papelería · v5.0</p>
         </div>
       </div>
-      <!-- Actions -->
-      <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="abrirModalTarea()" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition-all shadow-lg shadow-sky-500/20">
+
+      <!-- Bell & Actions -->
+      <div class="flex items-center gap-2">
+        <!-- Campana -->
+        <button onclick="abrirRadar()" id="btn-bell" class="relative p-2.5 rounded-xl glass hover:bg-white/10 transition-all" title="Radar de Riesgos">
+          <svg id="bell-icon" class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span id="bell-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full text-[9px] font-bold text-white flex items-center justify-center hidden neon-orange">!</span>
+        </button>
+
+        <button onclick="abrirModalTarea()" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold px-3 py-2 rounded-xl transition-all shadow-lg shadow-sky-500/20">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tarea
         </button>
-        <button onclick="abrirModalProyecto()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition-all">
+        <button onclick="abrirModalProy()" class="flex items-center gap-1.5 glass hover:bg-white/10 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition-all">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Proyecto
         </button>
-        <button onclick="abrirPopup()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition-all" title="Ver resumen del día">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Hoy
-        </button>
-        <button onclick="exportarDatos()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all" title="Exportar datos JSON">
+        <button onclick="exportarDatos()" class="p-2 rounded-xl glass hover:bg-white/10 text-slate-400 hover:text-white transition-all" title="Exportar JSON">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </button>
-        <label class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer" title="Importar datos JSON">
+        <label class="p-2 rounded-xl glass hover:bg-white/10 text-slate-400 hover:text-white transition-all cursor-pointer" title="Importar JSON">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <input type="file" accept=".json" onchange="importarDatos(event)" class="hidden">
         </label>
-        <button onclick="solicitarNotificaciones()" id="btn-notif" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all" title="Activar notificaciones">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        </button>
       </div>
     </div>
+
     <!-- KPIs -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-      <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl px-3 py-2">
-        <p class="text-xs text-slate-500 mono mb-1">AVANCE GLOBAL</p>
+      <div class="glass rounded-xl px-3 py-2">
+        <p class="text-xs text-slate-500 mono mb-1">AVANCE</p>
         <div class="flex items-center gap-2 mb-0.5">
-          <div class="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
-            <div id="kpi-barra" class="prog-bar h-full rounded-full bg-gradient-to-r from-sky-500 to-emerald-400" style="width:0%"></div>
+          <div class="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+            <div id="kpi-barra" class="prog h-full rounded-full bg-gradient-to-r from-sky-500 to-emerald-400" style="width:0%"></div>
           </div>
-          <span id="kpi-pct" class="text-xs font-bold mono text-sky-400 shrink-0">0%</span>
+          <span id="kpi-pct" class="text-xs mono font-bold text-sky-400 shrink-0">0%</span>
         </div>
-        <p class="text-xs text-slate-500"><span id="kpi-done" class="text-emerald-400 font-bold">0</span>/<span id="kpi-total">0</span> tareas</p>
+        <p class="text-xs text-slate-500"><span id="kpi-done" class="text-emerald-400 font-bold">0</span>/<span id="kpi-total">0</span></p>
       </div>
-      <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl px-3 py-2">
-        <p class="text-xs text-slate-500 mono mb-0.5">HOY COMPLETADAS</p>
+      <div class="glass rounded-xl px-3 py-2">
+        <p class="text-xs text-slate-500 mono mb-0.5">HOY</p>
         <p id="kpi-hoy" class="text-xl font-bold text-white">0</p>
         <p id="kpi-msg" class="text-xs text-slate-500 truncate">¡A por ello! 💪</p>
       </div>
-      <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl px-3 py-2">
+      <div class="glass rounded-xl px-3 py-2">
         <p class="text-xs text-slate-500 mono mb-0.5">URGENTES</p>
-        <p id="kpi-urgentes" class="text-xl font-bold text-red-400">0</p>
-        <p class="text-xs text-slate-500">sin completar</p>
+        <p id="kpi-urg" class="text-xl font-bold text-red-400">0</p>
+        <p class="text-xs text-slate-500">activas</p>
       </div>
-      <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl px-3 py-2">
-        <p class="text-xs text-slate-500 mono mb-0.5">SALUD ENTREGAS</p>
+      <div class="glass rounded-xl px-3 py-2">
+        <p class="text-xs text-slate-500 mono mb-0.5">SEMÁFORO</p>
         <div class="flex items-center gap-1.5">
-          <div id="salud-dot" class="w-2.5 h-2.5 rounded-full bg-slate-600 shrink-0"></div>
-          <p id="salud-lbl" class="text-sm font-bold text-slate-400">–</p>
+          <div id="sem-dot" class="sem sem-green sem-blink"></div>
+          <p id="sem-lbl" class="text-sm font-bold text-emerald-400">OK</p>
         </div>
-        <p class="text-xs text-slate-500"><span id="salud-ok" class="text-emerald-400 font-bold">0</span> ok · <span id="salud-tarde" class="text-red-400 font-bold">0</span> tarde</p>
+        <p id="sem-sub" class="text-xs text-slate-500">Al día</p>
       </div>
     </div>
   </div>
@@ -337,51 +446,49 @@
 <div class="max-w-screen-xl mx-auto px-4 py-5">
 
   <!-- Tabs -->
-  <div class="flex gap-1 mb-5 bg-slate-900 p-1 rounded-2xl w-fit border border-slate-800">
-    <button onclick="cambiarTab('kanban')"    data-tab="kanban"    class="tab active   text-white text-sm font-bold px-4 py-2 rounded-xl transition-all">Kanban</button>
-    <button onclick="cambiarTab('proyectos')" data-tab="proyectos" class="tab text-slate-500 text-sm font-bold px-4 py-2 rounded-xl transition-all hover:text-slate-300">Proyectos</button>
-    <button onclick="cambiarTab('ideas')"     data-tab="ideas"     class="tab text-slate-500 text-sm font-bold px-4 py-2 rounded-xl transition-all hover:text-slate-300">Ideas</button>
-    <button onclick="cambiarTab('stats')"     data-tab="stats"     class="tab text-slate-500 text-sm font-bold px-4 py-2 rounded-xl transition-all hover:text-slate-300">Stats</button>
+  <div class="flex gap-1 mb-5 glass p-1 rounded-2xl w-fit border border-white/5">
+    <button onclick="cambiarTab('kanban')"   data-tab="kanban"   class="tab active text-white text-sm font-bold px-4 py-2 rounded-xl transition-all border border-transparent">Kanban</button>
+    <button onclick="cambiarTab('proyectos')" data-tab="proyectos" class="tab text-slate-500 text-sm font-bold px-4 py-2 rounded-xl transition-all border border-transparent hover:text-slate-300">Proyectos</button>
+    <button onclick="cambiarTab('ideas')"    data-tab="ideas"    class="tab text-slate-500 text-sm font-bold px-4 py-2 rounded-xl transition-all border border-transparent hover:text-slate-300">Ideas</button>
+    <button onclick="cambiarTab('stats')"    data-tab="stats"    class="tab text-slate-500 text-sm font-bold px-4 py-2 rounded-xl transition-all border border-transparent hover:text-slate-300">Stats</button>
   </div>
 
   <!-- ── TAB KANBAN ── -->
   <div id="tab-kanban" class="tab-content">
-    <!-- Filters -->
     <div class="flex flex-wrap items-center gap-2 mb-4">
       <span class="text-xs text-slate-600 mono">DEPT:</span>
-      <button onclick="setFiltro('dept','')"          data-fd="" class="fd-btn text-xs px-3 py-1 rounded-lg bg-slate-800 text-slate-400 font-bold hover:bg-slate-700 transition-all">Todos</button>
-      <button onclick="setFiltro('dept','rrhh')"      data-fd="rrhh"      class="fd-btn dept-rrhh      text-xs px-3 py-1 rounded-lg dept-tag font-bold transition-all">💜 RRHH</button>
-      <button onclick="setFiltro('dept','ventas')"    data-fd="ventas"    class="fd-btn dept-ventas    text-xs px-3 py-1 rounded-lg dept-tag font-bold transition-all">💚 Ventas</button>
-      <button onclick="setFiltro('dept','it')"        data-fd="it"        class="fd-btn dept-it        text-xs px-3 py-1 rounded-lg dept-tag font-bold transition-all">💙 IT</button>
-      <button onclick="setFiltro('dept','marketing')" data-fd="marketing" class="fd-btn dept-marketing text-xs px-3 py-1 rounded-lg dept-tag font-bold transition-all">🧡 Mkt</button>
-      <span class="text-xs text-slate-600 mono ml-2">PROY:</span>
-      <div id="filtros-proy" class="flex gap-2 flex-wrap"></div>
+      <button onclick="setFiltro('dept','')"           data-fd="" class="fdb text-xs px-3 py-1 rounded-lg glass text-slate-400 font-bold hover:bg-white/10 transition-all">Todos</button>
+      <button onclick="setFiltro('dept','producto')"   data-fd="producto"    class="fdb dept-producto    text-xs px-3 py-1 rounded-lg d-tag font-bold transition-all">🟣 Producto</button>
+      <button onclick="setFiltro('dept','comercial-f')" data-fd="comercial-f" class="fdb dept-comercial-f text-xs px-3 py-1 rounded-lg d-tag font-bold transition-all">🟢 C.Físico</button>
+      <button onclick="setFiltro('dept','comercial-o')" data-fd="comercial-o" class="fdb dept-comercial-o text-xs px-3 py-1 rounded-lg d-tag font-bold transition-all">🩵 C.Online</button>
+      <button onclick="setFiltro('dept','logistica')"  data-fd="logistica"   class="fdb dept-logistica   text-xs px-3 py-1 rounded-lg d-tag font-bold transition-all">🟠 Logística</button>
+      <button onclick="setFiltro('dept','gestion')"    data-fd="gestion"     class="fdb dept-gestion     text-xs px-3 py-1 rounded-lg d-tag font-bold transition-all">⚪ Gestión</button>
+      <div id="fdb-proy" class="flex gap-2 flex-wrap ml-2"></div>
     </div>
-    <!-- Columns -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-        <div class="px-4 py-3.5 border-b border-slate-800 flex items-center gap-2">
+      <div class="glass-card rounded-2xl overflow-hidden">
+        <div class="px-4 py-3.5 border-b border-white/5 flex items-center gap-2">
           <div class="w-2.5 h-2.5 rounded-full bg-slate-500"></div>
           <h3 class="font-bold text-sm text-slate-300">Pendiente</h3>
-          <span id="cnt-pendiente" class="ml-auto text-xs mono bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full">0</span>
+          <span id="cnt-p" class="ml-auto text-xs mono glass text-slate-400 px-2 py-0.5 rounded-full">0</span>
         </div>
         <div id="col-pendiente" class="kanban-col p-3 space-y-3"
           ondragover="onDragOver(event,'pendiente')" ondrop="onDrop(event,'pendiente')" ondragleave="onDragLeave(event)"></div>
       </div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-        <div class="px-4 py-3.5 border-b border-slate-800 flex items-center gap-2">
+      <div class="glass-card rounded-2xl overflow-hidden">
+        <div class="px-4 py-3.5 border-b border-white/5 flex items-center gap-2">
           <div class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse"></div>
           <h3 class="font-bold text-sm text-sky-300">En Proceso</h3>
-          <span id="cnt-proceso" class="ml-auto text-xs mono bg-sky-500/20 text-sky-400 px-2 py-0.5 rounded-full">0</span>
+          <span id="cnt-pr" class="ml-auto text-xs mono bg-sky-500/20 text-sky-400 px-2 py-0.5 rounded-full">0</span>
         </div>
         <div id="col-proceso" class="kanban-col p-3 space-y-3"
           ondragover="onDragOver(event,'proceso')" ondrop="onDrop(event,'proceso')" ondragleave="onDragLeave(event)"></div>
       </div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-        <div class="px-4 py-3.5 border-b border-slate-800 flex items-center gap-2">
+      <div class="glass-card rounded-2xl overflow-hidden">
+        <div class="px-4 py-3.5 border-b border-white/5 flex items-center gap-2">
           <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
           <h3 class="font-bold text-sm text-emerald-300">Finalizado</h3>
-          <span id="cnt-finalizado" class="ml-auto text-xs mono bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full">0</span>
+          <span id="cnt-f" class="ml-auto text-xs mono bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full">0</span>
         </div>
         <div id="col-finalizado" class="kanban-col p-3 space-y-3"
           ondragover="onDragOver(event,'finalizado')" ondrop="onDrop(event,'finalizado')" ondragleave="onDragLeave(event)"></div>
@@ -393,12 +500,10 @@
   <div id="tab-proyectos" class="tab-content hidden">
     <div class="flex items-center justify-between mb-5">
       <div>
-        <h2 class="font-bold text-white text-xl">Proyectos</h2>
-        <p class="text-xs text-slate-500 mt-0.5">Progreso en tiempo real por tareas finalizadas</p>
+        <h2 class="font-bold text-white text-xl">Proyectos Vivos</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Progreso y trazabilidad total</p>
       </div>
-      <button onclick="abrirModalProyecto()" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all">
-        + Nuevo Proyecto
-      </button>
+      <button onclick="abrirModalProy()" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all">+ Nuevo</button>
     </div>
     <div id="lista-proyectos" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
   </div>
@@ -406,18 +511,18 @@
   <!-- ── TAB IDEAS ── -->
   <div id="tab-ideas" class="tab-content hidden">
     <div class="max-w-2xl">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-5">
-        <h3 class="font-bold text-white text-sm mb-4">Nueva Idea / Nota de Reunión</h3>
-        <input id="idea-titulo" type="text" placeholder="Título de la idea..." class="field mb-3">
-        <textarea id="idea-cuerpo" rows="3" placeholder="Descripción, puntos de reunión, contexto..." class="field resize-none mb-3"></textarea>
+      <div class="glass-card rounded-2xl p-5 mb-5">
+        <h3 class="font-bold text-white text-sm mb-4">💡 Nueva Idea / Nota de Reunión</h3>
+        <input id="idea-titulo" type="text" placeholder="Título..." class="fld mb-3">
+        <textarea id="idea-cuerpo" rows="3" placeholder="Describe la idea, puntos de reunión..." class="fld resize-none mb-3"></textarea>
         <div class="flex gap-2">
-          <select id="idea-tipo" class="field flex-1">
+          <select id="idea-tipo" class="fld flex-1">
             <option value="idea">💡 Idea</option>
             <option value="reunion">📋 Reunión</option>
             <option value="nota">📝 Nota</option>
             <option value="futura">✅ Tarea futura</option>
           </select>
-          <button onclick="guardarIdea()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold px-5 py-2 rounded-xl text-sm transition-all">Guardar</button>
+          <button onclick="guardarIdea()" class="bg-sky-500 hover:bg-sky-400 text-white font-bold px-5 py-2 rounded-xl text-sm transition-all">Guardar</button>
         </div>
       </div>
       <div id="lista-ideas" class="space-y-3"></div>
@@ -427,30 +532,27 @@
   <!-- ── TAB STATS ── -->
   <div id="tab-stats" class="tab-content hidden">
     <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">TOTAL</p><p id="st-total" class="font-bold text-2xl text-white">0</p></div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">COMPLETADAS</p><p id="st-done" class="font-bold text-2xl text-emerald-400">0</p></div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">A TIEMPO</p><p id="st-atiempo" class="font-bold text-2xl text-sky-400">0</p></div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">EXCELENTE</p><p id="st-excel" class="font-bold text-2xl text-yellow-400">0</p></div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">URGENTES</p><p id="st-urg" class="font-bold text-2xl text-red-400">0</p></div>
+      <div class="glass-card rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">TOTAL</p><p id="st-total" class="font-bold text-2xl text-white">0</p></div>
+      <div class="glass-card rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">COMPLETADAS</p><p id="st-done" class="font-bold text-2xl text-emerald-400">0</p></div>
+      <div class="glass-card rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">A TIEMPO</p><p id="st-ot" class="font-bold text-2xl text-sky-400">0</p></div>
+      <div class="glass-card rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">EXCELENTE</p><p id="st-ex" class="font-bold text-2xl text-yellow-400">0</p></div>
+      <div class="glass-card rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">URGENTES</p><p id="st-urg" class="font-bold text-2xl text-red-400">0</p></div>
     </div>
-    <!-- Salud general -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-5">
+    <div class="glass-card rounded-2xl p-5 mb-5">
       <h3 class="font-bold text-white text-sm mb-3">Salud de Entregas</h3>
       <div class="flex items-center gap-4">
-        <div class="flex-1 h-3 bg-slate-800 rounded-full overflow-hidden">
-          <div id="st-salud-barra" class="prog-bar h-full rounded-full bg-emerald-500" style="width:0%"></div>
+        <div class="flex-1 h-3 bg-white/5 rounded-full overflow-hidden">
+          <div id="st-salud-b" class="prog h-full rounded-full bg-emerald-500" style="width:0%"></div>
         </div>
         <span id="st-salud-pct" class="text-sm mono font-bold text-emerald-400 w-12 shrink-0">0%</span>
-        <span id="st-salud-badge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 shrink-0">–</span>
+        <span id="st-salud-badge" class="text-xs font-bold px-2.5 py-1 rounded-lg glass text-slate-400 shrink-0">–</span>
       </div>
     </div>
-    <!-- Por departamento -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6" id="stats-dept"></div>
-    <!-- Por proyecto -->
-    <div id="stats-proyectos"></div>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6" id="stats-dept"></div>
+    <div id="stats-proys"></div>
   </div>
 
-</div><!-- /main -->
+</div>
 
 <!-- ════════════════════════════════════════
      JAVASCRIPT
@@ -458,1313 +560,949 @@
 <script>
 'use strict';
 
-// ══════════════════════════════════════════
+// ──────────────────────────────────────────
 //  CONSTANTES
-// ══════════════════════════════════════════
-const LS_TASKS    = 'a360_tareas';
-const LS_PROJECTS = 'a360_proyectos';
-const LS_IDEAS    = 'a360_ideas';
-const LS_NOTIF    = 'a360_notificados';
-
+// ──────────────────────────────────────────
+const LS = { T:'aec_tareas', P:'aec_proyectos', I:'aec_ideas', N:'aec_notif' };
+const HOY = new Date().toDateString();
+const DOS_DIAS = 2*24*60*60*1000;
 const FRASES = [
   'Menos ruido, más enfoque.',
-  'Una tarea a la vez.',
-  'Hazlo hoy.',
-  'El momentum lo es todo.',
-  'Empieza. Ya.',
-  'Claridad ante todo.',
+  'Una decisión a la vez.',
+  'Ejecuta. Mide. Mejora.',
+  'El detalle hace al maestro.',
+  'Hoy define el mañana.',
+  'Claridad antes que velocidad.',
   'Progreso, no perfección.',
-  'Ejecuta y mejora.',
+  'Anticipa, no improvises.',
 ];
-
 const CATS = {
-  rrhh:      ['Onboarding','Nóminas','Selección','Formación','Cultura','Vacaciones'],
-  ventas:    ['Prospección','Cierre','Post-venta','CRM','Presentación','Seguimiento'],
-  it:        ['Soporte','Desarrollo','Seguridad','Infraestructura','Testing','Deploy'],
-  marketing: ['Redes Sociales','Campañas','SEO','Diseño','Contenido','Análisis'],
+  'producto':    ['Catálogo','Packaging','I+D','Proveedores','Costes','Lanzamiento'],
+  'comercial-f': ['Tienda','Escaparate','Promotores','Evento','Stock','Fidelización'],
+  'comercial-o': ['Web','SEO','Campañas','Redes','Email','Analytics'],
+  'logistica':   ['Pedido','Proveedor','Almacén','Envíos','Inventario','Devoluciones'],
+  'gestion':     ['Facturación','Legal','Nóminas','Reunión','Reporting','Presupuesto'],
 };
-
-const KEYWORDS_DEPT = {
-  rrhh:      ['onboarding','nómina','selección','formación','contratación','empleado','candidato','entrevista','rrhh','recursos humanos','vacacion','baja','alta','despido'],
-  ventas:    ['venta','cliente','comercial','propuesta','cierre','oferta','crm','factura','revenue','prospección','negoci'],
-  it:        ['bug','código','deploy','servidor','seguridad','infraestructura','soporte','desarrollo','api','base de datos','software','it ','tech','sistema','patch'],
-  marketing: ['campaña','redes','seo','diseño','contenido','post','blog','marketing','email','newsletter','publicidad','marca'],
+const DEPT_KW = {
+  'producto':    ['catálogo','producto','packaging','lanzamiento','diseño','erp'],
+  'comercial-f': ['tienda','escaparate','promotor','evento','comercial','físico'],
+  'comercial-o': ['web','seo','online','campaña','redes','email','digital'],
+  'logistica':   ['pedido','proveedor','almacén','envío','inventario','logística','compra'],
+  'gestion':     ['factura','legal','nómina','reunión','presupuesto','gestión','erp'],
 };
-
 const DEPT_META = {
-  rrhh:      { label: 'RRHH',      emoji: '💜', cls: 'dept-rrhh'      },
-  ventas:    { label: 'Ventas',    emoji: '💚', cls: 'dept-ventas'    },
-  it:        { label: 'IT',        emoji: '💙', cls: 'dept-it'        },
-  marketing: { label: 'Marketing', emoji: '🧡', cls: 'dept-marketing' },
+  'producto':    { label:'Producto',      emoji:'🟣', cls:'dept-producto'    },
+  'comercial-f': { label:'C. Físico',     emoji:'🟢', cls:'dept-comercial-f' },
+  'comercial-o': { label:'C. Online',     emoji:'🩵', cls:'dept-comercial-o' },
+  'logistica':   { label:'Logística',     emoji:'🟠', cls:'dept-logistica'   },
+  'gestion':     { label:'Gestión',       emoji:'⚪', cls:'dept-gestion'     },
 };
 
-const HOY = new Date().toDateString();
-const DOS_DIAS_MS = 2 * 24 * 60 * 60 * 1000;
-
-// ══════════════════════════════════════════
+// ──────────────────────────────────────────
 //  ESTADO
-// ══════════════════════════════════════════
+// ──────────────────────────────────────────
 let tareas     = [];
 let proyectos  = [];
 let ideas      = [];
-let notificados = [];
-let colorSeleccionado = '#0ea5e9';
-let dragIdActual      = null;
-let filtroDept        = '';
-let filtroProy        = '';
+let notifs     = [];
+let colorSel   = '#0ea5e9';
+let filtDept   = '';
+let filtProy   = '';
+let dragId     = null;
+let actaTareaId = null;
 
-// ══════════════════════════════════════════
-//  GESTIONAR LOCAL STORAGE
-// ══════════════════════════════════════════
-function guardarEnStorage() {
+// ──────────────────────────────────────────
+//  LOCAL STORAGE
+// ──────────────────────────────────────────
+function guardar() {
   try {
-    localStorage.setItem(LS_TASKS,    JSON.stringify(tareas));
-    localStorage.setItem(LS_PROJECTS, JSON.stringify(proyectos));
-    localStorage.setItem(LS_IDEAS,    JSON.stringify(ideas));
-    localStorage.setItem(LS_NOTIF,    JSON.stringify(notificados));
-  } catch (e) {
-    mostrarToast('Error al guardar datos en LocalStorage', 'error');
-    console.error('LocalStorage error:', e);
-  }
+    localStorage.setItem(LS.T, JSON.stringify(tareas));
+    localStorage.setItem(LS.P, JSON.stringify(proyectos));
+    localStorage.setItem(LS.I, JSON.stringify(ideas));
+    localStorage.setItem(LS.N, JSON.stringify(notifs));
+  } catch(e){ console.error('LS save error', e); }
+}
+function cargar() {
+  try {
+    tareas    = JSON.parse(localStorage.getItem(LS.T) || '[]');
+    proyectos = JSON.parse(localStorage.getItem(LS.P) || '[]');
+    ideas     = JSON.parse(localStorage.getItem(LS.I) || '[]');
+    notifs    = JSON.parse(localStorage.getItem(LS.N) || '[]');
+  } catch(e){ tareas=[]; proyectos=[]; ideas=[]; notifs=[]; }
 }
 
-function cargarDesdeStorage() {
-  try {
-    const t = localStorage.getItem(LS_TASKS);
-    const p = localStorage.getItem(LS_PROJECTS);
-    const i = localStorage.getItem(LS_IDEAS);
-    const n = localStorage.getItem(LS_NOTIF);
-    tareas     = t ? JSON.parse(t) : [];
-    proyectos  = p ? JSON.parse(p) : [];
-    ideas      = i ? JSON.parse(i) : [];
-    notificados = n ? JSON.parse(n) : [];
-  } catch (e) {
-    console.error('Error cargando storage:', e);
-    tareas = []; proyectos = []; ideas = []; notificados = [];
-  }
-}
-
-// ══════════════════════════════════════════
-//  EXPORTAR / IMPORTAR
-// ══════════════════════════════════════════
+// ──────────────────────────────────────────
+//  EXPORT / IMPORT
+// ──────────────────────────────────────────
 function exportarDatos() {
-  const datos = { tareas, proyectos, ideas, exportadoEn: new Date().toISOString(), version: '4.0' };
-  const blob  = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
-  const url   = URL.createObjectURL(blob);
-  const a     = document.createElement('a');
-  a.href = url;
-  a.download = `asistente360_${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  mostrarToast('📤 Datos exportados correctamente', 'success');
+  const d = { tareas, proyectos, ideas, v:'5.0', ts: new Date().toISOString() };
+  const b = new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href=u; a.download=`copilot_${new Date().toISOString().slice(0,10)}.json`; a.click();
+  URL.revokeObjectURL(u);
+  toast('📤 Datos exportados','success');
 }
-
 function importarDatos(evt) {
-  const archivo = evt.target.files[0];
-  if (!archivo) return;
-  const lector = new FileReader();
-  lector.onload = (e) => {
+  const f = evt.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = e => {
     try {
-      const datos = JSON.parse(e.target.result);
-      if (!Array.isArray(datos.tareas)) throw new Error('Formato inválido');
-      if (!confirm('¿Importar datos? Esto reemplazará los datos actuales.')) return;
-      tareas    = datos.tareas    || [];
-      proyectos = datos.proyectos || [];
-      ideas     = datos.ideas     || [];
-      guardarEnStorage();
-      renderizarTodo();
-      mostrarToast('📥 Datos importados correctamente', 'success');
-    } catch (err) {
-      mostrarToast('Error: archivo JSON inválido', 'error');
-    }
+      const d = JSON.parse(e.target.result);
+      if(!Array.isArray(d.tareas)) throw new Error();
+      if(!confirm('¿Importar? Reemplazará los datos actuales.')) return;
+      tareas=d.tareas||[]; proyectos=d.proyectos||[]; ideas=d.ideas||[];
+      guardar(); renderTodo();
+      toast('📥 Datos importados','success');
+    } catch { toast('Archivo inválido','error'); }
   };
-  lector.readAsText(archivo);
-  evt.target.value = '';
+  r.readAsText(f); evt.target.value='';
 }
 
-// ══════════════════════════════════════════
-//  ACTUALIZAR DEADLINES (lógica urgente)
-// ══════════════════════════════════════════
-function actualizarDeadlines(idExcluir) {
-  let actualizadas = 0;
+// ──────────────────────────────────────────
+//  ACTUALIZAR DEADLINES (+2 días)
+// ──────────────────────────────────────────
+function actualizarDeadlines(excluirId) {
+  let n=0;
   tareas.forEach(t => {
-    if (t.id === idExcluir) return;
-    if (t.estado !== 'pendiente') return;
-    if (t.urgente) return;
-    if (!t.deadline) return;
-    const fechaActual = new Date(t.deadline);
-    if (isNaN(fechaActual.getTime())) return;
-    const nuevaFecha = new Date(fechaActual.getTime() + DOS_DIAS_MS);
-    t.deadline = nuevaFecha.toISOString().slice(0, 16);
-    actualizadas++;
+    if(t.id===excluirId||t.estado!=='pendiente'||t.urgente||!t.deadline) return;
+    const d = new Date(t.deadline);
+    if(isNaN(d.getTime())) return;
+    t.deadline = new Date(d.getTime()+DOS_DIAS).toISOString().slice(0,16);
+    n++;
   });
-  return actualizadas;
+  return n;
 }
 
-// ══════════════════════════════════════════
+// ──────────────────────────────────────────
+//  ID & HELPERS
+// ──────────────────────────────────────────
+function uid() { return 'i'+Date.now()+Math.random().toString(36).slice(2,7); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function shake(id){ const el=document.getElementById(id); if(!el)return; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); el.addEventListener('animationend',()=>el.classList.remove('shake'),{once:true}); el.focus(); }
+function tiempoRestante(dl){
+  if(!dl) return '';
+  const d = new Date(dl).getTime()-Date.now();
+  if(d<0) return '⚠ Vencida';
+  const dd=Math.floor(d/86400000), hh=Math.floor((d%86400000)/3600000), mm=Math.floor((d%3600000)/60000);
+  if(dd>0) return `${dd}d ${hh}h`;
+  if(hh>0) return `${hh}h ${mm}m`;
+  return `${mm}m`;
+}
+function fmtFecha(dt){ if(!dt)return'–'; return new Date(dt).toLocaleString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function fmtFechaCorta(ts){ return new Date(ts).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}); }
+
+// ──────────────────────────────────────────
+//  TOAST
+// ──────────────────────────────────────────
+function toast(msg, tipo='info'){
+  const c={success:'bg-emerald-500/20 border-emerald-500/40 text-emerald-300',error:'bg-red-500/20 border-red-500/40 text-red-300',warning:'bg-yellow-500/20 border-yellow-500/40 text-yellow-300',info:'bg-sky-500/20 border-sky-500/40 text-sky-300'};
+  const t=document.createElement('div');
+  t.className=`pointer-events-auto toast-slide ${c[tipo]||c.info} border backdrop-blur-sm rounded-xl px-4 py-3 text-sm font-semibold shadow-2xl`;
+  t.textContent=msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(()=>{ t.style.transition='all .3s'; t.style.opacity='0'; t.style.transform='translateX(110%)'; setTimeout(()=>t.remove(),320); },5000);
+}
+
+// ──────────────────────────────────────────
+//  MODALS
+// ──────────────────────────────────────────
+function abrirModal(id){ const el=document.getElementById(id); el.classList.remove('hidden'); el.classList.add('flex'); }
+function cerrarModal(id){ const el=document.getElementById(id); el.classList.add('hidden'); el.classList.remove('flex'); if(id==='modal-tarea')resetTareaForm(); if(id==='modal-proy')resetProyForm(); }
+
+function abrirModalTarea(){
+  llenarSelectProy();
+  actualizarCats();
+  abrirModal('modal-tarea');
+}
+function abrirModalProy(){ abrirModal('modal-proy'); }
+
+function resetTareaForm(){
+  ['mt-id','mt-titulo','mt-desc','mt-deadline','mt-como','mt-siguiente','mt-asistentes','mt-frec'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('mt-urgente').checked=false;
+  document.getElementById('mt-alerta24').checked=false;
+  document.getElementById('mt-ciclica').checked=false;
+  document.getElementById('mt-estado').value='pendiente';
+  document.getElementById('mt-prio').value='media';
+  document.getElementById('mt-dept').value='producto';
+  document.getElementById('mt-heading').textContent='Nueva Tarea';
+  document.getElementById('mt-btn').textContent='Crear Tarea';
+  document.getElementById('hint-auto').classList.add('hidden');
+  document.getElementById('ciclica-opts').classList.add('hidden');
+  actualizarCats();
+}
+function resetProyForm(){
+  ['mp-id','mp-nombre','mp-keys'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('mp-dept').value='producto';
+  document.getElementById('mp-heading').textContent='Nuevo Proyecto';
+  document.getElementById('mp-btn').textContent='Crear Proyecto';
+  selColor('#0ea5e9');
+}
+
+function toggleCiclica(){
+  const on=document.getElementById('mt-ciclica').checked;
+  document.getElementById('ciclica-opts').classList.toggle('hidden',!on);
+}
+
+function actualizarCats(){
+  const dept=document.getElementById('mt-dept').value||'producto';
+  const cats=CATS[dept]||[];
+  const sel=document.getElementById('mt-cat');
+  const prev=sel.value;
+  sel.innerHTML=cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+  if(cats.includes(prev)) sel.value=prev;
+}
+
+function autodetectarDept(){
+  const txt=document.getElementById('mt-titulo').value.toLowerCase();
+  const eid=document.getElementById('mt-id').value;
+  for(const [dept,kws] of Object.entries(DEPT_KW)){
+    if(kws.some(k=>txt.includes(k))){
+      document.getElementById('mt-dept').value=dept;
+      actualizarCats();
+      if(!eid) document.getElementById('hint-auto').classList.remove('hidden');
+      break;
+    }
+  }
+  // Autodetect proyecto
+  if(!eid){
+    for(const p of proyectos){
+      if(!p.keywords) continue;
+      const kws=p.keywords.split(',').map(k=>k.trim().toLowerCase()).filter(Boolean);
+      if(kws.some(k=>k&&txt.includes(k))){ document.getElementById('mt-proy').value=p.id; return; }
+    }
+  }
+}
+
+function llenarSelectProy(){
+  const sel=document.getElementById('mt-proy');
+  const v=sel.value;
+  sel.innerHTML='<option value="">Sin proyecto</option>'+proyectos.map(p=>`<option value="${p.id}">${esc(p.nombre)}</option>`).join('');
+  if(v) sel.value=v;
+}
+
+function selColor(c){
+  colorSel=c;
+  document.querySelectorAll('.cpk').forEach(b=>{ b.classList.toggle('ring-white',b.dataset.c===c); b.classList.toggle('ring-transparent',b.dataset.c!==c); });
+}
+
+// ──────────────────────────────────────────
 //  TAREAS CRUD
-// ══════════════════════════════════════════
-function generarId() {
-  return 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-}
+// ──────────────────────────────────────────
+function guardarTarea(){
+  const titulo=document.getElementById('mt-titulo').value.trim();
+  if(!titulo){ shake('mt-titulo'); toast('El título es obligatorio','warning'); return; }
 
-function guardarTarea() {
-  const titulo = document.getElementById('mt-titulo-inp').value.trim();
-  if (!titulo) {
-    sacudirElemento('mt-titulo-inp');
-    mostrarToast('El título es obligatorio', 'warning');
-    return;
-  }
+  const eid=document.getElementById('mt-id').value;
+  const ahora=Date.now();
+  const urgente=document.getElementById('mt-urgente').checked;
+  const alerta24=document.getElementById('mt-alerta24').checked;
+  const ciclica=document.getElementById('mt-ciclica').checked;
+  const nuevoEstado=document.getElementById('mt-estado').value;
 
-  const idEditando = document.getElementById('mt-id').value;
-  const ahora = Date.now();
-  const urgente = document.getElementById('mt-urgente').checked;
-  const nuevoEstado = document.getElementById('mt-estado').value;
-
-  const datosTarea = {
+  const datos={
     titulo,
-    descripcion: document.getElementById('mt-desc').value.trim(),
-    dept:        document.getElementById('mt-dept').value,
-    categoria:   document.getElementById('mt-cat').value,
-    proyecto:    document.getElementById('mt-proyecto').value,
-    prioridad:   document.getElementById('mt-prio').value,
-    estado:      nuevoEstado,
-    deadline:    document.getElementById('mt-deadline').value,
-    urgente,
-    actualizadoEn: ahora,
+    desc:document.getElementById('mt-desc').value.trim(),
+    dept:document.getElementById('mt-dept').value,
+    cat:document.getElementById('mt-cat').value,
+    proy:document.getElementById('mt-proy').value,
+    prio:document.getElementById('mt-prio').value,
+    estado:nuevoEstado,
+    deadline:document.getElementById('mt-deadline').value,
+    urgente,alerta24,
+    ciclica,
+    frecDias:parseInt(document.getElementById('mt-frec').value)||0,
+    asistentes:document.getElementById('mt-asistentes').value.trim(),
+    como:document.getElementById('mt-como').value.trim(),
+    siguiente:document.getElementById('mt-siguiente').value.trim(),
+    actualizadoEn:ahora,
   };
 
-  if (idEditando) {
-    // EDITAR tarea existente
-    const idx = tareas.findIndex(t => t.id === idEditando);
-    if (idx === -1) { mostrarToast('Tarea no encontrada', 'error'); return; }
-    const tareaAnterior = tareas[idx];
-    const estadoAnterior = tareaAnterior.estado;
-
-    // Completar tarea
-    if (nuevoEstado === 'finalizado' && estadoAnterior !== 'finalizado') {
-      datosTarea.completadoEn = ahora;
-      datosTarea.creadoEn     = tareaAnterior.creadoEn;
-      if (tareaAnterior.deadline) {
-        const tiempoDeadline = new Date(tareaAnterior.deadline).getTime();
-        datosTarea.aTiempo    = ahora <= tiempoDeadline;
-        datosTarea.excelente  = datosTarea.aTiempo;
-      } else {
-        datosTarea.aTiempo   = true;
-        datosTarea.excelente = false;
+  if(eid){
+    const idx=tareas.findIndex(t=>t.id===eid);
+    if(idx===-1){ toast('Tarea no encontrada','error'); return; }
+    const vieja=tareas[idx];
+    if(nuevoEstado==='finalizado'&&vieja.estado!=='finalizado'){
+      datos.completadoEn=ahora; datos.creadoEn=vieja.creadoEn;
+      datos.aTiempo=vieja.deadline?ahora<=new Date(vieja.deadline).getTime():true;
+      datos.excelente=datos.aTiempo;
+      if(datos.excelente) toast('🌟 ¡Rendimiento Excelente!','success');
+      // Si es cíclica, programar siguiente sesión
+      if(vieja.ciclica&&vieja.frecDias>0){
+        const nextDate=new Date(ahora+vieja.frecDias*24*60*60*1000);
+        const nextT={
+          ...vieja,
+          id:uid(),
+          titulo:vieja.titulo+' (Siguiente)',
+          estado:'pendiente',
+          deadline:nextDate.toISOString().slice(0,16),
+          completadoEn:null,excelente:false,aTiempo:undefined,
+          creadoEn:ahora,actualizadoEn:ahora,
+          historial:[],
+        };
+        tareas.push(nextT);
+        toast(`🔁 Próxima sesión programada para ${fmtFecha(nextT.deadline)}`,'info');
       }
-      if (datosTarea.excelente) mostrarToast('🌟 ¡Completada antes del deadline! Rendimiento Excelente', 'success');
-      else mostrarToast('✅ Tarea completada', 'success');
     }
-
-    // LIMPIAR si retrocede de finalizado
-    if (nuevoEstado !== 'finalizado' && estadoAnterior === 'finalizado') {
-      datosTarea.completadoEn = null;
-      datosTarea.aTiempo      = undefined;
-      datosTarea.excelente    = false;
-      mostrarToast('↩️ Tarea reabierta — estadísticas limpias', 'info');
+    if(nuevoEstado!=='finalizado'&&vieja.estado==='finalizado'){
+      datos.completadoEn=null; datos.excelente=false; datos.aTiempo=undefined;
+      toast('↩️ Reabierta — estadísticas limpias','info');
     }
-
-    tareas[idx] = { ...tareaAnterior, ...datosTarea };
-    mostrarToast('✏️ Tarea actualizada', 'info');
+    tareas[idx]={...vieja,...datos};
+    toast('✏️ Tarea actualizada','info');
   } else {
-    // CREAR nueva tarea
-    const nuevaTarea = {
-      id:        generarId(),
-      creadoEn:  ahora,
-      ...datosTarea,
-      completadoEn: nuevoEstado === 'finalizado' ? ahora : null,
-      excelente:    false,
-      aTiempo:      undefined,
-    };
-
-    if (nuevoEstado === 'finalizado' && nuevaTarea.deadline) {
-      const tDl = new Date(nuevaTarea.deadline).getTime();
-      nuevaTarea.aTiempo   = ahora <= tDl;
-      nuevaTarea.excelente = nuevaTarea.aTiempo;
-    }
-
-    if (urgente && nuevoEstado === 'pendiente') {
-      // Insertar al inicio de las pendientes
-      const primerPendiente = tareas.findIndex(t => t.estado === 'pendiente');
-      if (primerPendiente === -1) {
-        tareas.push(nuevaTarea);
-      } else {
-        tareas.splice(primerPendiente, 0, nuevaTarea);
-      }
-      // Retrasar otras tareas pendientes
-      const afectadas = actualizarDeadlines(nuevaTarea.id);
-      mostrarToast(`🚨 URGENTE añadida al inicio. ${afectadas > 0 ? afectadas + ' tareas retrasadas +2 días.' : ''}`, 'warning');
-    } else {
-      tareas.push(nuevaTarea);
-    }
-    mostrarToast('✅ Tarea creada correctamente', 'success');
+    const t={id:uid(),creadoEn:ahora,...datos,completadoEn:null,excelente:false,aTiempo:undefined,historial:[]};
+    if(nuevoEstado==='finalizado'){ t.completadoEn=ahora; t.aTiempo=t.deadline?ahora<=new Date(t.deadline).getTime():true; t.excelente=t.aTiempo; }
+    if(urgente&&nuevoEstado==='pendiente'){
+      const fp=tareas.findIndex(x=>x.estado==='pendiente');
+      fp===-1?tareas.push(t):tareas.splice(fp,0,t);
+      const n=actualizarDeadlines(t.id);
+      toast(`🚨 URGENTE al inicio. ${n>0?n+' deadlines retrasados +2d':''}`, 'warning');
+    } else { tareas.push(t); }
+    toast('✅ Tarea creada','success');
   }
 
-  guardarEnStorage();
-  cerrarModal('modal-tarea');
-  renderizarTodo();
+  guardar(); cerrarModal('modal-tarea'); renderTodo();
 }
 
-function editarTarea(id) {
-  const tarea = tareas.find(t => t.id === id);
-  if (!tarea) return;
-
-  rellenarSelectProyectos();
-  document.getElementById('mt-id').value          = id;
-  document.getElementById('mt-titulo-inp').value   = tarea.titulo;
-  document.getElementById('mt-desc').value          = tarea.descripcion || '';
-  document.getElementById('mt-urgente').checked     = tarea.urgente || false;
-  document.getElementById('mt-dept').value          = tarea.dept || 'rrhh';
-  actualizarCategorias();
-  document.getElementById('mt-cat').value           = tarea.categoria || '';
-  document.getElementById('mt-proyecto').value      = tarea.proyecto || '';
-  document.getElementById('mt-prio').value          = tarea.prioridad || 'media';
-  document.getElementById('mt-estado').value        = tarea.estado || 'pendiente';
-  document.getElementById('mt-deadline').value      = tarea.deadline || '';
-  document.getElementById('mt-titulo').textContent  = 'Editar Tarea';
-  document.getElementById('mt-btn').textContent     = 'Guardar Cambios';
-  document.getElementById('hint-autodetect').classList.add('hidden');
-
+function editarTarea(id){
+  const t=tareas.find(x=>x.id===id); if(!t) return;
+  llenarSelectProy();
+  document.getElementById('mt-id').value=id;
+  document.getElementById('mt-titulo').value=t.titulo;
+  document.getElementById('mt-desc').value=t.desc||'';
+  document.getElementById('mt-urgente').checked=t.urgente||false;
+  document.getElementById('mt-alerta24').checked=t.alerta24||false;
+  document.getElementById('mt-dept').value=t.dept||'producto'; actualizarCats();
+  document.getElementById('mt-cat').value=t.cat||'';
+  document.getElementById('mt-proy').value=t.proy||'';
+  document.getElementById('mt-prio').value=t.prio||'media';
+  document.getElementById('mt-estado').value=t.estado;
+  document.getElementById('mt-deadline').value=t.deadline||'';
+  document.getElementById('mt-ciclica').checked=t.ciclica||false;
+  document.getElementById('mt-frec').value=t.frecDias||'';
+  document.getElementById('mt-asistentes').value=t.asistentes||'';
+  document.getElementById('mt-como').value=t.como||'';
+  document.getElementById('mt-siguiente').value=t.siguiente||'';
+  document.getElementById('ciclica-opts').classList.toggle('hidden',!t.ciclica);
+  document.getElementById('mt-heading').textContent='Editar Tarea';
+  document.getElementById('mt-btn').textContent='Guardar Cambios';
+  document.getElementById('hint-auto').classList.add('hidden');
   abrirModal('modal-tarea');
 }
 
-function eliminarTarea(id) {
-  if (!confirm('¿Eliminar esta tarea definitivamente?')) return;
-  tareas = tareas.filter(t => t.id !== id);
-  guardarEnStorage();
-  renderizarTodo();
-  mostrarToast('🗑️ Tarea eliminada', 'info');
+function eliminarTarea(id){
+  if(!confirm('¿Eliminar esta tarea?')) return;
+  tareas=tareas.filter(t=>t.id!==id);
+  guardar(); renderTodo(); toast('🗑️ Eliminada','info');
 }
 
-function moverTarea(id, direccion) {
-  const ESTADOS = ['pendiente', 'proceso', 'finalizado'];
-  const tarea = tareas.find(t => t.id === id);
-  if (!tarea) return;
-
-  const idxActual = ESTADOS.indexOf(tarea.estado);
-  const nuevoIdx  = idxActual + direccion;
-  if (nuevoIdx < 0 || nuevoIdx >= ESTADOS.length) return;
-
-  const estadoAnterior = tarea.estado;
-  const nuevoEstado    = ESTADOS[nuevoIdx];
-  const ahora = Date.now();
-
-  tarea.estado      = nuevoEstado;
-  tarea.actualizadoEn = ahora;
-
-  // Mover a finalizado
-  if (nuevoEstado === 'finalizado' && estadoAnterior !== 'finalizado') {
-    tarea.completadoEn = ahora;
-    if (tarea.deadline) {
-      const tDl = new Date(tarea.deadline).getTime();
-      tarea.aTiempo   = ahora <= tDl;
-      tarea.excelente = tarea.aTiempo;
-    } else {
-      tarea.aTiempo   = true;
-      tarea.excelente = false;
+function moverTarea(id,dir){
+  const COLS=['pendiente','proceso','finalizado'];
+  const t=tareas.find(x=>x.id===id); if(!t) return;
+  const ni=COLS.indexOf(t.estado)+dir;
+  if(ni<0||ni>=3) return;
+  const prev=t.estado; const ahora=Date.now();
+  t.estado=COLS[ni]; t.actualizadoEn=ahora;
+  if(COLS[ni]==='finalizado'&&prev!=='finalizado'){
+    t.completadoEn=ahora;
+    t.aTiempo=t.deadline?ahora<=new Date(t.deadline).getTime():true;
+    t.excelente=t.aTiempo;
+    if(t.excelente) toast('🌟 ¡Rendimiento Excelente!','success');
+    if(t.ciclica&&t.frecDias>0){
+      const nxt={...t,id:uid(),titulo:t.titulo+' (Siguiente)',estado:'pendiente',deadline:new Date(ahora+t.frecDias*86400000).toISOString().slice(0,16),completadoEn:null,excelente:false,aTiempo:undefined,creadoEn:ahora,actualizadoEn:ahora,historial:[]};
+      tareas.push(nxt);
+      toast('🔁 Próxima sesión creada','info');
     }
-    if (tarea.excelente) mostrarToast('🌟 ¡Rendimiento Excelente! Completada antes del deadline', 'success');
-    else mostrarToast('✅ Tarea finalizada', 'success');
   }
-
-  // Retroceder de finalizado — LIMPIAR datos
-  if (nuevoEstado !== 'finalizado' && estadoAnterior === 'finalizado') {
-    tarea.completadoEn = null;
-    tarea.aTiempo      = undefined;
-    tarea.excelente    = false;
-    mostrarToast('↩️ Tarea reabierta — estadísticas limpias', 'info');
+  if(COLS[ni]!=='finalizado'&&prev==='finalizado'){
+    t.completadoEn=null; t.excelente=false; t.aTiempo=undefined;
+    toast('↩️ Reabierta — stats limpias','info');
   }
-
-  guardarEnStorage();
-  renderizarTodo();
+  guardar(); renderTodo();
 }
 
-// ══════════════════════════════════════════
+// ──────────────────────────────────────────
 //  PROYECTOS CRUD
-// ══════════════════════════════════════════
-function selColor(c) {
-  colorSeleccionado = c;
-  document.querySelectorAll('.cpick').forEach(btn => {
-    const es = btn.dataset.c === c;
-    btn.classList.toggle('ring-white',       es);
-    btn.classList.toggle('ring-transparent', !es);
-  });
+// ──────────────────────────────────────────
+function guardarProyecto(){
+  const nombre=document.getElementById('mp-nombre').value.trim();
+  if(!nombre){ shake('mp-nombre'); toast('Nombre obligatorio','warning'); return; }
+  const eid=document.getElementById('mp-id').value;
+  const d={nombre,dept:document.getElementById('mp-dept').value,keywords:document.getElementById('mp-keys').value.trim(),color:colorSel};
+  if(eid){ const i=proyectos.findIndex(p=>p.id===eid); if(i!==-1) proyectos[i]={...proyectos[i],...d}; toast('✏️ Proyecto actualizado','info'); }
+  else { proyectos.push({id:uid(),creadoEn:Date.now(),...d}); toast('📁 Proyecto creado','success'); }
+  guardar(); cerrarModal('modal-proy'); renderTodo();
+}
+function editarProyecto(id){
+  const p=proyectos.find(x=>x.id===id); if(!p) return;
+  document.getElementById('mp-id').value=id;
+  document.getElementById('mp-nombre').value=p.nombre;
+  document.getElementById('mp-dept').value=p.dept||'producto';
+  document.getElementById('mp-keys').value=p.keywords||'';
+  selColor(p.color||'#0ea5e9');
+  document.getElementById('mp-heading').textContent='Editar Proyecto';
+  document.getElementById('mp-btn').textContent='Guardar Cambios';
+  abrirModal('modal-proy');
+}
+function eliminarProyecto(id){
+  if(!confirm('¿Eliminar proyecto? Las tareas perderán asignación.')) return;
+  proyectos=proyectos.filter(p=>p.id!==id);
+  tareas.forEach(t=>{ if(t.proy===id) t.proy=''; });
+  guardar(); renderTodo(); toast('🗑️ Proyecto eliminado','info');
 }
 
-function guardarProyecto() {
-  const nombre = document.getElementById('mp-nombre').value.trim();
-  if (!nombre) { sacudirElemento('mp-nombre'); mostrarToast('El nombre es obligatorio', 'warning'); return; }
-
-  const idEditando = document.getElementById('mp-id').value;
-  const datos = {
-    nombre,
-    dept:     document.getElementById('mp-dept').value,
-    keywords: document.getElementById('mp-keys').value.trim(),
-    color:    colorSeleccionado,
-  };
-
-  if (idEditando) {
-    const idx = proyectos.findIndex(p => p.id === idEditando);
-    if (idx !== -1) proyectos[idx] = { ...proyectos[idx], ...datos };
-    mostrarToast('✏️ Proyecto actualizado', 'info');
-  } else {
-    proyectos.push({ id: generarId(), creadoEn: Date.now(), ...datos });
-    mostrarToast('📁 Proyecto creado', 'success');
-  }
-
-  guardarEnStorage();
-  cerrarModal('modal-proyecto');
-  renderizarTodo();
-}
-
-function editarProyecto(id) {
-  const p = proyectos.find(p => p.id === id);
-  if (!p) return;
-  document.getElementById('mp-id').value     = id;
-  document.getElementById('mp-nombre').value = p.nombre;
-  document.getElementById('mp-dept').value   = p.dept || 'rrhh';
-  document.getElementById('mp-keys').value   = p.keywords || '';
-  selColor(p.color || '#0ea5e9');
-  document.getElementById('mp-titulo').textContent = 'Editar Proyecto';
-  document.getElementById('mp-btn').textContent    = 'Guardar Cambios';
-  abrirModal('modal-proyecto');
-}
-
-function eliminarProyecto(id) {
-  if (!confirm('¿Eliminar este proyecto? Las tareas asociadas perderán el proyecto.')) return;
-  proyectos = proyectos.filter(p => p.id !== id);
-  tareas.forEach(t => { if (t.proyecto === id) t.proyecto = ''; });
-  guardarEnStorage();
-  renderizarTodo();
-  mostrarToast('🗑️ Proyecto eliminado', 'info');
-}
-
-// ══════════════════════════════════════════
+// ──────────────────────────────────────────
 //  IDEAS CRUD
-// ══════════════════════════════════════════
-function guardarIdea() {
-  const titulo = document.getElementById('idea-titulo').value.trim();
-  const cuerpo = document.getElementById('idea-cuerpo').value.trim();
-  if (!titulo && !cuerpo) { sacudirElemento('idea-titulo'); return; }
-
-  ideas.unshift({
-    id: generarId(),
-    titulo:  titulo || 'Sin título',
-    cuerpo,
-    tipo:    document.getElementById('idea-tipo').value,
-    creadoEn: Date.now(),
-  });
-
-  guardarEnStorage();
-  document.getElementById('idea-titulo').value = '';
-  document.getElementById('idea-cuerpo').value = '';
-  renderizarIdeas();
-  mostrarToast('💡 Idea guardada', 'success');
+// ──────────────────────────────────────────
+function guardarIdea(){
+  const titulo=document.getElementById('idea-titulo').value.trim();
+  const cuerpo=document.getElementById('idea-cuerpo').value.trim();
+  if(!titulo&&!cuerpo){ shake('idea-titulo'); return; }
+  ideas.unshift({id:uid(),titulo:titulo||'Sin título',cuerpo,tipo:document.getElementById('idea-tipo').value,creadoEn:Date.now()});
+  guardar();
+  document.getElementById('idea-titulo').value='';
+  document.getElementById('idea-cuerpo').value='';
+  renderIdeas(); toast('💡 Idea guardada','success');
 }
-
-function eliminarIdea(id) {
-  ideas = ideas.filter(i => i.id !== id);
-  guardarEnStorage();
-  renderizarIdeas();
-}
-
-function ideaATarea(id) {
-  const idea = ideas.find(i => i.id === id);
-  if (!idea) return;
-  rellenarSelectProyectos();
-  document.getElementById('mt-titulo-inp').value  = idea.titulo;
-  document.getElementById('mt-desc').value         = idea.cuerpo || '';
-  document.getElementById('mt-titulo').textContent = 'Convertir Idea en Tarea';
-  document.getElementById('mt-btn').textContent    = 'Crear Tarea';
+function eliminarIdea(id){ ideas=ideas.filter(i=>i.id!==id); guardar(); renderIdeas(); }
+function ideaATarea(id){
+  const i=ideas.find(x=>x.id===id); if(!i) return;
+  llenarSelectProy(); actualizarCats();
+  document.getElementById('mt-titulo').value=i.titulo;
+  document.getElementById('mt-desc').value=i.cuerpo||'';
+  document.getElementById('mt-heading').textContent='Convertir Idea en Tarea';
+  document.getElementById('mt-btn').textContent='Crear Tarea';
   abrirModal('modal-tarea');
 }
 
-// ══════════════════════════════════════════
+// ──────────────────────────────────────────
+//  ACTAS / HISTORIAL
+// ──────────────────────────────────────────
+function abrirActa(id){
+  actaTareaId=id;
+  const t=tareas.find(x=>x.id===id); if(!t) return;
+  document.getElementById('acta-tarea-titulo').textContent=t.titulo;
+  document.getElementById('acta-fecha').value=new Date().toISOString().slice(0,10);
+  document.getElementById('acta-asist').value=t.asistentes||'';
+  document.getElementById('acta-notas').value='';
+  document.getElementById('acta-nextdl').value=t.deadline||'';
+  renderHistorial(t);
+  abrirModal('modal-acta');
+}
+
+function guardarSesion(){
+  const t=tareas.find(x=>x.id===actaTareaId); if(!t) return;
+  if(!Array.isArray(t.historial)) t.historial=[];
+  const sesion={
+    fecha:document.getElementById('acta-fecha').value,
+    asistentes:document.getElementById('acta-asist').value.trim(),
+    notas:document.getElementById('acta-notas').value.trim(),
+    nextDl:document.getElementById('acta-nextdl').value,
+    ts:Date.now(),
+  };
+  t.historial.push(sesion);
+  if(sesion.nextDl) t.deadline=sesion.nextDl;
+  document.getElementById('acta-notas').value='';
+  guardar(); renderHistorial(t); renderTodo();
+  toast('📋 Sesión guardada','success');
+}
+
+function renderHistorial(t){
+  const el=document.getElementById('acta-historial');
+  if(!t.historial||!t.historial.length){ el.innerHTML='<p class="text-xs text-slate-600 py-2">Sin sesiones previas.</p>'; return; }
+  el.innerHTML=[...t.historial].reverse().map((s,i)=>`
+  <div class="glass-card rounded-xl p-4 border border-white/5">
+    <div class="flex items-center justify-between mb-2">
+      <p class="text-xs font-bold text-sky-400 mono">${s.fecha}</p>
+      ${s.asistentes?`<p class="text-xs text-slate-500">👥 ${esc(s.asistentes)}</p>`:''}
+    </div>
+    ${s.notas?`<p class="text-xs text-slate-300 leading-relaxed whitespace-pre-wrap mb-2">${esc(s.notas)}</p>`:''}
+    ${s.nextDl?`<p class="text-xs text-yellow-400 mono">⏭ Siguiente DL: ${fmtFecha(s.nextDl)}</p>`:''}
+  </div>`).join('');
+}
+
+function generarActaEmail(){
+  const t=tareas.find(x=>x.id===actaTareaId); if(!t) return;
+  const ultsesion=t.historial&&t.historial.length?t.historial[t.historial.length-1]:null;
+  const h=new Date().getHours();
+  const sal=h<12?'Buenos días':h<20?'Buenas tardes':'Buenas noches';
+  let txt=`${sal.toUpperCase()},\n\nACTA DE REUNIÓN — ${t.titulo}\n${'═'.repeat(50)}\n`;
+  if(ultsesion){
+    txt+=`\nFECHA: ${ultsesion.fecha}\n`;
+    if(ultsesion.asistentes) txt+=`ASISTENTES: ${ultsesion.asistentes}\n`;
+    txt+=`\nACUERDOS Y NOTAS:\n${ultsesion.notas||'–'}\n`;
+    if(ultsesion.nextDl) txt+=`\nPRÓXIMA REVISIÓN: ${fmtFecha(ultsesion.nextDl)}\n`;
+  }
+  if(t.siguiente) txt+=`\nSIGUIENTE PASO: ${t.siguiente}\n`;
+  txt+=`\n${'═'.repeat(50)}\nGenerado por AI Executive Copilot\n`;
+  navigator.clipboard.writeText(txt).then(()=>toast('📤 Acta copiada al portapapeles','success')).catch(()=>toast('Error al copiar','error'));
+}
+
+// ──────────────────────────────────────────
 //  DRAG & DROP
-// ══════════════════════════════════════════
-function onDragStart(evt, id) {
-  dragIdActual = id;
-  setTimeout(() => {
-    const el = document.getElementById('card-' + id);
-    if (el) el.classList.add('is-dragging');
-  }, 0);
-  evt.dataTransfer.effectAllowed = 'move';
+// ──────────────────────────────────────────
+function onDragStart(e,id){
+  dragId=id;
+  setTimeout(()=>{ const el=document.getElementById('dc'+id); if(el) el.classList.add('dragging'); },0);
+  e.dataTransfer.effectAllowed='move';
 }
-
-function onDragEnd() {
-  if (dragIdActual) {
-    const el = document.getElementById('card-' + dragIdActual);
-    if (el) el.classList.remove('is-dragging');
-  }
-  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
-  dragIdActual = null;
+function onDragEnd(){
+  if(dragId){ const el=document.getElementById('dc'+dragId); if(el) el.classList.remove('dragging'); }
+  document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));
+  dragId=null;
 }
-
-function onDragOver(evt, colId) {
-  evt.preventDefault();
-  evt.dataTransfer.dropEffect = 'move';
-  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
-  const colEl = document.getElementById('col-' + colId);
-  if (colEl) colEl.classList.add('drag-over');
-}
-
-function onDragLeave(evt) {
-  const el = evt.currentTarget;
-  if (el) el.classList.remove('drag-over');
-}
-
-function onDrop(evt, nuevoEstado) {
-  evt.preventDefault();
-  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
-
-  if (!dragIdActual) return;
-
-  const tarea = tareas.find(t => t.id === dragIdActual);
-  if (!tarea) { dragIdActual = null; return; }
-  if (tarea.estado === nuevoEstado) { dragIdActual = null; return; }
-
-  const estadoAnterior = tarea.estado;
-  const ahora = Date.now();
-  tarea.estado       = nuevoEstado;
-  tarea.actualizadoEn = ahora;
-
-  // Arrastrar a finalizado
-  if (nuevoEstado === 'finalizado' && estadoAnterior !== 'finalizado') {
-    tarea.completadoEn = ahora;
-    if (tarea.deadline) {
-      const tDl = new Date(tarea.deadline).getTime();
-      tarea.aTiempo   = ahora <= tDl;
-      tarea.excelente = tarea.aTiempo;
-    } else {
-      tarea.aTiempo   = true;
-      tarea.excelente = false;
+function onDragOver(e,col){ e.preventDefault(); document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over')); const el=document.getElementById('col-'+col); if(el) el.classList.add('drag-over'); }
+function onDragLeave(e){ if(e.currentTarget) e.currentTarget.classList.remove('drag-over'); }
+function onDrop(e,nuevoEstado){
+  e.preventDefault();
+  document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));
+  if(!dragId) return;
+  const t=tareas.find(x=>x.id===dragId); if(!t||t.estado===nuevoEstado){ dragId=null; return; }
+  const prev=t.estado; const ahora=Date.now();
+  t.estado=nuevoEstado; t.actualizadoEn=ahora;
+  if(nuevoEstado==='finalizado'&&prev!=='finalizado'){
+    t.completadoEn=ahora; t.aTiempo=t.deadline?ahora<=new Date(t.deadline).getTime():true; t.excelente=t.aTiempo;
+    if(t.excelente) toast('🌟 ¡Rendimiento Excelente!','success');
+    if(t.ciclica&&t.frecDias>0){
+      const nxt={...t,id:uid(),titulo:t.titulo+' (Siguiente)',estado:'pendiente',deadline:new Date(ahora+t.frecDias*86400000).toISOString().slice(0,16),completadoEn:null,excelente:false,aTiempo:undefined,creadoEn:ahora,actualizadoEn:ahora,historial:[]};
+      tareas.push(nxt); toast('🔁 Próxima sesión creada','info');
     }
-    if (tarea.excelente) mostrarToast('🌟 ¡Rendimiento Excelente!', 'success');
-    else mostrarToast('✅ Tarea finalizada', 'success');
   }
-
-  // Arrastrar fuera de finalizado — LIMPIAR
-  if (nuevoEstado !== 'finalizado' && estadoAnterior === 'finalizado') {
-    tarea.completadoEn = null;
-    tarea.aTiempo      = undefined;
-    tarea.excelente    = false;
-    mostrarToast('↩️ Reabierta — estadísticas limpias', 'info');
+  if(nuevoEstado!=='finalizado'&&prev==='finalizado'){
+    t.completadoEn=null; t.excelente=false; t.aTiempo=undefined;
+    toast('↩️ Reabierta — stats limpias','info');
   }
-
-  dragIdActual = null;
-  guardarEnStorage();
-  renderizarTodo();
+  dragId=null; guardar(); renderTodo();
 }
 
-// ══════════════════════════════════════════
-//  RENDERIZAR TAREAS (función principal)
-// ══════════════════════════════════════════
-function renderizarTareas() {
-  // Filtrar
-  let visibles = [...tareas];
-  if (filtroDept) visibles = visibles.filter(t => t.dept === filtroDept);
-  if (filtroProy) visibles = visibles.filter(t => t.proyecto === filtroProy);
+// ──────────────────────────────────────────
+//  RENDER KANBAN
+// ──────────────────────────────────────────
+function renderFiltrosProy(){
+  const el=document.getElementById('fdb-proy'); if(!el) return;
+  el.innerHTML=proyectos.map(p=>`<button onclick="setFiltro('proy','${p.id}')" data-fp="${p.id}" class="fpb text-xs px-3 py-1 rounded-lg border font-bold transition-all" style="border-color:${p.color};color:${p.color};background:${p.color}18">${esc(p.nombre)}</button>`).join('');
+  actualizarBotonesFiltro();
+}
+function setFiltro(tipo,val){ if(tipo==='dept') filtDept=val; else filtProy=val; actualizarBotonesFiltro(); renderKanban(); }
+function actualizarBotonesFiltro(){
+  document.querySelectorAll('.fdb').forEach(b=>{ b.style.opacity=b.dataset.fd===filtDept?'1':'0.5'; b.style.fontWeight=b.dataset.fd===filtDept?'800':'600'; });
+  document.querySelectorAll('.fpb').forEach(b=>{ b.style.opacity=b.dataset.fp===filtProy?'1':'0.5'; b.style.fontWeight=b.dataset.fp===filtProy?'800':'600'; });
+}
 
-  // Agrupar por estado
-  const grupos = { pendiente: [], proceso: [], finalizado: [] };
-  visibles.forEach(t => {
-    if (grupos[t.estado]) grupos[t.estado].push(t);
-  });
-
-  // Ordenar pendientes: urgentes primero
-  grupos.pendiente.sort((a, b) => {
-    if (a.urgente && !b.urgente) return -1;
-    if (!a.urgente && b.urgente) return 1;
-    return 0;
-  });
-
-  // Actualizar contadores
-  document.getElementById('cnt-pendiente').textContent  = grupos.pendiente.length;
-  document.getElementById('cnt-proceso').textContent    = grupos.proceso.length;
-  document.getElementById('cnt-finalizado').textContent = grupos.finalizado.length;
-
-  // Renderizar columnas
-  ['pendiente', 'proceso', 'finalizado'].forEach(estado => {
-    const col = document.getElementById('col-' + estado);
-    if (!col) return;
-    const lista = grupos[estado];
-    if (!lista.length) {
-      col.innerHTML = `<div class="border-2 border-dashed border-slate-800/60 rounded-xl p-6 text-center text-xs text-slate-700">Sin tareas</div>`;
-      return;
-    }
-    col.innerHTML = lista.map(t => construirCard(t, estado)).join('');
+function renderKanban(){
+  let vis=[...tareas];
+  if(filtDept) vis=vis.filter(t=>t.dept===filtDept);
+  if(filtProy) vis=vis.filter(t=>t.proy===filtProy);
+  const grupos={pendiente:[],proceso:[],finalizado:[]};
+  vis.forEach(t=>{ if(grupos[t.estado]) grupos[t.estado].push(t); });
+  grupos.pendiente.sort((a,b)=>(b.urgente?1:0)-(a.urgente?1:0));
+  document.getElementById('cnt-p').textContent=grupos.pendiente.length;
+  document.getElementById('cnt-pr').textContent=grupos.proceso.length;
+  document.getElementById('cnt-f').textContent=grupos.finalizado.length;
+  ['pendiente','proceso','finalizado'].forEach(estado=>{
+    const col=document.getElementById('col-'+estado);
+    if(!col) return;
+    const arr=grupos[estado];
+    if(!arr.length){ col.innerHTML=`<div class="border-2 border-dashed border-white/5 rounded-xl p-6 text-center text-xs text-slate-700">Sin tareas</div>`; return; }
+    col.innerHTML=arr.map(t=>buildCard(t,estado)).join('');
   });
 }
 
-function construirCard(t, estado) {
-  const ahora = Date.now();
-  const dl    = t.deadline ? new Date(t.deadline).getTime() : null;
-  const diff  = dl ? dl - ahora : null;
-  const vencida  = diff !== null && diff < 0 && estado !== 'finalizado';
-  const critica  = diff !== null && diff >= 0 && diff < 3600000 && estado !== 'finalizado';
-  const aviso    = diff !== null && diff >= 3600000 && diff < 86400000 && estado !== 'finalizado';
+function buildCard(t,estado){
+  const ahora=Date.now();
+  const dl=t.deadline?new Date(t.deadline).getTime():null;
+  const diff=dl?dl-ahora:null;
+  const venc=diff!==null&&diff<0&&estado!=='finalizado';
+  const crit=diff!==null&&diff>=0&&diff<3600000&&estado!=='finalizado';
+  const warn=diff!==null&&diff>=3600000&&diff<86400000&&estado!=='finalizado';
+  const dm=DEPT_META[t.dept]||DEPT_META.gestion;
+  const proy=t.proy?proyectos.find(p=>p.id===t.proy):null;
+  const COLS=['pendiente','proceso','finalizado'];
+  const ci=COLS.indexOf(estado);
+  const prioC={baja:'bg-emerald-500/15 text-emerald-400',media:'bg-yellow-500/15 text-yellow-400',alta:'bg-red-500/15 text-red-400'};
+  const dlC=venc?'text-red-400':crit?'text-orange-400':warn?'text-yellow-400':'text-slate-500';
+  const border=t.urgente&&estado!=='finalizado'?'border-red-500/50':venc?'border-red-400/20':crit?'border-orange-400/20':warn?'border-yellow-500/15':'border-white/5';
+  const anillo=t.urgente&&estado!=='finalizado'?'urg-pulse':'';
+  const tieneAlerta=t.alerta24&&estado!=='finalizado';
 
-  const dm       = DEPT_META[t.dept] || DEPT_META.it;
-  const proy     = t.proyecto ? proyectos.find(p => p.id === t.proyecto) : null;
-  const COLS     = ['pendiente', 'proceso', 'finalizado'];
-  const idxCol   = COLS.indexOf(estado);
-
-  const prioBadge = { baja: 'bg-emerald-500/15 text-emerald-400', media: 'bg-yellow-500/15 text-yellow-400', alta: 'bg-red-500/15 text-red-400' };
-  const prioFlecha = { baja: '↓', media: '=', alta: '↑' };
-  const colorDl  = vencida ? 'text-red-400' : critica ? 'text-orange-400' : aviso ? 'text-yellow-400' : 'text-slate-500';
-  const borderCard = t.urgente && estado !== 'finalizado' ? 'border-red-500/50' : vencida ? 'border-red-400/25' : critica ? 'border-orange-400/25' : aviso ? 'border-yellow-500/20' : 'border-slate-700/50';
-  const anillo     = t.urgente && estado !== 'finalizado' ? 'urg-pulse' : '';
-
-  return `
-  <div id="card-${t.id}"
-    class="task-card bg-slate-800/70 border ${borderCard} rounded-xl ${anillo} fade-up ${dm.cls}"
-    draggable="true"
-    ondragstart="onDragStart(event,'${t.id}')"
-    ondragend="onDragEnd()">
-
-    ${proy ? `<div class="h-0.5 rounded-t-xl" style="background:${proy.color}"></div>` : ''}
-
+  return `<div id="dc${t.id}" class="task-card glass-card border ${border} rounded-xl ${anillo} fade-up ${dm.cls}"
+    draggable="true" ondragstart="onDragStart(event,'${t.id}')" ondragend="onDragEnd()">
+    ${proy?`<div class="h-0.5 rounded-t-xl" style="background:${proy.color}"></div>`:''}
     <div class="p-3.5">
-      <!-- Fila superior -->
       <div class="flex items-start gap-2 mb-2.5">
-        ${t.urgente ? '<span class="shrink-0 text-xs bg-red-500 text-white font-bold px-1.5 py-0.5 rounded-md mt-0.5">🚨</span>' : ''}
-        <p class="text-sm font-semibold text-slate-200 flex-1 leading-snug cursor-pointer hover:text-white transition-colors" onclick="editarTarea('${t.id}')">${escaparHtml(t.titulo)}</p>
-        <span class="shrink-0 text-xs px-1.5 py-0.5 rounded-md font-bold ${prioBadge[t.prioridad] || prioBadge.media}">${prioFlecha[t.prioridad] || '='}</span>
+        ${t.urgente?'<span class="shrink-0 text-xs bg-red-500 text-white font-bold px-1.5 py-0.5 rounded-md mt-0.5">🚨</span>':''}
+        ${tieneAlerta?'<span class="shrink-0 text-xs bg-orange-500/20 text-orange-400 font-bold px-1.5 py-0.5 rounded-md mt-0.5 border border-orange-500/30">🔔</span>':''}
+        <p class="text-sm font-semibold text-slate-200 flex-1 leading-snug cursor-pointer hover:text-white transition-colors" onclick="editarTarea('${t.id}')">${esc(t.titulo)}</p>
+        <span class="shrink-0 text-xs px-1.5 py-0.5 rounded-md font-bold ${prioC[t.prio]||prioC.media}">${{baja:'↓',media:'=',alta:'↑'}[t.prio]||'='}</span>
       </div>
-
-      <!-- Badges -->
       <div class="flex flex-wrap gap-1.5 mb-2.5">
-        <span class="text-xs dept-tag px-2 py-0.5 rounded-md font-bold">${dm.emoji} ${dm.label}</span>
-        ${t.categoria ? `<span class="text-xs bg-slate-700/60 text-slate-400 px-2 py-0.5 rounded-md">${escaparHtml(t.categoria)}</span>` : ''}
-        ${proy ? `<span class="text-xs font-bold px-2 py-0.5 rounded-md" style="background:${proy.color}22;color:${proy.color}">${escaparHtml(proy.nombre)}</span>` : ''}
-        ${t.excelente ? '<span class="text-xs bg-yellow-500/15 text-yellow-400 px-2 py-0.5 rounded-md">🌟 Excelente</span>' : ''}
-        ${estado === 'finalizado' && t.aTiempo === false ? '<span class="text-xs bg-red-500/15 text-red-400 px-2 py-0.5 rounded-md">⏰ Tarde</span>' : ''}
+        <span class="text-xs d-tag px-2 py-0.5 rounded-md font-bold">${dm.emoji} ${dm.label}</span>
+        ${t.cat?`<span class="text-xs glass text-slate-400 px-2 py-0.5 rounded-md">${esc(t.cat)}</span>`:''}
+        ${proy?`<span class="text-xs font-bold px-2 py-0.5 rounded-md" style="background:${proy.color}22;color:${proy.color}">${esc(proy.nombre)}</span>`:''}
+        ${t.excelente?'<span class="text-xs bg-yellow-500/15 text-yellow-400 px-2 py-0.5 rounded-md">🌟 Excelente</span>':''}
+        ${estado==='finalizado'&&t.aTiempo===false?'<span class="text-xs bg-red-500/15 text-red-400 px-2 py-0.5 rounded-md">⏰ Tarde</span>':''}
+        ${t.ciclica?'<span class="text-xs bg-sky-500/15 text-sky-400 px-2 py-0.5 rounded-md">🔁</span>':''}
       </div>
-
-      <!-- Deadline -->
-      ${dl ? `<div class="flex items-center gap-1.5 text-xs mono ${colorDl} mb-2.5">
+      ${dl?`<div class="flex items-center gap-1.5 text-xs mono ${dlC} mb-2.5">
         <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span>${estado !== 'finalizado' ? calcularTiempoRestante(t.deadline) : '✓ ' + formatearFecha(t.deadline)}</span>
-      </div>` : ''}
-
-      <!-- Descripción expandible -->
-      ${t.descripcion ? `
-      <div class="mb-2.5">
-        <button onclick="toggleNotas('${t.id}')" class="flex items-center gap-1 text-xs text-slate-600 hover:text-slate-400 transition-colors">
-          <svg id="arr-${t.id}" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-          Ver notas
+        <span>${estado!=='finalizado'?tiempoRestante(t.deadline):'✓ '+fmtFecha(t.deadline)}</span>
+      </div>`:''}
+      ${t.desc?`<div>
+        <button onclick="toggleNotas('${t.id}')" class="flex items-center gap-1 text-xs text-slate-600 hover:text-slate-400 transition-colors mb-1.5">
+          <svg id="arr${t.id}" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>Ver notas
         </button>
-        <div id="notas-${t.id}" class="notes-body mt-1.5">
-          <div class="text-xs text-slate-500 bg-slate-900/70 rounded-lg p-2.5 leading-relaxed whitespace-pre-wrap">${escaparHtml(t.descripcion)}</div>
+        <div id="nb${t.id}" class="notes-body">
+          <div class="text-xs text-slate-500 glass rounded-lg p-2.5 leading-relaxed whitespace-pre-wrap">${esc(t.desc)}</div>
+          ${t.como?`<div class="mt-2 text-xs text-violet-400 glass rounded-lg p-2.5"><span class="font-bold">📋 Procedimiento:</span> ${esc(t.como)}</div>`:''}
+          ${t.siguiente?`<div class="mt-2 text-xs text-emerald-400 glass rounded-lg p-2.5"><span class="font-bold">➡️ Siguiente paso:</span> ${esc(t.siguiente)}</div>`:''}
         </div>
-      </div>` : ''}
-
-      <!-- Acciones -->
-      <div class="flex items-center gap-1 pt-2.5 border-t border-slate-700/40">
-        <button onclick="moverTarea('${t.id}',-1)" title="Mover atrás"
-          class="p-1 rounded-lg text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${idxCol === 0 ? 'opacity-20 pointer-events-none' : ''}">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <button onclick="moverTarea('${t.id}',1)" title="Mover adelante"
-          class="p-1 rounded-lg text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${idxCol === 2 ? 'opacity-20 pointer-events-none' : ''}">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
+      </div>`:''}
+      <div class="flex items-center gap-1 pt-2.5 border-t border-white/5 mt-1">
+        <button onclick="moverTarea('${t.id}',-1)" class="p-1 rounded-lg text-slate-600 hover:text-slate-300 hover:bg-white/10 transition-all ${ci===0?'opacity-20 pointer-events-none':''}" title="Mover atrás"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button onclick="moverTarea('${t.id}',1)" class="p-1 rounded-lg text-slate-600 hover:text-slate-300 hover:bg-white/10 transition-all ${ci===2?'opacity-20 pointer-events-none':''}" title="Mover adelante"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
         <div class="flex-1"></div>
-        <button onclick="editarTarea('${t.id}')" title="Editar" class="p-1 rounded-lg text-slate-600 hover:text-sky-400 hover:bg-slate-700 transition-all">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>
-        <button onclick="eliminarTarea('${t.id}')" title="Eliminar" class="p-1 rounded-lg text-slate-600 hover:text-red-400 hover:bg-slate-700 transition-all">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-        </button>
+        <button onclick="abrirActa('${t.id}')" class="p-1 rounded-lg text-slate-600 hover:text-sky-400 hover:bg-white/10 transition-all" title="Acta/Historial"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></button>
+        <button onclick="editarTarea('${t.id}')" class="p-1 rounded-lg text-slate-600 hover:text-sky-400 hover:bg-white/10 transition-all" title="Editar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button onclick="eliminarTarea('${t.id}')" class="p-1 rounded-lg text-slate-600 hover:text-red-400 hover:bg-white/10 transition-all" title="Eliminar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
       </div>
     </div>
   </div>`;
 }
 
-function toggleNotas(id) {
-  const notas = document.getElementById('notas-' + id);
-  const arr   = document.getElementById('arr-' + id);
-  if (!notas) return;
-  const abierto = notas.classList.toggle('open');
-  if (arr) arr.style.transform = abierto ? 'rotate(180deg)' : '';
+function toggleNotas(id){
+  const n=document.getElementById('nb'+id); const a=document.getElementById('arr'+id);
+  if(!n) return;
+  const open=n.classList.toggle('open');
+  if(a) a.style.transform=open?'rotate(180deg)':'';
 }
 
-// ══════════════════════════════════════════
-//  RENDERIZAR PROYECTOS
-// ══════════════════════════════════════════
-function renderizarProyectos() {
-  const lista = document.getElementById('lista-proyectos');
-  if (!lista) return;
-
-  if (!proyectos.length) {
-    lista.innerHTML = `<div class="col-span-2 border-2 border-dashed border-slate-800 rounded-2xl p-14 text-center">
-      <p class="text-slate-500 mb-3">No hay proyectos aún.</p>
-      <button onclick="abrirModalProyecto()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all">+ Crear Proyecto</button>
-    </div>`;
+// ──────────────────────────────────────────
+//  RENDER PROYECTOS
+// ──────────────────────────────────────────
+function renderProyectos(){
+  const el=document.getElementById('lista-proyectos'); if(!el) return;
+  if(!proyectos.length){
+    el.innerHTML=`<div class="col-span-2 border-2 border-dashed border-white/5 rounded-2xl p-14 text-center"><p class="text-slate-500 mb-3">Sin proyectos.</p><button onclick="abrirModalProy()" class="bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all">+ Crear Proyecto</button></div>`;
     return;
   }
-
-  lista.innerHTML = proyectos.map(p => {
-    const tareasProy = tareas.filter(t => t.proyecto === p.id);
-    const pend = tareasProy.filter(t => t.estado === 'pendiente').length;
-    const proc = tareasProy.filter(t => t.estado === 'proceso').length;
-    const done = tareasProy.filter(t => t.estado === 'finalizado').length;
-    const total = tareasProy.length;
-    const pct   = total ? Math.round((done / total) * 100) : 0;
-    const ot  = tareasProy.filter(t => t.aTiempo === true).length;
-    const lt  = tareasProy.filter(t => t.aTiempo === false && t.estado === 'finalizado').length;
-    const hp  = (ot + lt) > 0 ? Math.round((ot / (ot + lt)) * 100) : 0;
-    const urg = tareasProy.filter(t => t.urgente && t.estado !== 'finalizado').length;
-    const dm  = DEPT_META[p.dept] || DEPT_META.it;
-
-    const badgeEstado = pct === 100
-      ? '<span class="text-xs bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full font-bold">✓ Completado</span>'
-      : pct > 50
-      ? '<span class="text-xs bg-sky-500/15 text-sky-400 px-2 py-0.5 rounded-full font-bold">En progreso</span>'
-      : '<span class="text-xs bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full font-bold">Iniciado</span>';
-
-    return `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all fade-up">
+  el.innerHTML=proyectos.map(p=>{
+    const pt=tareas.filter(t=>t.proy===p.id);
+    const pend=pt.filter(t=>t.estado==='pendiente').length;
+    const proc=pt.filter(t=>t.estado==='proceso').length;
+    const done=pt.filter(t=>t.estado==='finalizado').length;
+    const total=pt.length;
+    const pct=total?Math.round((done/total)*100):0;
+    const ot=pt.filter(t=>t.aTiempo===true).length;
+    const lt=pt.filter(t=>t.aTiempo===false&&t.estado==='finalizado').length;
+    const hp=(ot+lt)>0?Math.round((ot/(ot+lt))*100):0;
+    const urg=pt.filter(t=>t.urgente&&t.estado!=='finalizado').length;
+    const dm=DEPT_META[p.dept]||DEPT_META.gestion;
+    const badge=pct===100?'<span class="text-xs bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full font-bold">✓ Listo</span>':pct>50?'<span class="text-xs bg-sky-500/15 text-sky-400 px-2 py-0.5 rounded-full font-bold">En progreso</span>':'<span class="text-xs glass text-slate-400 px-2 py-0.5 rounded-full font-bold">Iniciado</span>';
+    return `<div class="glass-card rounded-2xl p-5 fade-up">
       <div class="flex items-start justify-between mb-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:${p.color}20">
-            <div class="w-4 h-4 rounded-full" style="background:${p.color}"></div>
-          </div>
-          <div>
-            <h4 class="font-bold text-white text-sm">${escaparHtml(p.nombre)}</h4>
-            <span class="text-xs ${dm.cls} dept-tag px-2 py-0.5 rounded-md font-bold">${dm.emoji} ${dm.label}</span>
-          </div>
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:${p.color}20"><div class="w-4 h-4 rounded-full" style="background:${p.color}"></div></div>
+          <div><h4 class="font-bold text-white text-sm">${esc(p.nombre)}</h4><span class="text-xs ${dm.cls} d-tag px-2 py-0.5 rounded-md font-bold">${dm.emoji} ${dm.label}</span></div>
         </div>
-        <div class="flex items-center gap-2">
-          ${badgeEstado}
-          ${urg > 0 ? `<span class="text-xs bg-red-500/15 text-red-400 px-2 py-0.5 rounded-full font-bold">🚨${urg}</span>` : ''}
-          <button onclick="editarProyecto('${p.id}')" class="p-1.5 rounded-lg text-slate-600 hover:text-sky-400 hover:bg-slate-800 transition-all">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          </button>
-          <button onclick="eliminarProyecto('${p.id}')" class="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-slate-800 transition-all">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-          </button>
+        <div class="flex items-center gap-2">${badge}${urg>0?`<span class="text-xs bg-red-500/15 text-red-400 px-2 py-0.5 rounded-full font-bold">🚨${urg}</span>`:''}
+          <button onclick="editarProyecto('${p.id}')" class="p-1.5 rounded-lg text-slate-600 hover:text-sky-400 hover:bg-white/10 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button onclick="eliminarProyecto('${p.id}')" class="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-white/10 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
         </div>
       </div>
-
-      <!-- Barra de progreso principal -->
       <div class="mb-4">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-xs text-slate-500 mono">PROGRESO</span>
-          <span class="text-sm font-bold mono dept-pct ${dm.cls}">${pct}%</span>
-        </div>
-        <div class="h-3 bg-slate-800 rounded-full overflow-hidden">
-          <div class="prog-bar h-full rounded-full dept-fill ${dm.cls}" style="width:${pct}%"></div>
-        </div>
-        <div class="flex justify-between mt-1 text-xs text-slate-600">
-          <span>${done} de ${total} tareas</span>
-          ${pct === 100 ? '<span class="text-emerald-400 font-bold">🎉 ¡Completado!</span>' : ''}
-        </div>
+        <div class="flex justify-between mb-1.5"><span class="text-xs text-slate-500 mono">PROGRESO</span><span class="text-sm font-bold mono" style="color:${p.color}">${pct}%</span></div>
+        <div class="h-3 bg-white/5 rounded-full overflow-hidden"><div class="prog h-full rounded-full" style="width:${pct}%;background:${p.color}"></div></div>
+        <div class="flex justify-between mt-1 text-xs text-slate-600"><span>${done}/${total} tareas</span>${pct===100?'<span class="text-emerald-400 font-bold">🎉 ¡Completado!</span>':''}</div>
       </div>
-
-      <!-- Mini stats -->
       <div class="grid grid-cols-3 gap-2 mb-3">
-        <div class="bg-slate-800/50 rounded-lg p-2 text-center"><p class="text-xs text-slate-500">Pendiente</p><p class="font-bold text-slate-300">${pend}</p></div>
-        <div class="bg-slate-800/50 rounded-lg p-2 text-center"><p class="text-xs text-slate-500">Proceso</p><p class="font-bold text-sky-400">${proc}</p></div>
-        <div class="bg-slate-800/50 rounded-lg p-2 text-center"><p class="text-xs text-slate-500">Fin.</p><p class="font-bold text-emerald-400">${done}</p></div>
+        <div class="glass rounded-lg p-2 text-center"><p class="text-xs text-slate-500">Pend.</p><p class="font-bold text-slate-300">${pend}</p></div>
+        <div class="glass rounded-lg p-2 text-center"><p class="text-xs text-slate-500">Proceso</p><p class="font-bold text-sky-400">${proc}</p></div>
+        <div class="glass rounded-lg p-2 text-center"><p class="text-xs text-slate-500">Fin.</p><p class="font-bold text-emerald-400">${done}</p></div>
       </div>
-
-      <!-- Salud de entregas -->
-      ${(ot + lt) > 0 ? `
-      <div class="border-t border-slate-800 pt-3">
-        <div class="flex items-center justify-between mb-1">
-          <span class="text-xs mono text-slate-500">SALUD ENTREGAS</span>
-          <span class="text-xs mono font-bold ${hp >= 80 ? 'text-emerald-400' : hp >= 50 ? 'text-yellow-400' : 'text-red-400'}">${hp}%</span>
-        </div>
-        <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden">
-          <div class="prog-bar h-full rounded-full ${hp >= 80 ? 'bg-emerald-500' : hp >= 50 ? 'bg-yellow-500' : 'bg-red-500'}" style="width:${hp}%"></div>
-        </div>
-        <div class="flex gap-3 mt-1.5 text-xs">
-          <span class="text-emerald-400">✓ ${ot} a tiempo</span>
-          <span class="text-red-400">✗ ${lt} tarde</span>
-        </div>
-      </div>` : `<div class="border-t border-slate-800 pt-3 text-xs text-slate-700">Sin tareas con deadline completadas</div>`}
-
-      ${p.keywords ? `<div class="mt-2 text-xs text-slate-700">🔑 ${escaparHtml(p.keywords)}</div>` : ''}
+      ${(ot+lt)>0?`<div class="border-t border-white/5 pt-3">
+        <div class="flex justify-between mb-1"><span class="text-xs mono text-slate-500">SALUD ENTREGAS</span><span class="text-xs mono font-bold ${hp>=80?'text-emerald-400':hp>=50?'text-yellow-400':'text-red-400'}">${hp}%</span></div>
+        <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="prog h-full rounded-full ${hp>=80?'bg-emerald-500':hp>=50?'bg-yellow-500':'bg-red-500'}" style="width:${hp}%"></div></div>
+        <div class="flex gap-3 mt-1.5 text-xs"><span class="text-emerald-400">✓${ot}</span><span class="text-red-400">✗${lt}</span></div>
+      </div>`:`<div class="border-t border-white/5 pt-3 text-xs text-slate-700">Sin entregas con deadline</div>`}
+      ${p.keywords?`<div class="mt-2 text-xs text-slate-700">🔑 ${esc(p.keywords)}</div>`:''}
     </div>`;
   }).join('');
 }
 
-// ══════════════════════════════════════════
-//  RENDERIZAR IDEAS
-// ══════════════════════════════════════════
-function renderizarIdeas() {
-  const lista = document.getElementById('lista-ideas');
-  if (!lista) return;
-
-  const coloresTipo = { idea: '#0ea5e9', reunion: '#8b5cf6', nota: '#10b981', futura: '#f59e0b' };
-  const emojisTipo  = { idea: '💡', reunion: '📋', nota: '📝', futura: '✅' };
-
-  if (!ideas.length) {
-    lista.innerHTML = '<div class="border-2 border-dashed border-slate-800 rounded-2xl p-10 text-center text-slate-700">Sin ideas aún.</div>';
-    return;
-  }
-
-  lista.innerHTML = ideas.map(i => `
-    <div class="bg-slate-900 border border-slate-800 border-l-4 rounded-xl p-4 group fade-up" style="border-left-color:${coloresTipo[i.tipo] || '#0ea5e9'}">
-      <div class="flex items-start justify-between gap-2">
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1.5">
-            <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">${emojisTipo[i.tipo] || '💡'} ${i.tipo}</span>
-            <span class="text-xs text-slate-600 mono">${formatearFechaCorta(i.creadoEn)}</span>
-          </div>
-          <p class="text-sm font-semibold text-slate-200 mb-1">${escaparHtml(i.titulo)}</p>
-          ${i.cuerpo ? `<p class="text-xs text-slate-500 leading-relaxed">${escaparHtml(i.cuerpo)}</p>` : ''}
-        </div>
-        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-          <button onclick="ideaATarea('${i.id}')" title="Convertir en tarea"
-            class="p-1.5 rounded-lg bg-slate-800 hover:bg-sky-500/20 text-slate-500 hover:text-sky-400 transition-all">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-          </button>
-          <button onclick="eliminarIdea('${i.id}')" title="Eliminar"
-            class="p-1.5 rounded-lg bg-slate-800 hover:bg-red-500/20 text-slate-500 hover:text-red-400 transition-all">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-          </button>
-        </div>
+// ──────────────────────────────────────────
+//  RENDER IDEAS
+// ──────────────────────────────────────────
+function renderIdeas(){
+  const el=document.getElementById('lista-ideas'); if(!el) return;
+  const tc={idea:'#0ea5e9',reunion:'#8b5cf6',nota:'#10b981',futura:'#f59e0b'};
+  const te={idea:'💡',reunion:'📋',nota:'📝',futura:'✅'};
+  if(!ideas.length){ el.innerHTML='<div class="border-2 border-dashed border-white/5 rounded-2xl p-10 text-center text-slate-700">Sin ideas aún.</div>'; return; }
+  el.innerHTML=ideas.map(i=>`
+  <div class="glass-card border-l-4 rounded-xl p-4 group fade-up" style="border-left-color:${tc[i.tipo]||'#0ea5e9'}">
+    <div class="flex items-start justify-between gap-2">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1.5"><span class="text-xs glass text-slate-400 px-2 py-0.5 rounded-md">${te[i.tipo]||'💡'} ${i.tipo}</span><span class="text-xs text-slate-600 mono">${fmtFechaCorta(i.creadoEn)}</span></div>
+        <p class="text-sm font-semibold text-slate-200 mb-1">${esc(i.titulo)}</p>
+        ${i.cuerpo?`<p class="text-xs text-slate-500 leading-relaxed">${esc(i.cuerpo)}</p>`:''}
       </div>
-    </div>`).join('');
+      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+        <button onclick="ideaATarea('${i.id}')" title="→ Tarea" class="p-1.5 rounded-lg glass hover:bg-sky-500/20 text-slate-500 hover:text-sky-400 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button>
+        <button onclick="eliminarIdea('${i.id}')" title="Eliminar" class="p-1.5 rounded-lg glass hover:bg-red-500/20 text-slate-500 hover:text-red-400 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+      </div>
+    </div>
+  </div>`).join('');
 }
 
-// ══════════════════════════════════════════
-//  RENDERIZAR STATS
-// ══════════════════════════════════════════
-function renderizarStats() {
-  const total  = tareas.length;
-  const done   = tareas.filter(t => t.estado === 'finalizado').length;
-  const ot     = tareas.filter(t => t.aTiempo === true).length;
-  const tard   = tareas.filter(t => t.aTiempo === false && t.estado === 'finalizado').length;
-  const excel  = tareas.filter(t => t.excelente).length;
-  const urg    = tareas.filter(t => t.urgente && t.estado !== 'finalizado').length;
-  const hp     = (ot + tard) > 0 ? Math.round((ot / (ot + tard)) * 100) : 0;
+// ──────────────────────────────────────────
+//  RENDER STATS
+// ──────────────────────────────────────────
+function renderStats(){
+  const total=tareas.length,done=tareas.filter(t=>t.estado==='finalizado').length;
+  const ot=tareas.filter(t=>t.aTiempo===true).length,lt=tareas.filter(t=>t.aTiempo===false&&t.estado==='finalizado').length;
+  const excel=tareas.filter(t=>t.excelente).length,urg=tareas.filter(t=>t.urgente&&t.estado!=='finalizado').length;
+  const hp=(ot+lt)>0?Math.round((ot/(ot+lt))*100):0;
+  const g=id=>document.getElementById(id);
+  g('st-total').textContent=total; g('st-done').textContent=done; g('st-ot').textContent=ot; g('st-ex').textContent=excel; g('st-urg').textContent=urg;
+  g('st-salud-b').style.width=hp+'%'; g('st-salud-pct').textContent=hp+'%';
+  const sb=g('st-salud-badge');
+  if(hp>=90){sb.textContent='🌟 Excelente';sb.className='text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 shrink-0';}
+  else if(hp>=70){sb.textContent='👍 Bueno';sb.className='text-xs font-bold px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-400 shrink-0';}
+  else if(hp>=50){sb.textContent='⚠️ Regular';sb.className='text-xs font-bold px-2.5 py-1 rounded-lg bg-yellow-500/15 text-yellow-400 shrink-0';}
+  else if(hp>0){sb.textContent='❌ Mejorar';sb.className='text-xs font-bold px-2.5 py-1 rounded-lg bg-red-500/15 text-red-400 shrink-0';}
+  else{sb.textContent='– Sin datos';sb.className='text-xs font-bold px-2.5 py-1 rounded-lg glass text-slate-400 shrink-0';}
 
-  document.getElementById('st-total').textContent    = total;
-  document.getElementById('st-done').textContent     = done;
-  document.getElementById('st-atiempo').textContent  = ot;
-  document.getElementById('st-excel').textContent    = excel;
-  document.getElementById('st-urg').textContent      = urg;
-
-  const sbEl  = document.getElementById('st-salud-barra');
-  const spEl  = document.getElementById('st-salud-pct');
-  const sbdEl = document.getElementById('st-salud-badge');
-  if (sbEl) sbEl.style.width = hp + '%';
-  if (spEl) spEl.textContent = hp + '%';
-  if (sbdEl) {
-    if      (hp >= 90) { sbdEl.textContent = '🌟 Excelente'; sbdEl.className = 'text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 shrink-0'; }
-    else if (hp >= 70) { sbdEl.textContent = '👍 Bueno';    sbdEl.className = 'text-xs font-bold px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-400 shrink-0'; }
-    else if (hp >= 50) { sbdEl.textContent = '⚠️ Regular'; sbdEl.className = 'text-xs font-bold px-2.5 py-1 rounded-lg bg-yellow-500/15 text-yellow-400 shrink-0'; }
-    else if (hp >  0)  { sbdEl.textContent = '❌ Mejorar'; sbdEl.className = 'text-xs font-bold px-2.5 py-1 rounded-lg bg-red-500/15 text-red-400 shrink-0'; }
-    else               { sbdEl.textContent = '– Sin datos'; sbdEl.className = 'text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 shrink-0'; }
-  }
-
-  // Por departamento
-  const sdEl = document.getElementById('stats-dept');
-  if (sdEl) {
-    sdEl.innerHTML = Object.entries(DEPT_META).map(([key, dm]) => {
-      const dt   = tareas.filter(t => t.dept === key);
-      const dd   = dt.filter(t => t.estado === 'finalizado').length;
-      const dpct = dt.length ? Math.round((dd / dt.length) * 100) : 0;
-      return `<div class="bg-slate-900 border border-slate-800 rounded-xl p-3 ${dm.cls}">
-        <p class="text-xs font-bold dept-tag px-2 py-0.5 rounded-md w-fit mb-2">${dm.emoji} ${dm.label}</p>
-        <div class="flex justify-between mb-1"><span class="text-xs text-slate-500">${dd}/${dt.length}</span><span class="text-xs mono font-bold dept-pct">${dpct}%</span></div>
-        <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden"><div class="prog-bar h-full dept-fill rounded-full" style="width:${dpct}%"></div></div>
+  // Dept
+  const sd=document.getElementById('stats-dept'); if(sd){
+    sd.innerHTML=Object.entries(DEPT_META).map(([k,dm])=>{
+      const dt=tareas.filter(t=>t.dept===k),dd=dt.filter(t=>t.estado==='finalizado').length;
+      const dpct=dt.length?Math.round((dd/dt.length)*100):0;
+      return `<div class="glass-card rounded-xl p-3 ${dm.cls}">
+        <p class="text-xs font-bold d-tag px-2 py-0.5 rounded-md w-fit mb-2">${dm.emoji} ${dm.label}</p>
+        <div class="flex justify-between mb-1"><span class="text-xs text-slate-500">${dd}/${dt.length}</span><span class="text-xs mono font-bold d-pct">${dpct}%</span></div>
+        <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="prog h-full d-bar rounded-full" style="width:${dpct}%"></div></div>
       </div>`;
     }).join('');
   }
 
-  // Por proyecto
-  const spPEl = document.getElementById('stats-proyectos');
-  if (spPEl) {
-    if (!proyectos.length) { spPEl.innerHTML = ''; return; }
-    spPEl.innerHTML = '<h3 class="font-bold text-white mb-3">Proyectos</h3>' +
-      proyectos.map(p => {
-        const pt   = tareas.filter(t => t.proyecto === p.id);
-        const pd   = pt.filter(t => t.estado === 'finalizado').length;
-        const pp   = pt.length ? Math.round((pd / pt.length) * 100) : 0;
-        const pot  = pt.filter(t => t.aTiempo === true).length;
-        const plt  = pt.filter(t => t.aTiempo === false && t.estado === 'finalizado').length;
-        const pph  = (pot + plt) > 0 ? Math.round((pot / (pot + plt)) * 100) : 0;
-        return `<div class="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-3">
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2">
-              <div class="w-3 h-3 rounded-full" style="background:${p.color}"></div>
-              <span class="text-sm font-semibold text-slate-200">${escaparHtml(p.nombre)}</span>
-            </div>
-            <span class="text-xs mono font-bold" style="color:${p.color}">${pd}/${pt.length} · ${pp}%</span>
-          </div>
-          <div class="h-2.5 bg-slate-800 rounded-full overflow-hidden mb-2">
-            <div class="prog-bar h-full rounded-full" style="width:${pp}%;background:${p.color}"></div>
-          </div>
-          ${(pot+plt)>0 ? `<div class="flex gap-3 text-xs"><span class="text-emerald-400">✓ ${pot} a tiempo</span><span class="text-red-400">✗ ${plt} tarde</span><span class="text-slate-500">Salud: ${pph}%</span></div>` : ''}
-        </div>`;
-      }).join('');
-  }
+  const sp=document.getElementById('stats-proys'); if(!sp) return;
+  if(!proyectos.length){sp.innerHTML='';return;}
+  sp.innerHTML='<h3 class="font-bold text-white mb-3">Proyectos</h3>'+proyectos.map(p=>{
+    const pt=tareas.filter(t=>t.proy===p.id),pd=pt.filter(t=>t.estado==='finalizado').length;
+    const pp=pt.length?Math.round((pd/pt.length)*100):0;
+    const pot=pt.filter(t=>t.aTiempo===true).length,plt=pt.filter(t=>t.aTiempo===false&&t.estado==='finalizado').length;
+    const pph=(pot+plt)>0?Math.round((pot/(pot+plt))*100):0;
+    return `<div class="glass-card rounded-xl p-4 mb-3">
+      <div class="flex items-center justify-between mb-2"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background:${p.color}"></div><span class="text-sm font-semibold text-slate-200">${esc(p.nombre)}</span></div><span class="text-xs mono font-bold" style="color:${p.color}">${pd}/${pt.length} · ${pp}%</span></div>
+      <div class="h-2.5 bg-white/5 rounded-full overflow-hidden mb-2"><div class="prog h-full rounded-full" style="width:${pp}%;background:${p.color}"></div></div>
+      ${(pot+plt)>0?`<div class="flex gap-3 text-xs"><span class="text-emerald-400">✓${pot}</span><span class="text-red-400">✗${plt}</span><span class="text-slate-500">Salud:${pph}%</span></div>`:''}
+    </div>`;
+  }).join('');
 }
 
-// ══════════════════════════════════════════
-//  KPIs HEADER
-// ══════════════════════════════════════════
-function actualizarKPIs() {
-  const total    = tareas.length;
-  const done     = tareas.filter(t => t.estado === 'finalizado').length;
-  const pct      = total ? Math.round((done / total) * 100) : 0;
-  const hoyDone  = tareas.filter(t => t.estado === 'finalizado' && t.completadoEn && new Date(t.completadoEn).toDateString() === HOY).length;
-  const urgentes = tareas.filter(t => t.urgente && t.estado !== 'finalizado').length;
-  const ot       = tareas.filter(t => t.aTiempo === true).length;
-  const tard     = tareas.filter(t => t.aTiempo === false && t.estado === 'finalizado').length;
-  const hp       = (ot + tard) > 0 ? Math.round((ot / (ot + tard)) * 100) : 0;
+// ──────────────────────────────────────────
+//  KPIs HEADER + SEMÁFORO
+// ──────────────────────────────────────────
+function actualizarKPIs(){
+  const total=tareas.length,done=tareas.filter(t=>t.estado==='finalizado').length;
+  const pct=total?Math.round((done/total)*100):0;
+  const hoy=tareas.filter(t=>t.estado==='finalizado'&&t.completadoEn&&new Date(t.completadoEn).toDateString()===HOY).length;
+  const urg=tareas.filter(t=>t.urgente&&t.estado!=='finalizado').length;
 
-  const el = (id) => document.getElementById(id);
-  el('kpi-done').textContent    = done;
-  el('kpi-total').textContent   = total;
-  el('kpi-barra').style.width   = pct + '%';
-  el('kpi-pct').textContent     = pct + '%';
-  el('kpi-hoy').textContent     = hoyDone;
-  el('kpi-urgentes').textContent = urgentes;
-  el('salud-ok').textContent    = ot;
-  el('salud-tarde').textContent  = tard;
+  const g=id=>document.getElementById(id);
+  g('kpi-done').textContent=done; g('kpi-total').textContent=total;
+  g('kpi-barra').style.width=pct+'%'; g('kpi-pct').textContent=pct+'%';
+  g('kpi-hoy').textContent=hoy; g('kpi-urg').textContent=urg;
 
-  const mensajes = ['¡A por ello! 💪', '¡Primera completada! 🚀', `${hoyDone} tareas hoy 🔥`, `¡Imparable! ${hoyDone} 🏆`];
-  el('kpi-msg').textContent = hoyDone === 0 ? mensajes[0] : hoyDone === 1 ? mensajes[1] : hoyDone < 5 ? mensajes[2] : mensajes[3];
+  const msgs=['¡A por ello! 💪','¡Primera! 🚀',`${hoy} tareas 🔥`,`¡Imparable! 🏆`];
+  g('kpi-msg').textContent=hoy===0?msgs[0]:hoy===1?msgs[1]:hoy<5?msgs[2]:msgs[3];
 
-  const dot = el('salud-dot'), lbl = el('salud-lbl');
-  if (!done)      { dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-600 shrink-0'; lbl.textContent = '–'; lbl.className = 'text-sm font-bold text-slate-400'; }
-  else if(hp>=80) { dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0'; lbl.textContent = 'Excelente'; lbl.className = 'text-sm font-bold text-emerald-400'; }
-  else if(hp>=50) { dot.className = 'w-2.5 h-2.5 rounded-full bg-yellow-400 shrink-0'; lbl.textContent = 'Regular'; lbl.className = 'text-sm font-bold text-yellow-400'; }
-  else            { dot.className = 'w-2.5 h-2.5 rounded-full bg-red-400 shrink-0'; lbl.textContent = 'Bajo'; lbl.className = 'text-sm font-bold text-red-400'; }
-}
-
-// ══════════════════════════════════════════
-//  RENDERIZAR TODO
-// ══════════════════════════════════════════
-function renderizarTodo() {
-  actualizarKPIs();
-  renderizarFiltrosProy();
-  const tabActiva = document.querySelector('.tab-content:not(.hidden)');
-  if (!tabActiva) return;
-  const id = tabActiva.id;
-  if (id === 'tab-kanban')    renderizarTareas();
-  if (id === 'tab-proyectos') renderizarProyectos();
-  if (id === 'tab-ideas')     renderizarIdeas();
-  if (id === 'tab-stats')     renderizarStats();
-}
-
-// ══════════════════════════════════════════
-//  FILTROS
-// ══════════════════════════════════════════
-function setFiltro(tipo, valor) {
-  if (tipo === 'dept') filtroDept = valor;
-  if (tipo === 'proy') filtroProy = valor;
-  actualizarBotonesFiltro();
-  renderizarTareas();
-}
-
-function actualizarBotonesFiltro() {
-  document.querySelectorAll('.fd-btn').forEach(btn => {
-    const activo = btn.dataset.fd === filtroDept;
-    btn.style.opacity    = activo ? '1' : '0.5';
-    btn.style.fontWeight = activo ? '800' : '600';
-  });
-  document.querySelectorAll('.fp-btn').forEach(btn => {
-    const activo = btn.dataset.fp === filtroProy;
-    btn.style.opacity    = activo ? '1' : '0.5';
-    btn.style.fontWeight = activo ? '800' : '600';
-  });
-}
-
-function renderizarFiltrosProy() {
-  const cont = document.getElementById('filtros-proy');
-  if (!cont) return;
-  cont.innerHTML = proyectos.map(p =>
-    `<button onclick="setFiltro('proy','${p.id}')" data-fp="${p.id}" class="fp-btn text-xs px-3 py-1 rounded-lg border font-bold transition-all"
-      style="border-color:${p.color};color:${p.color};background:${p.color}1a">${escaparHtml(p.nombre)}</button>`
-  ).join('');
-  if (filtroProy) { const b = cont.querySelector(`[data-fp="${filtroProy}"]`); if (b) { b.style.opacity='1'; b.style.fontWeight='800'; } }
-}
-
-// ══════════════════════════════════════════
-//  TABS
-// ══════════════════════════════════════════
-function cambiarTab(nombre) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.classList.remove('active','text-white');
-    btn.classList.add('text-slate-500');
-  });
-  const tabEl = document.getElementById('tab-' + nombre);
-  const btnEl = document.querySelector(`[data-tab="${nombre}"]`);
-  if (tabEl) tabEl.classList.remove('hidden');
-  if (btnEl) { btnEl.classList.add('active','text-white'); btnEl.classList.remove('text-slate-500'); }
-
-  if (nombre === 'kanban')    { renderizarTareas(); renderizarFiltrosProy(); }
-  if (nombre === 'proyectos') renderizarProyectos();
-  if (nombre === 'ideas')     renderizarIdeas();
-  if (nombre === 'stats')     renderizarStats();
-}
-
-// ══════════════════════════════════════════
-//  MODALS
-// ══════════════════════════════════════════
-function abrirModal(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.remove('hidden');
-  el.classList.add('flex');
-}
-
-function cerrarModal(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.add('hidden');
-  el.classList.remove('flex');
-  if (id === 'modal-tarea')    resetearFormTarea();
-  if (id === 'modal-proyecto') resetearFormProyecto();
-}
-
-function abrirModalTarea() {
-  rellenarSelectProyectos();
-  actualizarCategorias();
-  abrirModal('modal-tarea');
-}
-
-function abrirModalProyecto() {
-  abrirModal('modal-proyecto');
-}
-
-function resetearFormTarea() {
-  document.getElementById('mt-id').value          = '';
-  document.getElementById('mt-titulo-inp').value   = '';
-  document.getElementById('mt-desc').value          = '';
-  document.getElementById('mt-deadline').value      = '';
-  document.getElementById('mt-urgente').checked     = false;
-  document.getElementById('mt-estado').value        = 'pendiente';
-  document.getElementById('mt-prio').value          = 'media';
-  document.getElementById('mt-dept').value          = 'rrhh';
-  document.getElementById('mt-titulo').textContent  = 'Nueva Tarea';
-  document.getElementById('mt-btn').textContent     = 'Crear Tarea';
-  document.getElementById('hint-autodetect').classList.add('hidden');
-  actualizarCategorias();
-}
-
-function resetearFormProyecto() {
-  document.getElementById('mp-id').value      = '';
-  document.getElementById('mp-nombre').value  = '';
-  document.getElementById('mp-keys').value    = '';
-  document.getElementById('mp-dept').value    = 'rrhh';
-  document.getElementById('mp-titulo').textContent = 'Nuevo Proyecto';
-  document.getElementById('mp-btn').textContent    = 'Crear Proyecto';
-  selColor('#0ea5e9');
-}
-
-function rellenarSelectProyectos() {
-  const sel = document.getElementById('mt-proyecto');
-  const val = sel.value;
-  sel.innerHTML = '<option value="">Sin proyecto</option>' +
-    proyectos.map(p => `<option value="${p.id}">${escaparHtml(p.nombre)}</option>`).join('');
-  if (val) sel.value = val;
-}
-
-function actualizarCategorias() {
-  const dept  = document.getElementById('mt-dept').value || 'rrhh';
-  const cats  = CATS[dept] || [];
-  const sel   = document.getElementById('mt-cat');
-  const valAnt = sel.value;
-  sel.innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
-  if (cats.includes(valAnt)) sel.value = valAnt;
-}
-
-function autodetectarDept() {
-  const texto = document.getElementById('mt-titulo-inp').value.toLowerCase();
-  const idEditando = document.getElementById('mt-id').value;
-  for (const [dept, kws] of Object.entries(KEYWORDS_DEPT)) {
-    if (kws.some(k => texto.includes(k))) {
-      document.getElementById('mt-dept').value = dept;
-      actualizarCategorias();
-      if (!idEditando) {
-        document.getElementById('hint-autodetect').classList.remove('hidden');
-      }
-      break;
-    }
-  }
-  // Autodetectar proyecto
-  if (!idEditando) {
-    for (const p of proyectos) {
-      if (!p.keywords) continue;
-      const kws = p.keywords.split(',').map(k => k.trim().toLowerCase()).filter(Boolean);
-      if (kws.some(k => k && texto.includes(k))) {
-        document.getElementById('mt-proyecto').value = p.id;
-        return;
-      }
-    }
-  }
-}
-
-// ══════════════════════════════════════════
-//  POPUP MATUTINO
-// ══════════════════════════════════════════
-function construirPopup() {
-  const h   = new Date().getHours();
-  const sal = h < 12 ? '¡Buenos días! ☀️' : h < 20 ? '¡Buenas tardes! 🌤️' : '¡Buenas noches! 🌙';
-  document.getElementById('pu-greeting').textContent = sal;
-  document.getElementById('pu-motto').textContent    = '"' + FRASES[Math.floor(Math.random() * FRASES.length)] + '"';
-  document.getElementById('pu-fecha').textContent    = new Date().toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-
-  const urgentes  = tareas.filter(t => t.urgente && t.estado !== 'finalizado');
-  const paraHoy   = tareas.filter(t => t.estado !== 'finalizado' && t.deadline && new Date(t.deadline).toDateString() === HOY);
-  const doneCnt   = tareas.filter(t => t.estado === 'finalizado').length;
-
-  document.getElementById('pu-urg').textContent  = urgentes.length;
-  document.getElementById('pu-hoy').textContent  = paraHoy.length;
-  document.getElementById('pu-done').textContent = doneCnt;
-
-  const secciones = [];
-
-  // 1. Urgentes
-  if (urgentes.length) {
-    const filas = urgentes.map(t => filaTareaPopup(t)).join('');
-    secciones.push(seccionPopup('🚨 Tareas Urgentes', '#f87171', filas));
-  }
-
-  // 2. Para hoy
-  if (paraHoy.length) {
-    const filas = paraHoy.map(t => filaTareaPopup(t)).join('');
-    secciones.push(seccionPopup('📅 Para Hoy', '#fbbf24', filas));
+  // Semáforo de viabilidad
+  const ahora=Date.now();
+  const vencidas=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()<ahora).length;
+  const en48h=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()-ahora<172800000&&new Date(t.deadline).getTime()>ahora).length;
+  const dot=g('sem-dot'),lbl=g('sem-lbl'),sub=g('sem-sub');
+  if(vencidas>0||urg>2){
+    dot.className='sem sem-red'; lbl.textContent='CRÍTICO'; lbl.className='text-sm font-bold text-red-400'; sub.textContent='Anticipar tareas';
+  } else if(en48h>2||urg>0){
+    dot.className='sem sem-yellow'; lbl.textContent='ATENCIÓN'; lbl.className='text-sm font-bold text-yellow-400'; sub.textContent='Revisar agenda';
   } else {
-    secciones.push(seccionPopup('📅 Para Hoy', '#64748b', '<p class="text-xs text-slate-600 py-1">Sin tareas con deadline para hoy. ✅</p>'));
+    dot.className='sem sem-green sem-blink'; lbl.textContent='OK'; lbl.className='text-sm font-bold text-emerald-400'; sub.textContent='Al día';
   }
 
-  // 3. Proyectos
-  if (proyectos.length) {
-    const filas = proyectos.map(p => {
-      const pt   = tareas.filter(t => t.proyecto === p.id);
-      const done = pt.filter(t => t.estado === 'finalizado').length;
-      const pct  = pt.length ? Math.round((done / pt.length) * 100) : 0;
-      return `<div class="flex items-center gap-3 py-1.5 border-b border-slate-800 last:border-0">
+  // Bell
+  const alertas24=tareas.filter(t=>t.alerta24&&t.estado!=='finalizado');
+  const bell=g('btn-bell'), badge=g('bell-badge'), icon=g('bell-icon');
+  if(alertas24.length>0){
+    badge.classList.remove('hidden'); badge.textContent=alertas24.length;
+    icon.setAttribute('stroke','#fb923c');
+    if(!bell.classList.contains('bell-anim')){ bell.classList.add('bell-anim'); setTimeout(()=>bell.classList.remove('bell-anim'),1000); }
+  } else {
+    badge.classList.add('hidden');
+    icon.setAttribute('stroke','currentColor');
+  }
+}
+
+// ──────────────────────────────────────────
+//  RADAR POP-UP
+// ──────────────────────────────────────────
+function abrirRadar(){
+  const h=new Date().getHours();
+  const sal=h<12?'¡Buenos días! ☀️':h<20?'¡Buenas tardes! 🌤️':'¡Buenas noches! 🌙';
+  document.getElementById('radar-greeting').textContent=sal;
+  document.getElementById('radar-motto').textContent='"'+FRASES[Math.floor(Math.random()*FRASES.length)]+'"';
+  document.getElementById('radar-fecha').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  const ahora=Date.now();
+  const urg=tareas.filter(t=>t.urgente&&t.estado!=='finalizado');
+  const en48h=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()-ahora>0&&new Date(t.deadline).getTime()-ahora<172800000);
+  const alertas24=tareas.filter(t=>t.alerta24&&t.estado!=='finalizado');
+  const done=tareas.filter(t=>t.estado==='finalizado').length;
+
+  document.getElementById('r-urg').textContent=urg.length;
+  document.getElementById('r-48h').textContent=en48h.length;
+  document.getElementById('r-done').textContent=done;
+
+  let html='';
+
+  // Alertas 24h
+  if(alertas24.length){
+    const rows=alertas24.map(t=>{
+      const proy=t.proy?proyectos.find(p=>p.id===t.proy):null;
+      return `<div class="flex items-center gap-2 py-1.5 border-b border-white/5 last:border-0">
+        <span class="w-2 h-2 rounded-full bg-orange-400 shrink-0"></span>
+        <span class="text-xs text-slate-200 flex-1 truncate">${esc(t.titulo)}</span>
+        ${proy?`<span class="text-xs font-bold shrink-0 px-1.5 py-0.5 rounded" style="color:${proy.color};background:${proy.color}22">${esc(proy.nombre)}</span>`:''}
+      </div>`;
+    }).join('');
+    html+=seccionRadar('🔔 Alertas Marcadas (24h)','#fb923c',rows);
+  }
+
+  // Urgentes
+  if(urg.length){
+    const rows=urg.map(t=>`<div class="flex items-center gap-2 py-1.5 border-b border-white/5 last:border-0">
+      <span class="text-red-400 text-xs font-bold shrink-0">🚨</span>
+      <span class="text-xs text-slate-200 flex-1 truncate">${esc(t.titulo)}</span>
+      ${t.deadline?`<span class="text-xs mono text-slate-500 shrink-0">${tiempoRestante(t.deadline)}</span>`:''}
+    </div>`).join('');
+    html+=seccionRadar('🚨 Tareas Urgentes','#f87171',rows);
+  }
+
+  // Radar 48-72h
+  const en72h=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()-ahora>0&&new Date(t.deadline).getTime()-ahora<259200000);
+  if(en72h.length){
+    const rows=en72h.map(t=>{
+      const diff=new Date(t.deadline).getTime()-ahora;
+      const color=diff<86400000?'#f87171':diff<172800000?'#fbbf24':'#34d399';
+      return `<div class="flex items-center gap-2 py-1.5 border-b border-white/5 last:border-0">
+        <div class="w-2 h-2 rounded-full shrink-0" style="background:${color}"></div>
+        <span class="text-xs text-slate-200 flex-1 truncate">${esc(t.titulo)}</span>
+        <span class="text-xs mono font-bold shrink-0" style="color:${color}">${tiempoRestante(t.deadline)}</span>
+      </div>`;
+    }).join('');
+    html+=seccionRadar('⏱ Radar Deadlines (48-72h)','#fbbf24',rows);
+  }
+
+  // Semáforo de viabilidad
+  const vencidas=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()<ahora).length;
+  let semColor='#4ade80', semMsg='✅ Agenda bajo control. Llegarás a tiempo.';
+  if(vencidas>0||urg.length>2){ semColor='#f87171'; semMsg='🚨 Atención crítica. Anticipa o delega tareas.'; }
+  else if(en48h.length>2||urg.length>0){ semColor='#fbbf24'; semMsg='⚠️ Carga elevada. Revisa la agenda.'; }
+  html+=`<div class="glass rounded-2xl p-4 border border-white/5">
+    <div class="flex items-center gap-3">
+      <div class="w-4 h-4 rounded-full sem-blink" style="background:${semColor};box-shadow:0 0 8px ${semColor}"></div>
+      <div><p class="text-sm font-bold text-white">Semáforo de Viabilidad</p><p class="text-xs mt-0.5" style="color:${semColor}">${semMsg}</p></div>
+    </div>
+  </div>`;
+
+  // Proyectos
+  if(proyectos.length){
+    const rows=proyectos.map(p=>{
+      const pt=tareas.filter(t=>t.proy===p.id),d=pt.filter(t=>t.estado==='finalizado').length;
+      const pct=pt.length?Math.round((d/pt.length)*100):0;
+      return `<div class="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
         <div class="w-2 h-2 rounded-full shrink-0" style="background:${p.color}"></div>
-        <span class="text-xs text-slate-300 flex-1 truncate">${escaparHtml(p.nombre)}</span>
-        <div class="w-20 h-1.5 bg-slate-800 rounded-full overflow-hidden shrink-0">
-          <div class="h-full rounded-full" style="width:${pct}%;background:${p.color}"></div>
-        </div>
+        <span class="text-xs text-slate-300 flex-1 truncate">${esc(p.nombre)}</span>
+        <div class="w-16 h-1.5 bg-white/5 rounded-full overflow-hidden shrink-0"><div class="h-full rounded-full" style="width:${pct}%;background:${p.color}"></div></div>
         <span class="text-xs mono font-bold shrink-0" style="color:${p.color}">${pct}%</span>
       </div>`;
     }).join('');
-    secciones.push(seccionPopup('📊 Proyectos', '#38bdf8', filas));
+    html+=seccionRadar('📊 Proyectos','#38bdf8',rows);
   }
 
-  document.getElementById('pu-body').innerHTML = secciones.join('');
+  document.getElementById('radar-body').innerHTML=html;
+  abrirModal('popup-radar');
 }
 
-function seccionPopup(titulo, color, contenido) {
-  return `<div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4">
+function seccionRadar(titulo,color,contenido){
+  return `<div class="glass rounded-2xl p-4 border border-white/5">
     <h4 class="font-bold text-sm mb-3" style="color:${color}">${titulo}</h4>
     ${contenido}
   </div>`;
 }
 
-function filaTareaPopup(t) {
-  const proy = t.proyecto ? proyectos.find(p => p.id === t.proyecto) : null;
-  return `<div class="flex items-center gap-2 py-1.5 border-b border-slate-800/60 last:border-0">
-    ${t.urgente ? '<span class="text-red-400 text-xs font-bold shrink-0">🚨</span>' : '<span class="w-1.5 h-1.5 rounded-full bg-slate-600 shrink-0"></span>'}
-    <span class="text-xs text-slate-200 flex-1 truncate">${escaparHtml(t.titulo)}</span>
-    ${proy ? `<span class="text-xs font-bold shrink-0 px-1.5 py-0.5 rounded" style="background:${proy.color}22;color:${proy.color}">${escaparHtml(proy.nombre)}</span>` : ''}
-    ${t.deadline ? `<span class="text-xs mono text-slate-500 shrink-0">${calcularTiempoRestante(t.deadline)}</span>` : ''}
-  </div>`;
+function cerrarRadar(){ cerrarModal('popup-radar'); }
+
+function copiarInformeRadar(){
+  const h=new Date().getHours();
+  const sal=h<12?'Buenos días':h<20?'Buenas tardes':'Buenas noches';
+  const ahora=Date.now();
+  const urg=tareas.filter(t=>t.urgente&&t.estado!=='finalizado');
+  const hoy2=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).toDateString()===HOY);
+  let txt=`${sal.toUpperCase()} — ${new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).toUpperCase()}\n${'═'.repeat(52)}\n\n`;
+  if(urg.length){ txt+=`🚨 URGENTES (${urg.length})\n${'-'.repeat(30)}\n`; urg.forEach(t=>{txt+=`  • ${t.titulo}${t.deadline?' ['+fmtFecha(t.deadline)+']':''}\n`;}); txt+='\n'; }
+  if(hoy2.length){ txt+=`📅 PARA HOY (${hoy2.length})\n${'-'.repeat(30)}\n`; hoy2.forEach(t=>{txt+=`  • ${t.titulo}\n`;}); txt+='\n'; }
+  if(proyectos.length){ txt+=`📊 PROYECTOS\n${'-'.repeat(30)}\n`; proyectos.forEach(p=>{const pt=tareas.filter(t=>t.proy===p.id),d=pt.filter(t=>t.estado==='finalizado').length;const pct=pt.length?Math.round((d/pt.length)*100):0;txt+=`  • ${p.nombre}: ${pct}% (${d}/${pt.length})\n`;}); }
+  txt+=`\n${'═'.repeat(52)}\nAI Executive Copilot · Papelería\n`;
+  navigator.clipboard.writeText(txt).then(()=>toast('📋 Informe copiado','success')).catch(()=>toast('Error al copiar','error'));
 }
 
-function abrirPopup() {
-  construirPopup();
-  const popup = document.getElementById('popup');
-  popup.classList.remove('hidden');
-  popup.classList.add('flex');
+// ──────────────────────────────────────────
+//  TABS
+// ──────────────────────────────────────────
+function cambiarTab(nombre){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.add('hidden'));
+  document.querySelectorAll('.tab').forEach(btn=>{ btn.classList.remove('active','text-white'); btn.classList.add('text-slate-500'); });
+  const tc=document.getElementById('tab-'+nombre); if(tc) tc.classList.remove('hidden');
+  const tb=document.querySelector(`[data-tab="${nombre}"]`); if(tb){ tb.classList.add('active','text-white'); tb.classList.remove('text-slate-500'); }
+  if(nombre==='kanban'){ renderKanban(); renderFiltrosProy(); }
+  if(nombre==='proyectos') renderProyectos();
+  if(nombre==='ideas') renderIdeas();
+  if(nombre==='stats') renderStats();
 }
 
-function cerrarPopup() {
-  const popup = document.getElementById('popup');
-  popup.classList.add('hidden');
-  popup.classList.remove('flex');
+// ──────────────────────────────────────────
+//  RENDER TODO
+// ──────────────────────────────────────────
+function renderTodo(){
+  actualizarKPIs();
+  renderFiltrosProy();
+  const act=document.querySelector('.tab-content:not(.hidden)');
+  if(!act) return;
+  if(act.id==='tab-kanban'){ renderKanban(); renderFiltrosProy(); }
+  if(act.id==='tab-proyectos') renderProyectos();
+  if(act.id==='tab-ideas') renderIdeas();
+  if(act.id==='tab-stats') renderStats();
 }
 
-function copiarInformePopup() {
-  const h    = new Date().getHours();
-  const sal  = h < 12 ? 'Buenos días' : h < 20 ? 'Buenas tardes' : 'Buenas noches';
-  const fecha = new Date().toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-  const urg  = tareas.filter(t => t.urgente && t.estado !== 'finalizado');
-  const hoy  = tareas.filter(t => t.estado !== 'finalizado' && t.deadline && new Date(t.deadline).toDateString() === HOY);
-
-  let txt = `${sal.toUpperCase()} — ${fecha.toUpperCase()}\n${'═'.repeat(50)}\n\n`;
-
-  if (urg.length) {
-    txt += `🚨 URGENTES (${urg.length})\n${'-'.repeat(30)}\n`;
-    urg.forEach(t => { txt += `  • ${t.titulo}${t.deadline ? ' [' + formatearFecha(t.deadline) + ']' : ''}\n`; });
-    txt += '\n';
-  }
-  if (hoy.length) {
-    txt += `📅 PARA HOY (${hoy.length})\n${'-'.repeat(30)}\n`;
-    hoy.forEach(t => { txt += `  • ${t.titulo}\n`; });
-    txt += '\n';
-  }
-  if (proyectos.length) {
-    txt += `📊 PROYECTOS\n${'-'.repeat(30)}\n`;
-    proyectos.forEach(p => {
-      const pt   = tareas.filter(t => t.proyecto === p.id);
-      const done = pt.filter(t => t.estado === 'finalizado').length;
-      const pct  = pt.length ? Math.round((done / pt.length) * 100) : 0;
-      txt += `  • ${p.nombre}: ${pct}% (${done}/${pt.length})\n`;
-    });
-  }
-  txt += `\n${'═'.repeat(50)}\nGenerado por Asistente 360 Pro\n`;
-
-  navigator.clipboard.writeText(txt)
-    .then(() => mostrarToast('📋 Informe copiado al portapapeles', 'success'))
-    .catch(() => mostrarToast('No se pudo copiar. Revisa permisos del navegador.', 'error'));
-}
-
-// ══════════════════════════════════════════
-//  NOTIFICACIONES
-// ══════════════════════════════════════════
-function solicitarNotificaciones() {
-  if (!('Notification' in window)) { mostrarToast('Tu navegador no soporta notificaciones', 'error'); return; }
-  Notification.requestPermission().then(p => {
-    if (p === 'granted') { mostrarToast('🔔 Notificaciones activadas', 'success'); document.getElementById('btn-notif').classList.add('text-sky-400'); }
-    else mostrarToast('Permiso de notificaciones denegado', 'error');
-  });
-}
-
-function verificarNotificaciones() {
-  if (Notification.permission !== 'granted') return;
-  const ahora = Date.now();
-  tareas.forEach(t => {
-    if (!t.deadline || t.estado === 'finalizado') return;
-    const diff = new Date(t.deadline).getTime() - ahora;
-    const k1h  = 'k1h_' + t.id;
-    const k30  = 'k30_' + t.id;
-    const kVen = 'kVen_' + t.id;
-
-    if (diff > 0 && diff < 3600000 && !notificados.includes(k1h)) {
-      notificados.push(k1h);
-      new Notification('⏰ Deadline en 1 hora', { body: t.titulo });
-      mostrarToast(`⏰ "${t.titulo}" vence en menos de 1 hora`, 'warning');
-    }
-    if (diff > 0 && diff < 1800000 && !notificados.includes(k30)) {
-      notificados.push(k30);
-      new Notification('⚠️ ¡30 minutos!', { body: t.titulo });
-    }
-    if (diff < 0 && diff > -300000 && !notificados.includes(kVen)) {
-      notificados.push(kVen);
-      new Notification('🚨 Deadline vencido', { body: t.titulo });
-      mostrarToast(`🚨 VENCIDA: "${t.titulo}"`, 'error');
-    }
-  });
-  guardarEnStorage();
-}
-
-// ══════════════════════════════════════════
-//  TOASTS
-// ══════════════════════════════════════════
-function mostrarToast(mensaje, tipo = 'info') {
-  const colores = {
-    success: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',
-    error:   'bg-red-500/15 border-red-500/30 text-red-300',
-    warning: 'bg-yellow-500/15 border-yellow-500/30 text-yellow-300',
-    info:    'bg-sky-500/15 border-sky-500/30 text-sky-300',
-  };
-  const t = document.createElement('div');
-  t.className = `pointer-events-auto toast-in ${colores[tipo] || colores.info} border backdrop-blur-sm rounded-xl px-4 py-3 text-sm font-semibold shadow-2xl`;
-  t.textContent = mensaje;
-  document.getElementById('toasts').appendChild(t);
-  setTimeout(() => {
-    t.style.transition = 'all 0.3s ease';
-    t.style.opacity    = '0';
-    t.style.transform  = 'translateX(110%)';
-    setTimeout(() => t.remove(), 320);
-  }, 5000);
-}
-
-// ══════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════
-function calcularTiempoRestante(deadline) {
-  if (!deadline) return '';
-  const diff = new Date(deadline).getTime() - Date.now();
-  if (diff < 0) return '⚠ Vencida';
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff % 86400000) / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  if (d > 0) return `${d}d ${h}h`;
-  if (h > 0) return `${h}h ${m}m`;
-  return `${m}m`;
-}
-
-function formatearFecha(dt) {
-  if (!dt) return '–';
-  return new Date(dt).toLocaleString('es-ES', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-}
-
-function formatearFechaCorta(ts) {
-  return new Date(ts).toLocaleDateString('es-ES', { day:'2-digit', month:'short' });
-}
-
-function escaparHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-}
-
-function sacudirElemento(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.remove('shake');
-  void el.offsetWidth; // forzar reflow
-  el.classList.add('shake');
-  el.addEventListener('animationend', () => el.classList.remove('shake'), { once: true });
-  el.focus();
-}
-
-// ══════════════════════════════════════════
-//  TECLAS RÁPIDAS
-// ══════════════════════════════════════════
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    cerrarModal('modal-tarea');
-    cerrarModal('modal-proyecto');
-    cerrarPopup();
-  }
-  if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-    e.preventDefault();
-    abrirModalTarea();
-  }
-  if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-    e.preventDefault();
-    abrirModalProyecto();
-  }
+// ──────────────────────────────────────────
+//  TECLADO
+// ──────────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ ['popup-radar','modal-tarea','modal-proy','modal-acta'].forEach(id=>cerrarModal(id)); }
+  if((e.ctrlKey||e.metaKey)&&e.key==='n'){ e.preventDefault(); abrirModalTarea(); }
+  if((e.ctrlKey||e.metaKey)&&e.key==='p'){ e.preventDefault(); abrirModalProy(); }
 });
 
-// ══════════════════════════════════════════
+// ──────────────────────────────────────────
 //  INIT
-// ══════════════════════════════════════════
-(function inicializar() {
-  // 1. Cargar datos
-  cargarDesdeStorage();
-
-  // 2. Configurar notificaciones
-  if (Notification.permission === 'granted') {
-    document.getElementById('btn-notif').classList.add('text-sky-400');
-  }
-
-  // 3. Render inicial
-  renderizarTodo();
-  renderizarFiltrosProy();
-
-  // 4. Abrir popup matutino
-  construirPopup();
-  abrirPopup();
-
-  // 5. Timers
-  setInterval(verificarNotificaciones, 30000);
-  setInterval(() => { actualizarKPIs(); renderizarTareas(); }, 60000);
+// ──────────────────────────────────────────
+(function init(){
+  cargar();
+  renderTodo();
+  // Abrir radar al inicio
+  setTimeout(()=>abrirRadar(), 400);
+  setInterval(()=>{ actualizarKPIs(); renderKanban(); }, 60000);
 })();
 </script>
 </body>
