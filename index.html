@@ -6,30 +6,27 @@
 <title>Asistente Pro · Gestión de Proyectos</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg-base:#0a0f1e; --bg-900:#0f172a; --bg-800:#131c35; --bg-700:#1e293b;
-  --bg-600:#273449; --bg-500:#334155; --bg-400:#475569;
-  --text-primary:#f1f5f9; --text-secondary:#cbd5e1; --text-muted:#94a3b8; --text-faint:#64748b;
-  --border:#1e293b; --border-mid:#273449;
-  --brand:#0ea5e9; --brand-dark:#0284c7; --brand-light:#38bdf8;
-  --emerald:#34d399; --emerald-bg:rgba(52,211,153,0.1);
-  --red:#f87171; --red-bg:rgba(248,113,113,0.1);
-  --orange:#fb923c; --orange-bg:rgba(251,146,60,0.1);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg-base:#0a0f1e;--bg-900:#0f172a;--bg-800:#131c35;--bg-700:#1e293b;
+  --bg-600:#273449;--bg-500:#334155;--bg-400:#475569;
+  --text-primary:#f1f5f9;--text-secondary:#cbd5e1;--text-muted:#94a3b8;--text-faint:#64748b;
+  --border:#1e293b;--border-mid:#273449;
+  --brand:#0ea5e9;--brand-dark:#0284c7;--brand-light:#38bdf8;
+  --emerald:#34d399;--emerald-bg:rgba(52,211,153,0.1);
+  --red:#f87171;--red-bg:rgba(248,113,113,0.1);
+  --orange:#fb923c;--orange-bg:rgba(251,146,60,0.1);
   --yellow:#fbbf24;
-  --radius-sm:8px; --radius:12px; --radius-lg:16px;
+  --radius-sm:8px;--radius:12px;--radius-lg:16px;
   --shadow:0 4px 24px rgba(0,0,0,0.5);
-  --font-display:'Syne',sans-serif; --font-body:'DM Sans',sans-serif; --font-mono:'JetBrains Mono',monospace;
+  --font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;
 }
 html,body{height:100%;}
-body{font-family:var(--font-body);background:var(--bg-base);color:var(--text-secondary);font-size:14px;line-height:1.5;
-  background-image:radial-gradient(ellipse 80% 60% at 20% -10%,rgba(14,165,233,0.08) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 110%,rgba(99,102,241,0.06) 0%,transparent 60%);}
+body{font-family:var(--font-body);background:var(--bg-base);color:var(--text-secondary);font-size:14px;line-height:1.5;background-image:radial-gradient(ellipse 80% 60% at 20% -10%,rgba(14,165,233,0.08) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 110%,rgba(99,102,241,0.06) 0%,transparent 60%);}
 h1,h2,h3,h4{font-family:var(--font-display);}
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--bg-900);}
 ::-webkit-scrollbar-thumb{background:var(--bg-500);border-radius:9px;}
-
-/* SYNC INDICATOR */
 .sync-bar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--brand);z-index:200;transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease,opacity 0.4s ease;}
 .sync-bar.active{transform:scaleX(1);}
 .sync-bar.done{transform:scaleX(1);opacity:0;}
@@ -37,7 +34,6 @@ h1,h2,h3,h4{font-family:var(--font-display);}
 .sync-dot.syncing{background:var(--yellow);animation:pulseDot 1s infinite;}
 .sync-dot.error{background:var(--red);}
 @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:0.3}}
-
 .app{display:flex;height:100vh;overflow:hidden;}
 #sidebar{width:240px;background:var(--bg-900);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:transform 0.3s ease;}
 .sidebar-logo{padding:18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
@@ -281,45 +277,23 @@ label{font-size:11px;color:var(--text-muted);font-weight:500;display:block;margi
 </style>
 </head>
 <body>
-
 <div class="sync-bar" id="sync-bar"></div>
 <div id="overlay" onclick="closeSidebar()"></div>
 <div id="toast-container"></div>
-
 <div class="app">
   <aside id="sidebar">
     <div class="sidebar-logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      </div>
+      <div class="logo-icon"><svg viewBox="0 0 24 24" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
       <div>
         <div class="logo-title">Asistente Pro</div>
-        <div class="logo-sub">
-          <div class="sync-dot" id="sync-dot"></div>
-          <span id="sync-label">Conectando...</span>
-        </div>
+        <div class="logo-sub"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">Conectando...</span></div>
       </div>
     </div>
     <nav>
-      <button class="nav-item active" onclick="showSection('dashboard')" data-section="dashboard">
-        <svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Panel Principal
-      </button>
-      <button class="nav-item" onclick="showSection('kanban')" data-section="kanban">
-        <svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="4" height="18"/><rect x="10" y="3" width="4" height="12"/><rect x="17" y="3" width="4" height="15"/></svg>
-        Tablero Kanban
-        <span id="nav-badge-kanban" class="nav-badge"></span>
-      </button>
-      <button class="nav-item" onclick="showSection('ideas')" data-section="ideas">
-        <svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="10" r="5"/><path d="M8.56 13.89L7 22l5-3 5 3-1.56-8.11"/></svg>
-        Ideas Rápidas
-        <span id="nav-badge-ideas" class="nav-badge"></span>
-      </button>
-      <button class="nav-item" onclick="showSection('deadlines')" data-section="deadlines">
-        <svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
-        Deadlines
-        <span id="nav-badge-urgent" class="nav-badge urgent" style="display:none"></span>
-      </button>
+      <button class="nav-item active" onclick="showSection('dashboard')" data-section="dashboard"><svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Panel Principal</button>
+      <button class="nav-item" onclick="showSection('kanban')" data-section="kanban"><svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="4" height="18"/><rect x="10" y="3" width="4" height="12"/><rect x="17" y="3" width="4" height="15"/></svg>Tablero Kanban<span id="nav-badge-kanban" class="nav-badge"></span></button>
+      <button class="nav-item" onclick="showSection('ideas')" data-section="ideas"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="10" r="5"/><path d="M8.56 13.89L7 22l5-3 5 3-1.56-8.11"/></svg>Ideas Rápidas<span id="nav-badge-ideas" class="nav-badge"></span></button>
+      <button class="nav-item" onclick="showSection('deadlines')" data-section="deadlines"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>Deadlines<span id="nav-badge-urgent" class="nav-badge urgent" style="display:none"></span></button>
     </nav>
     <div class="sidebar-stats">
       <div class="stats-label">Resumen</div>
@@ -330,528 +304,161 @@ label{font-size:11px;color:var(--text-muted);font-weight:500;display:block;margi
       <div class="progress-pct"><span id="sidebar-pct">0</span>% completado</div>
     </div>
     <div class="sidebar-notif">
-      <button id="notif-btn" onclick="requestNotifications()">
-        <svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <span id="notif-text">Activar notificaciones</span>
-      </button>
+      <button id="notif-btn" onclick="requestNotifications()"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span id="notif-text">Activar notificaciones</span></button>
     </div>
   </aside>
-
   <main>
     <header>
-      <button class="header-menu-btn" onclick="toggleSidebar()">
-        <svg viewBox="0 0 24 24" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
-      <div class="header-title">
-        <h2 id="page-title">Panel Principal</h2>
-        <p id="page-date"></p>
-      </div>
-      <button class="btn-primary" onclick="openTaskModal()">
-        <svg viewBox="0 0 24 24" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span>Nueva Tarea</span>
-      </button>
+      <button class="header-menu-btn" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div class="header-title"><h2 id="page-title">Panel Principal</h2><p id="page-date"></p></div>
+      <button class="btn-primary" onclick="openTaskModal()"><svg viewBox="0 0 24 24" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Nueva Tarea</span></button>
     </header>
-
     <div class="content">
-
       <div id="section-dashboard" class="section active">
         <div class="stat-grid">
-          <div class="stat-card">
-            <div class="stat-card-top"><div class="stat-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></div><span class="stat-tag">TOTAL</span></div>
-            <div class="stat-num" id="stat-total">0</div><div class="stat-label">Todas las tareas</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top"><div class="stat-icon brand"><svg viewBox="0 0 24 24" stroke-width="1.8"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg></div><span class="stat-tag">ACTIVO</span></div>
-            <div class="stat-num brand" id="stat-process">0</div><div class="stat-label">En proceso</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top"><div class="stat-icon emerald"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><span class="stat-tag">LISTO</span></div>
-            <div class="stat-num emerald" id="stat-done">0</div><div class="stat-label">Finalizadas</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-top"><div class="stat-icon red"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><span class="stat-tag">URGENTE</span></div>
-            <div class="stat-num red" id="stat-urgent">0</div><div class="stat-label">Próximas 24h</div>
-          </div>
+          <div class="stat-card"><div class="stat-card-top"><div class="stat-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></div><span class="stat-tag">TOTAL</span></div><div class="stat-num" id="stat-total">0</div><div class="stat-label">Todas las tareas</div></div>
+          <div class="stat-card"><div class="stat-card-top"><div class="stat-icon brand"><svg viewBox="0 0 24 24" stroke-width="1.8"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg></div><span class="stat-tag">ACTIVO</span></div><div class="stat-num brand" id="stat-process">0</div><div class="stat-label">En proceso</div></div>
+          <div class="stat-card"><div class="stat-card-top"><div class="stat-icon emerald"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><span class="stat-tag">LISTO</span></div><div class="stat-num emerald" id="stat-done">0</div><div class="stat-label">Finalizadas</div></div>
+          <div class="stat-card"><div class="stat-card-top"><div class="stat-icon red"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><span class="stat-tag">URGENTE</span></div><div class="stat-num red" id="stat-urgent">0</div><div class="stat-label">Próximas 24h</div></div>
         </div>
         <div class="dash-grid">
-          <div class="dash-card">
-            <div class="dash-card-header"><h3>Próximos Deadlines</h3><button class="link-btn" onclick="showSection('deadlines')">Ver todos →</button></div>
-            <div id="dashboard-deadlines"></div>
-          </div>
-          <div class="dash-card">
-            <div class="dash-card-header"><h3>Ideas Recientes</h3><button class="link-btn" onclick="showSection('ideas')">Ver todas →</button></div>
-            <div id="dashboard-ideas"></div>
-            <div class="quick-idea-row">
-              <input type="text" id="quick-idea-input" placeholder="Añadir idea rápida...">
-              <button class="btn-primary" onclick="addQuickIdea()" style="padding:8px 12px;flex-shrink:0;">
-                <svg viewBox="0 0 24 24" stroke-width="2.5" style="width:14px;height:14px;stroke:white;fill:none;display:block"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              </button>
-            </div>
+          <div class="dash-card"><div class="dash-card-header"><h3>Próximos Deadlines</h3><button class="link-btn" onclick="showSection('deadlines')">Ver todos →</button></div><div id="dashboard-deadlines"></div></div>
+          <div class="dash-card"><div class="dash-card-header"><h3>Ideas Recientes</h3><button class="link-btn" onclick="showSection('ideas')">Ver todas →</button></div><div id="dashboard-ideas"></div>
+            <div class="quick-idea-row"><input type="text" id="quick-idea-input" placeholder="Añadir idea rápida..."><button class="btn-primary" onclick="addQuickIdea()" style="padding:8px 12px;flex-shrink:0;"><svg viewBox="0 0 24 24" stroke-width="2.5" style="width:14px;height:14px;stroke:white;fill:none;display:block"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button></div>
           </div>
         </div>
       </div>
-
       <div id="section-kanban" class="section">
         <div class="kanban-grid">
-          <div class="kanban-col-wrap">
-            <div class="kanban-col-header"><div class="col-dot pending"></div><h3 class="pending">Pendiente</h3><span class="col-count" id="count-pending">0</span></div>
-            <div class="kanban-col" id="col-pending" ondragover="dragOver(event,'pending')" ondrop="drop(event,'pending')" ondragleave="dragLeave()"></div>
-          </div>
-          <div class="kanban-col-wrap">
-            <div class="kanban-col-header"><div class="col-dot process"></div><h3 class="process">En Proceso</h3><span class="col-count process" id="count-process">0</span></div>
-            <div class="kanban-col" id="col-process" ondragover="dragOver(event,'process')" ondrop="drop(event,'process')" ondragleave="dragLeave()"></div>
-          </div>
-          <div class="kanban-col-wrap">
-            <div class="kanban-col-header"><div class="col-dot done"></div><h3 class="done">Finalizado</h3><span class="col-count done" id="count-done">0</span></div>
-            <div class="kanban-col" id="col-done" ondragover="dragOver(event,'done')" ondrop="drop(event,'done')" ondragleave="dragLeave()"></div>
-          </div>
+          <div class="kanban-col-wrap"><div class="kanban-col-header"><div class="col-dot pending"></div><h3 class="pending">Pendiente</h3><span class="col-count" id="count-pending">0</span></div><div class="kanban-col" id="col-pending" ondragover="dragOver(event,'pending')" ondrop="drop(event,'pending')" ondragleave="dragLeave()"></div></div>
+          <div class="kanban-col-wrap"><div class="kanban-col-header"><div class="col-dot process"></div><h3 class="process">En Proceso</h3><span class="col-count process" id="count-process">0</span></div><div class="kanban-col" id="col-process" ondragover="dragOver(event,'process')" ondrop="drop(event,'process')" ondragleave="dragLeave()"></div></div>
+          <div class="kanban-col-wrap"><div class="kanban-col-header"><div class="col-dot done"></div><h3 class="done">Finalizado</h3><span class="col-count done" id="count-done">0</span></div><div class="kanban-col" id="col-done" ondragover="dragOver(event,'done')" ondrop="drop(event,'done')" ondragleave="dragLeave()"></div></div>
         </div>
       </div>
-
       <div id="section-ideas" class="section">
-        <div class="idea-form">
-          <h3>Nueva Idea / Nota de Reunión</h3>
+        <div class="idea-form"><h3>Nueva Idea / Nota de Reunión</h3>
           <div class="form-group"><input type="text" id="idea-title" placeholder="Título de la idea..."></div>
           <div class="form-group" style="margin-top:10px"><textarea id="idea-body" rows="3" placeholder="Detalle, contexto o notas..."></textarea></div>
-          <div class="idea-form-row">
-            <select id="idea-tag" style="flex:1"><option value="idea">💡 Idea</option><option value="reunion">📋 Reunión</option><option value="nota">📝 Nota</option><option value="recordatorio">🔔 Recordatorio</option></select>
-            <button class="btn-primary" onclick="addIdea()">Guardar Idea</button>
-          </div>
+          <div class="idea-form-row"><select id="idea-tag" style="flex:1"><option value="idea">💡 Idea</option><option value="reunion">📋 Reunión</option><option value="nota">📝 Nota</option><option value="recordatorio">🔔 Recordatorio</option></select><button class="btn-primary" onclick="addIdea()">Guardar Idea</button></div>
         </div>
         <div id="ideas-list"></div>
       </div>
-
-      <div id="section-deadlines" class="section">
-        <div id="deadlines-list"></div>
-      </div>
+      <div id="section-deadlines" class="section"><div id="deadlines-list"></div></div>
     </div>
   </main>
 </div>
 
-<!-- MODAL TAREA -->
 <div id="modal-task" class="modal-backdrop">
   <div class="modal">
-    <div class="modal-header">
-      <h3 id="modal-task-title">Nueva Tarea</h3>
-      <button class="modal-close" onclick="closeModal('modal-task')"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
+    <div class="modal-header"><h3 id="modal-task-title">Nueva Tarea</h3><button class="modal-close" onclick="closeModal('modal-task')"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="modal-body">
       <input type="hidden" id="task-edit-id">
       <div class="form-group"><label>Título *</label><input type="text" id="task-title" placeholder="Nombre de la tarea..."></div>
       <div class="form-group"><label>Descripción / Notas</label><textarea id="task-desc" rows="3" placeholder="Descripción detallada..."></textarea></div>
       <div class="form-grid-2">
-        <div class="form-group"><label>Categoría</label>
-          <select id="task-category"><option value="desarrollo">🖥️ Desarrollo</option><option value="diseño">🎨 Diseño</option><option value="marketing">📣 Marketing</option><option value="reunión">📋 Reunión</option><option value="urgente">🔥 Urgente</option><option value="otro">📌 Otro</option></select>
-        </div>
-        <div class="form-group"><label>Estado</label>
-          <select id="task-status"><option value="pending">Pendiente</option><option value="process">En Proceso</option><option value="done">Finalizado</option></select>
-        </div>
+        <div class="form-group"><label>Categoría</label><select id="task-category"><option value="desarrollo">🖥️ Desarrollo</option><option value="diseño">🎨 Diseño</option><option value="marketing">📣 Marketing</option><option value="reunión">📋 Reunión</option><option value="urgente">🔥 Urgente</option><option value="otro">📌 Otro</option></select></div>
+        <div class="form-group"><label>Estado</label><select id="task-status"><option value="pending">Pendiente</option><option value="process">En Proceso</option><option value="done">Finalizado</option></select></div>
       </div>
       <div class="form-group"><label>Fecha y Hora de Entrega</label><input type="datetime-local" id="task-deadline"></div>
-      <div class="form-group"><label>Prioridad</label>
-        <div class="prio-row">
-          <button type="button" class="prio-btn" id="prio-low" onclick="setPriority('low')">▼ Baja</button>
-          <button type="button" class="prio-btn active-medium" id="prio-medium" onclick="setPriority('medium')">■ Media</button>
-          <button type="button" class="prio-btn" id="prio-high" onclick="setPriority('high')">▲ Alta</button>
-        </div>
-      </div>
+      <div class="form-group"><label>Prioridad</label><div class="prio-row"><button type="button" class="prio-btn" id="prio-low" onclick="setPriority('low')">▼ Baja</button><button type="button" class="prio-btn active-medium" id="prio-medium" onclick="setPriority('medium')">■ Media</button><button type="button" class="prio-btn" id="prio-high" onclick="setPriority('high')">▲ Alta</button></div></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('modal-task')">Cancelar</button>
-      <button class="btn-primary" onclick="saveTask()"><span id="modal-task-btn">Crear Tarea</span></button>
-    </div>
+    <div class="modal-footer"><button class="btn-secondary" onclick="closeModal('modal-task')">Cancelar</button><button class="btn-primary" onclick="saveTask()"><span id="modal-task-btn">Crear Tarea</span></button></div>
   </div>
 </div>
 
-<!-- MODAL VER -->
 <div id="modal-view" class="modal-backdrop">
   <div class="modal">
-    <div class="modal-header">
-      <div class="view-badges"><span id="view-category-badge" class="badge">—</span><span id="view-priority-badge" class="prio-tag"></span></div>
-      <button class="modal-close" onclick="closeModal('modal-view')"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
+    <div class="modal-header"><div class="view-badges"><span id="view-category-badge" class="badge">—</span><span id="view-priority-badge" class="prio-tag"></span></div><button class="modal-close" onclick="closeModal('modal-view')"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="modal-body">
-      <div>
-        <h3 id="view-title" style="font-size:17px;color:var(--text-primary);margin-bottom:6px;"></h3>
-        <p id="view-desc" style="font-size:13px;color:var(--text-muted);line-height:1.6;"></p>
-      </div>
-      <div class="view-info-grid">
-        <div class="view-info-box"><p>Estado</p><p id="view-status"></p></div>
-        <div class="view-info-box"><p>Deadline</p><p id="view-deadline" style="font-family:var(--font-mono);font-size:11px;"></p></div>
-      </div>
+      <div><h3 id="view-title" style="font-size:17px;color:var(--text-primary);margin-bottom:6px;"></h3><p id="view-desc" style="font-size:13px;color:var(--text-muted);line-height:1.6;"></p></div>
+      <div class="view-info-grid"><div class="view-info-box"><p>Estado</p><p id="view-status"></p></div><div class="view-info-box"><p>Deadline</p><p id="view-deadline" style="font-family:var(--font-mono);font-size:11px;"></p></div></div>
       <div class="view-countdown" id="view-countdown" style="display:none"><p>Tiempo restante</p><p id="view-countdown-val"></p></div>
     </div>
-    <div class="modal-footer">
-      <div class="view-footer-btns">
-        <button class="btn-edit" onclick="editTaskFromView()"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar</button>
-        <button class="btn-delete" onclick="deleteTaskFromView()"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Eliminar</button>
-      </div>
-    </div>
+    <div class="modal-footer"><div class="view-footer-btns"><button class="btn-edit" onclick="editTaskFromView()"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar</button><button class="btn-delete" onclick="deleteTaskFromView()"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Eliminar</button></div></div>
   </div>
 </div>
 
-<!-- FIREBASE SDK -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDIAF5luVXZ3tyNdIurhqxT_aug6RxOtOI",
-  authDomain: "asistente-digital-f17b4.firebaseapp.com",
-  databaseURL: "https://asistente-digital-f17b4-default-rtdb.firebaseio.com",
-  projectId: "asistente-digital-f17b4",
-  storageBucket: "asistente-digital-f17b4.firebasestorage.app",
-  messagingSenderId: "942215288164",
-  appId: "1:942215288164:web:9e7a6ad635a06852489671"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// ── COLECCIONES ──
-const tasksCol = collection(db, 'tasks');
-const ideasCol = collection(db, 'ideas');
-
-// ── STATE ──
-let tasks = [], ideas = [];
-let dragId = null, currentPrio = 'medium', viewingId = null;
-let notified = JSON.parse(localStorage.getItem('pm_notified') || '[]');
-
-function saveNotified() { localStorage.setItem('pm_notified', JSON.stringify(notified)); }
-function uid() { return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); }
-
-// ── SYNC STATUS ──
-function setSyncStatus(status) {
-  const dot = document.getElementById('sync-dot');
-  const label = document.getElementById('sync-label');
-  const bar = document.getElementById('sync-bar');
-  if (status === 'ok') { dot.className='sync-dot'; label.textContent='Sincronizado'; bar.className='sync-bar done'; setTimeout(()=>bar.className='sync-bar',600); }
-  else if (status === 'syncing') { dot.className='sync-dot syncing'; label.textContent='Sincronizando...'; bar.className='sync-bar active'; }
-  else { dot.className='sync-dot error'; label.textContent='Sin conexión'; }
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyDIAF5luVXZ3tyNdIurhqxT_aug6RxOtOI",
+  authDomain:"asistente-digital-f17b4.firebaseapp.com",
+  databaseURL:"https://asistente-digital-f17b4-default-rtdb.firebaseio.com",
+  projectId:"asistente-digital-f17b4",
+  storageBucket:"asistente-digital-f17b4.firebasestorage.app",
+  messagingSenderId:"942215288164",
+  appId:"1:942215288164:web:9e7a6ad635a06852489671"
+});
+const db=firebase.database();
+const tasksRef=db.ref('tasks');
+const ideasRef=db.ref('ideas');
+let tasks=[],ideas=[],dragId=null,currentPrio='medium',viewingId=null;
+let notified=JSON.parse(localStorage.getItem('pm_notified')||'[]');
+function saveNotified(){localStorage.setItem('pm_notified',JSON.stringify(notified));}
+function uid(){return 'id_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);}
+function setSyncStatus(s){
+  const dot=document.getElementById('sync-dot'),label=document.getElementById('sync-label'),bar=document.getElementById('sync-bar');
+  if(s==='ok'){dot.className='sync-dot';label.textContent='Sincronizado';bar.className='sync-bar done';setTimeout(()=>bar.className='sync-bar',600);}
+  else if(s==='syncing'){dot.className='sync-dot syncing';label.textContent='Sincronizando...';bar.className='sync-bar active';}
+  else{dot.className='sync-dot error';label.textContent='Sin conexión';}
 }
-
-// ── LISTENERS EN TIEMPO REAL ──
-onSnapshot(tasksCol, snap => {
-  tasks = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (a.createdAt||0) - (b.createdAt||0));
-  setSyncStatus('ok');
+tasksRef.on('value',snap=>{
+  const data=snap.val()||{};
+  tasks=Object.entries(data).map(([id,v])=>({id,...v})).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+  setSyncStatus('ok');renderAll();checkNotifications();
+},()=>setSyncStatus('error'));
+ideasRef.on('value',snap=>{
+  const data=snap.val()||{};
+  ideas=Object.entries(data).map(([id,v])=>({id,...v})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   renderAll();
-  checkNotifications();
-}, () => setSyncStatus('error'));
-
-onSnapshot(ideasCol, snap => {
-  ideas = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-  renderAll();
-}, () => {});
-
-// ── FIRESTORE CRUD ──
-async function fsSetTask(task) {
-  setSyncStatus('syncing');
-  const { id, ...data } = task;
-  await setDoc(doc(db, 'tasks', id), data);
-}
-async function fsDeleteTask(id) {
-  setSyncStatus('syncing');
-  await deleteDoc(doc(db, 'tasks', id));
-}
-async function fsSetIdea(idea) {
-  const { id, ...data } = idea;
-  await setDoc(doc(db, 'ideas', id), data);
-}
-async function fsDeleteIdea(id) {
-  await deleteDoc(doc(db, 'ideas', id));
-}
-
-// ── NAVIGATION ──
-const titles = { dashboard:'Panel Principal', kanban:'Tablero Kanban', ideas:'Ideas Rápidas', deadlines:'Deadlines' };
-window.showSection = function(name) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('section-' + name).classList.add('active');
-  const btn = document.querySelector('[data-section="' + name + '"]');
-  if (btn) btn.classList.add('active');
-  document.getElementById('page-title').textContent = titles[name] || name;
-  if (name === 'kanban') renderKanban();
-  if (name === 'ideas') renderIdeas();
-  if (name === 'deadlines') renderDeadlines();
-  if (name === 'dashboard') renderDashboard();
-  closeSidebar();
-};
-window.toggleSidebar = function() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('show'); };
-window.closeSidebar = function() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); };
-
-// ── MODALS ──
-window.openModal = function(id) { document.getElementById(id).classList.add('open'); };
-window.closeModal = function(id) {
-  document.getElementById(id).classList.remove('open');
-  if (id === 'modal-task') { document.getElementById('task-edit-id').value = ''; document.getElementById('modal-task-title').textContent = 'Nueva Tarea'; document.getElementById('modal-task-btn').textContent = 'Crear Tarea'; }
-};
-window.openTaskModal = function() { resetTaskForm(); openModal('modal-task'); };
-function resetTaskForm() {
-  ['task-edit-id','task-title','task-desc','task-deadline'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('task-category').value = 'desarrollo';
-  document.getElementById('task-status').value = 'pending';
-  setPriority('medium');
-}
-window.setPriority = function(p) {
-  currentPrio = p;
-  ['low','medium','high'].forEach(pr => { document.getElementById('prio-' + pr).className = 'prio-btn' + (pr === p ? ' active-' + pr : ''); });
-};
-
-// ── TASKS ──
-window.saveTask = async function() {
-  const title = document.getElementById('task-title').value.trim();
-  if (!title) { shakeEl('task-title'); return; }
-  const editId = document.getElementById('task-edit-id').value;
-  const data = {
-    title, desc: document.getElementById('task-desc').value.trim(),
-    category: document.getElementById('task-category').value,
-    status: document.getElementById('task-status').value,
-    deadline: document.getElementById('task-deadline').value,
-    priority: currentPrio, updatedAt: Date.now()
-  };
-  if (editId) {
-    const existing = tasks.find(t => t.id === editId);
-    await fsSetTask({ ...existing, ...data, id: editId });
-    showToast('✏️ Tarea actualizada', 'success');
-  } else {
-    const newTask = { id: uid(), ...data, createdAt: Date.now() };
-    await fsSetTask(newTask);
-    showToast('✅ Tarea creada', 'success');
-  }
-  closeModal('modal-task');
-};
-
-window.deleteTask = async function(id) {
-  await fsDeleteTask(id);
-  showToast('🗑️ Eliminada', 'info');
-};
-
-window.editTask = function(id) {
-  const t = tasks.find(t => t.id === id); if (!t) return;
-  document.getElementById('task-edit-id').value = id;
-  document.getElementById('task-title').value = t.title;
-  document.getElementById('task-desc').value = t.desc || '';
-  document.getElementById('task-category').value = t.category;
-  document.getElementById('task-status').value = t.status;
-  document.getElementById('task-deadline').value = t.deadline || '';
-  setPriority(t.priority || 'medium');
-  document.getElementById('modal-task-title').textContent = 'Editar Tarea';
-  document.getElementById('modal-task-btn').textContent = 'Guardar Cambios';
-  openModal('modal-task');
-};
-
-window.moveTask = async function(id, dir) {
-  const cols = ['pending','process','done'];
-  const t = tasks.find(t => t.id === id); if (!t) return;
-  const i = cols.indexOf(t.status);
-  let newStatus = t.status;
-  if (dir === 1 && i < 2) newStatus = cols[i+1];
-  if (dir === -1 && i > 0) newStatus = cols[i-1];
-  if (newStatus !== t.status) await fsSetTask({ ...t, status: newStatus });
-};
-
-window.viewTask = function(id) {
-  const t = tasks.find(t => t.id === id); if (!t) return;
-  viewingId = id;
-  const sL = { pending:'Pendiente', process:'En Proceso', done:'Finalizado' };
-  const pL = { low:'Baja', medium:'Media', high:'Alta' };
-  document.getElementById('view-title').textContent = t.title;
-  document.getElementById('view-desc').textContent = t.desc || 'Sin descripción';
-  const cb = document.getElementById('view-category-badge'); cb.textContent = catLabel(t.category); cb.className = 'badge cat-' + t.category;
-  const pb = document.getElementById('view-priority-badge'); pb.textContent = pL[t.priority]||'Media'; pb.className = 'prio-tag '+(t.priority||'medium');
-  document.getElementById('view-status').textContent = sL[t.status];
-  document.getElementById('view-deadline').textContent = t.deadline ? formatDate(t.deadline) : 'Sin fecha límite';
-  const cd = document.getElementById('view-countdown');
-  if (t.deadline && t.status !== 'done') { cd.style.display='block'; document.getElementById('view-countdown-val').textContent = timeRemaining(t.deadline); }
-  else cd.style.display = 'none';
-  openModal('modal-view');
-};
-window.editTaskFromView = function() { closeModal('modal-view'); if (viewingId) editTask(viewingId); };
-window.deleteTaskFromView = function() { closeModal('modal-view'); if (viewingId) deleteTask(viewingId); };
-
-// ── IDEAS ──
-window.addIdea = async function() {
-  const title = document.getElementById('idea-title').value.trim();
-  const body = document.getElementById('idea-body').value.trim();
-  if (!title && !body) { shakeEl('idea-title'); return; }
-  const idea = { id: uid(), title: title||'Sin título', body, tag: document.getElementById('idea-tag').value, createdAt: Date.now() };
-  await fsSetIdea(idea);
-  document.getElementById('idea-title').value = '';
-  document.getElementById('idea-body').value = '';
-  showToast('💡 Idea guardada', 'success');
-};
-
-window.addQuickIdea = async function() {
-  const input = document.getElementById('quick-idea-input');
-  const val = input.value.trim(); if (!val) return;
-  await fsSetIdea({ id: uid(), title: val, body: '', tag: 'idea', createdAt: Date.now() });
-  input.value = '';
-  showToast('💡 Idea añadida', 'success');
-};
-
-window.deleteIdea = async function(id) { await fsDeleteIdea(id); };
-
-window.convertIdeaToTask = function(id) {
-  const idea = ideas.find(i => i.id === id); if (!idea) return;
-  resetTaskForm();
-  document.getElementById('task-title').value = idea.title;
-  document.getElementById('task-desc').value = idea.body || '';
-  document.getElementById('modal-task-title').textContent = 'Convertir en Tarea';
-  document.getElementById('modal-task-btn').textContent = 'Crear Tarea';
-  openModal('modal-task');
-};
-
-// ── DRAG & DROP ──
-window.dragStart = function(e, id) { dragId = id; setTimeout(() => { const el = document.getElementById('card-'+id); if(el) el.classList.add('dragging'); }, 0); };
-window.dragEnd = function() { if(dragId){const el=document.getElementById('card-'+dragId);if(el)el.classList.remove('dragging');} dragId=null; };
-window.dragOver = function(e, col) { e.preventDefault(); document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over')); document.getElementById('col-'+col).classList.add('drag-over'); };
-window.dragLeave = function() { document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over')); };
-window.drop = async function(e, col) {
-  e.preventDefault(); document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));
-  if (dragId) { const t=tasks.find(t=>t.id===dragId); if(t&&t.status!==col) await fsSetTask({...t, status:col}); }
-};
-
-// ── RENDER KANBAN ──
-function renderKanban() {
-  const cols = { pending:[], process:[], done:[] };
-  tasks.forEach(t => { if(cols[t.status]) cols[t.status].push(t); });
-  Object.entries(cols).forEach(([col, arr]) => {
-    document.getElementById('count-'+col).textContent = arr.length;
-    const el = document.getElementById('col-'+col);
-    if (!arr.length) { el.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="15" x2="12" y2="15"/></svg><p>Sin tareas</p></div>'; return; }
-    el.innerHTML = arr.map(t => buildCard(t)).join('');
-  });
-}
-
-function buildCard(t) {
-  const now=Date.now(), dl=t.deadline?new Date(t.deadline).getTime():null, diff=dl?dl-now:null;
-  const isOverdue=diff!==null&&diff<0&&t.status!=='done';
-  const isCrit=diff!==null&&diff>=0&&diff<3600000&&t.status!=='done';
-  const isWarn=diff!==null&&diff>=3600000&&diff<86400000&&t.status!=='done';
-  const cardCls=isOverdue||isCrit?'task-card critical'+(isOverdue?' urgent-pulse':''):isWarn?'task-card warning':'task-card';
-  const dlCls=isOverdue||isCrit?'card-deadline crit':isWarn?'card-deadline warn':'card-deadline normal';
-  const cols=['pending','process','done'], ci=cols.indexOf(t.status);
-  const prioIcon={low:'▼',medium:'■',high:'▲'}[t.priority]||'■';
-  return `<div id="card-${t.id}" class="${cardCls}" draggable="true" ondragstart="dragStart(event,'${t.id}')" ondragend="dragEnd()">
-    <div class="card-top"><span class="prio-icon ${t.priority||'medium'}">${prioIcon}</span><span class="card-title" onclick="viewTask('${t.id}')">${esc(t.title)}</span></div>
-    ${t.desc?`<div class="card-desc">${esc(t.desc)}</div>`:''}
-    <div class="card-meta"><span class="badge cat-${t.category}">${catLabel(t.category)}</span></div>
-    ${dl?`<div class="${dlCls}"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg><span>${t.status!=='done'?timeRemaining(t.deadline):formatDate(t.deadline)}</span></div>`:''}
-    <div class="card-actions">
-      <button class="card-btn ${ci===0?'disabled':''}" onclick="moveTask('${t.id}',-1)"><svg viewBox="0 0 24 24" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <button class="card-btn ${ci===2?'disabled':''}" onclick="moveTask('${t.id}',1)"><svg viewBox="0 0 24 24" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
-      <div class="card-spacer"></div>
-      <button class="card-btn" onclick="editTask('${t.id}')"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-      <button class="card-btn" onclick="deleteTask('${t.id}')"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
-    </div>
-  </div>`;
-}
-
-// ── RENDER IDEAS ──
-function renderIdeas() {
-  const el = document.getElementById('ideas-list');
-  const tagLabels = { idea:'💡 Idea', reunion:'📋 Reunión', nota:'📝 Nota', recordatorio:'🔔 Recordatorio' };
-  if (!ideas.length) { el.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="10" r="5"/><path d="M8.56 13.89L7 22l5-3 5 3-1.56-8.11"/></svg><p>Sin ideas guardadas</p></div>'; return; }
-  el.innerHTML = ideas.map(i=>`<div class="idea-card"><div class="idea-card-inner"><div class="idea-card-body"><div class="idea-card-meta"><span class="idea-tag">${tagLabels[i.tag]||i.tag}</span><span class="idea-date">${formatDateShort(i.createdAt)}</span></div><div class="idea-title-text">${esc(i.title)}</div>${i.body?`<div class="idea-body-text">${esc(i.body)}</div>`:''}</div><div class="idea-actions"><button class="icon-btn" onclick="convertIdeaToTask('${i.id}')" title="Convertir"><svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button><button class="icon-btn" onclick="deleteIdea('${i.id}')" title="Eliminar"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div></div></div>`).join('');
-}
-
-// ── RENDER DEADLINES ──
-function renderDeadlines() {
-  const el = document.getElementById('deadlines-list');
-  const withDl = tasks.filter(t=>t.deadline).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
-  if (!withDl.length) { el.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><p>No hay tareas con fecha límite</p></div>'; return; }
-  const sL={pending:'Pendiente',process:'En Proceso',done:'Finalizado'};
-  el.innerHTML = withDl.map(t=>{
-    const now=Date.now(),dl=new Date(t.deadline).getTime(),diff=dl-now;
-    const isOverdue=diff<0&&t.status!=='done', isCrit=diff>=0&&diff<3600000&&t.status!=='done', isWarn=diff>=3600000&&diff<86400000&&t.status!=='done', isDone=t.status==='done';
-    const itemCls='deadline-item'+(isDone?' done-item':isCrit||isOverdue?' crit':isWarn?' warn':'');
-    const iconCls=isDone?'dl-icon done-icon':isCrit||isOverdue?'dl-icon crit':isWarn?'dl-icon warn':'dl-icon normal';
-    const remCls=isCrit||isOverdue?'dl-remain crit':isWarn?'dl-remain warn':'dl-remain normal';
-    const iconPath=isDone?'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>':isCrit||isOverdue?'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/>':'<circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/>';
-    return `<div class="${itemCls}"><div class="${iconCls}"><svg viewBox="0 0 24 24" stroke-width="1.8">${iconPath}</svg></div><div class="dl-body"><div class="dl-top"><span class="dl-name">${esc(t.title)}</span><span class="badge cat-${t.category}">${catLabel(t.category)}</span></div><div class="dl-meta"><span class="dl-date">${formatDate(t.deadline)}</span>${t.status!=='done'?`<span class="${remCls}">${timeRemaining(t.deadline)}</span>`:''}<span class="dl-status">${sL[t.status]}</span></div></div><button class="dl-edit" onclick="editTask('${t.id}')"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div>`;
-  }).join('');
-}
-
-// ── RENDER DASHBOARD ──
-function renderDashboard() {
-  const now=Date.now();
-  const total=tasks.length, pending=tasks.filter(t=>t.status==='pending').length;
-  const process=tasks.filter(t=>t.status==='process').length, done=tasks.filter(t=>t.status==='done').length;
-  const urgent=tasks.filter(t=>t.deadline&&t.status!=='done'&&(new Date(t.deadline).getTime()-now)<86400000).length;
-  ['total','process','done','urgent'].forEach(k=>{ const el=document.getElementById('stat-'+k); if(el) el.textContent={total,process,done,urgent}[k]; });
-  document.getElementById('sidebar-pending').textContent=pending;
-  document.getElementById('sidebar-process').textContent=process;
-  document.getElementById('sidebar-done').textContent=done;
-  const pct=total?Math.round((done/total)*100):0;
-  document.getElementById('sidebar-progress').style.width=pct+'%';
-  document.getElementById('sidebar-pct').textContent=pct;
-
-  const upcoming=tasks.filter(t=>t.deadline&&t.status!=='done').sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,4);
-  const ddEl=document.getElementById('dashboard-deadlines');
-  ddEl.innerHTML=!upcoming.length?'<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><p>Sin deadlines próximos</p></div>'
-    :upcoming.map(t=>{const diff=new Date(t.deadline).getTime()-now,isW=diff<86400000;return `<div class="dash-row" onclick="viewTask('${t.id}')"><div class="dash-dot ${isW?'warn':'normal'}"></div><span class="dash-row-title">${esc(t.title)}</span><span class="dash-row-time ${isW?'warn':'normal'}">${timeRemaining(t.deadline)}</span></div>`;}).join('');
-
-  const tagEmoji={idea:'💡',reunion:'📋',nota:'📝',recordatorio:'🔔'};
-  const idEl=document.getElementById('dashboard-ideas');
-  idEl.innerHTML=!ideas.length?'<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="10" r="5"/><path d="M8.56 13.89L7 22l5-3 5 3-1.56-8.11"/></svg><p>Sin ideas aún</p></div>'
-    :ideas.slice(0,4).map(i=>`<div class="dash-idea-row"><span class="dash-idea-emoji">${tagEmoji[i.tag]||'💡'}</span><div class="dash-idea-info"><div class="dash-idea-name">${esc(i.title)}</div>${i.body?`<div class="dash-idea-sub">${esc(i.body)}</div>`:''}</div><button class="dash-convert" onclick="convertIdeaToTask('${i.id}')">→</button></div>`).join('');
-}
-
-function renderAll() {
-  renderDashboard(); updateBadges();
-  const active=document.querySelector('.section.active');
-  if(active){
-    if(active.id==='section-kanban') renderKanban();
-    if(active.id==='section-deadlines') renderDeadlines();
-    if(active.id==='section-ideas') renderIdeas();
-  }
-}
-function updateBadges() {
-  document.getElementById('nav-badge-kanban').textContent=tasks.length||'';
-  document.getElementById('nav-badge-ideas').textContent=ideas.length||'';
-  const now=Date.now();
-  const urg=tasks.filter(t=>t.deadline&&t.status!=='done'&&(new Date(t.deadline).getTime()-now)<86400000).length;
-  const bu=document.getElementById('nav-badge-urgent');
-  if(urg>0){bu.textContent=urg;bu.style.display='flex';}else bu.style.display='none';
-}
-
-// ── NOTIFICATIONS ──
-window.requestNotifications = function() {
-  if(!('Notification' in window)){showToast('No soportado','error');return;}
-  Notification.requestPermission().then(p=>{
-    if(p==='granted'){showToast('🔔 Notificaciones activadas','success');document.getElementById('notif-text').textContent='Notificaciones activas';document.getElementById('notif-btn').classList.add('active');}
-    else showToast('Notificaciones bloqueadas','error');
-  });
-};
-function checkNotifications() {
-  const now=Date.now();
-  tasks.forEach(t=>{
-    if(!t.deadline||t.status==='done') return;
-    const diff=new Date(t.deadline).getTime()-now;
-    if(diff>0&&diff<3600000&&!notified.includes(t.id+'_1h')){notified.push(t.id+'_1h');saveNotified();showToast(`⏰ "${t.title}" vence en menos de 1h`,'warning');if(Notification.permission==='granted')new Notification('⏰ Deadline próximo',{body:t.title});}
-    if(diff<0&&diff>-300000&&!notified.includes(t.id+'_due')){notified.push(t.id+'_due');saveNotified();showToast(`🚨 VENCIDA: "${t.title}"`,'error');if(Notification.permission==='granted')new Notification('🚨 Deadline vencido',{body:t.title});}
-  });
-}
-
-// ── HELPERS ──
-function showToast(msg, type='info') {
-  const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;
-  document.getElementById('toast-container').appendChild(t);
-  setTimeout(()=>{t.classList.add('hide');setTimeout(()=>t.remove(),380);},3500);
-}
-window.showToast = showToast;
+});
+function dbSetTask(t){setSyncStatus('syncing');const{id,...d}=t;tasksRef.child(id).set(d);}
+function dbDelTask(id){setSyncStatus('syncing');tasksRef.child(id).remove();}
+function dbSetIdea(i){const{id,...d}=i;ideasRef.child(id).set(d);}
+function dbDelIdea(id){ideasRef.child(id).remove();}
+const titles={dashboard:'Panel Principal',kanban:'Tablero Kanban',ideas:'Ideas Rápidas',deadlines:'Deadlines'};
+function showSection(n){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(v=>v.classList.remove('active'));document.getElementById('section-'+n).classList.add('active');const b=document.querySelector('[data-section="'+n+'"]');if(b)b.classList.add('active');document.getElementById('page-title').textContent=titles[n]||n;if(n==='kanban')renderKanban();if(n==='ideas')renderIdeas();if(n==='deadlines')renderDeadlines();if(n==='dashboard')renderDashboard();closeSidebar();}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='modal-task'){document.getElementById('task-edit-id').value='';document.getElementById('modal-task-title').textContent='Nueva Tarea';document.getElementById('modal-task-btn').textContent='Crear Tarea';}}
+function openTaskModal(){resetTaskForm();openModal('modal-task');}
+function resetTaskForm(){['task-edit-id','task-title','task-desc','task-deadline'].forEach(id=>document.getElementById(id).value='');document.getElementById('task-category').value='desarrollo';document.getElementById('task-status').value='pending';setPriority('medium');}
+function setPriority(p){currentPrio=p;['low','medium','high'].forEach(pr=>document.getElementById('prio-'+pr).className='prio-btn'+(pr===p?' active-'+pr:''));}
+function saveTask(){const title=document.getElementById('task-title').value.trim();if(!title){shakeEl('task-title');return;}const editId=document.getElementById('task-edit-id').value;const data={title,desc:document.getElementById('task-desc').value.trim(),category:document.getElementById('task-category').value,status:document.getElementById('task-status').value,deadline:document.getElementById('task-deadline').value,priority:currentPrio,updatedAt:Date.now()};if(editId){const ex=tasks.find(t=>t.id===editId);dbSetTask({...ex,...data,id:editId});showToast('✏️ Tarea actualizada','success');}else{dbSetTask({id:uid(),...data,createdAt:Date.now()});showToast('✅ Tarea creada','success');}closeModal('modal-task');}
+function deleteTask(id){dbDelTask(id);showToast('🗑️ Eliminada','info');}
+function editTask(id){const t=tasks.find(t=>t.id===id);if(!t)return;document.getElementById('task-edit-id').value=id;document.getElementById('task-title').value=t.title;document.getElementById('task-desc').value=t.desc||'';document.getElementById('task-category').value=t.category;document.getElementById('task-status').value=t.status;document.getElementById('task-deadline').value=t.deadline||'';setPriority(t.priority||'medium');document.getElementById('modal-task-title').textContent='Editar Tarea';document.getElementById('modal-task-btn').textContent='Guardar Cambios';openModal('modal-task');}
+function moveTask(id,dir){const cols=['pending','process','done'],t=tasks.find(t=>t.id===id);if(!t)return;const i=cols.indexOf(t.status);let ns=t.status;if(dir===1&&i<2)ns=cols[i+1];if(dir===-1&&i>0)ns=cols[i-1];if(ns!==t.status)dbSetTask({...t,status:ns});}
+function viewTask(id){const t=tasks.find(t=>t.id===id);if(!t)return;viewingId=id;const sL={pending:'Pendiente',process:'En Proceso',done:'Finalizado'},pL={low:'Baja',medium:'Media',high:'Alta'};document.getElementById('view-title').textContent=t.title;document.getElementById('view-desc').textContent=t.desc||'Sin descripción';const cb=document.getElementById('view-category-badge');cb.textContent=catLabel(t.category);cb.className='badge cat-'+t.category;const pb=document.getElementById('view-priority-badge');pb.textContent=pL[t.priority]||'Media';pb.className='prio-tag '+(t.priority||'medium');document.getElementById('view-status').textContent=sL[t.status];document.getElementById('view-deadline').textContent=t.deadline?formatDate(t.deadline):'Sin fecha límite';const cd=document.getElementById('view-countdown');if(t.deadline&&t.status!=='done'){cd.style.display='block';document.getElementById('view-countdown-val').textContent=timeRemaining(t.deadline);}else cd.style.display='none';openModal('modal-view');}
+function editTaskFromView(){closeModal('modal-view');if(viewingId)editTask(viewingId);}
+function deleteTaskFromView(){closeModal('modal-view');if(viewingId)deleteTask(viewingId);}
+function addIdea(){const title=document.getElementById('idea-title').value.trim(),body=document.getElementById('idea-body').value.trim();if(!title&&!body){shakeEl('idea-title');return;}dbSetIdea({id:uid(),title:title||'Sin título',body,tag:document.getElementById('idea-tag').value,createdAt:Date.now()});document.getElementById('idea-title').value='';document.getElementById('idea-body').value='';showToast('💡 Idea guardada','success');}
+function addQuickIdea(){const input=document.getElementById('quick-idea-input'),val=input.value.trim();if(!val)return;dbSetIdea({id:uid(),title:val,body:'',tag:'idea',createdAt:Date.now()});input.value='';showToast('💡 Idea añadida','success');}
+function deleteIdea(id){dbDelIdea(id);}
+function convertIdeaToTask(id){const idea=ideas.find(i=>i.id===id);if(!idea)return;resetTaskForm();document.getElementById('task-title').value=idea.title;document.getElementById('task-desc').value=idea.body||'';document.getElementById('modal-task-title').textContent='Convertir en Tarea';document.getElementById('modal-task-btn').textContent='Crear Tarea';openModal('modal-task');}
+function dragStart(e,id){dragId=id;setTimeout(()=>{const el=document.getElementById('card-'+id);if(el)el.classList.add('dragging');},0);}
+function dragEnd(){if(dragId){const el=document.getElementById('card-'+dragId);if(el)el.classList.remove('dragging');}dragId=null;}
+function dragOver(e,col){e.preventDefault();document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));document.getElementById('col-'+col).classList.add('drag-over');}
+function dragLeave(){document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));}
+function drop(e,col){e.preventDefault();document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));if(dragId){const t=tasks.find(t=>t.id===dragId);if(t&&t.status!==col)dbSetTask({...t,status:col});}}
+function renderKanban(){const cols={pending:[],process:[],done:[]};tasks.forEach(t=>{if(cols[t.status])cols[t.status].push(t);});Object.entries(cols).forEach(([col,arr])=>{document.getElementById('count-'+col).textContent=arr.length;const el=document.getElementById('col-'+col);if(!arr.length){el.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="15" x2="12" y2="15"/></svg><p>Sin tareas</p></div>';return;}el.innerHTML=arr.map(t=>buildCard(t)).join('');});}
+function buildCard(t){const now=Date.now(),dl=t.deadline?new Date(t.deadline).getTime():null,diff=dl?dl-now:null;const isOverdue=diff!==null&&diff<0&&t.status!=='done',isCrit=diff!==null&&diff>=0&&diff<3600000&&t.status!=='done',isWarn=diff!==null&&diff>=3600000&&diff<86400000&&t.status!=='done';const cardCls=isOverdue||isCrit?'task-card critical'+(isOverdue?' urgent-pulse':''):isWarn?'task-card warning':'task-card';const dlCls=isOverdue||isCrit?'card-deadline crit':isWarn?'card-deadline warn':'card-deadline normal';const cols=['pending','process','done'],ci=cols.indexOf(t.status);const prioIcon={low:'▼',medium:'■',high:'▲'}[t.priority]||'■';return `<div id="card-${t.id}" class="${cardCls}" draggable="true" ondragstart="dragStart(event,'${t.id}')" ondragend="dragEnd()"><div class="card-top"><span class="prio-icon ${t.priority||'medium'}">${prioIcon}</span><span class="card-title" onclick="viewTask('${t.id}')">${esc(t.title)}</span></div>${t.desc?`<div class="card-desc">${esc(t.desc)}</div>`:''}<div class="card-meta"><span class="badge cat-${t.category}">${catLabel(t.category)}</span></div>${dl?`<div class="${dlCls}"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg><span>${t.status!=='done'?timeRemaining(t.deadline):formatDate(t.deadline)}</span></div>`:''}<div class="card-actions"><button class="card-btn ${ci===0?'disabled':''}" onclick="moveTask('${t.id}',-1)"><svg viewBox="0 0 24 24" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button><button class="card-btn ${ci===2?'disabled':''}" onclick="moveTask('${t.id}',1)"><svg viewBox="0 0 24 24" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button><div class="card-spacer"></div><button class="card-btn" onclick="editTask('${t.id}')"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="card-btn" onclick="deleteTask('${t.id}')"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>`;}
+function renderIdeas(){const el=document.getElementById('ideas-list'),tL={idea:'💡 Idea',reunion:'📋 Reunión',nota:'📝 Nota',recordatorio:'🔔 Recordatorio'};if(!ideas.length){el.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="10" r="5"/><path d="M8.56 13.89L7 22l5-3 5 3-1.56-8.11"/></svg><p>Sin ideas guardadas</p></div>';return;}el.innerHTML=ideas.map(i=>`<div class="idea-card"><div class="idea-card-inner"><div class="idea-card-body"><div class="idea-card-meta"><span class="idea-tag">${tL[i.tag]||i.tag}</span><span class="idea-date">${formatDateShort(i.createdAt)}</span></div><div class="idea-title-text">${esc(i.title)}</div>${i.body?`<div class="idea-body-text">${esc(i.body)}</div>`:''}</div><div class="idea-actions"><button class="icon-btn" onclick="convertIdeaToTask('${i.id}')" title="Convertir"><svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button><button class="icon-btn" onclick="deleteIdea('${i.id}')" title="Eliminar"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div></div></div>`).join('');}
+function renderDeadlines(){const el=document.getElementById('deadlines-list'),withDl=tasks.filter(t=>t.deadline).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));if(!withDl.length){el.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><p>No hay tareas con fecha límite</p></div>';return;}const sL={pending:'Pendiente',process:'En Proceso',done:'Finalizado'};el.innerHTML=withDl.map(t=>{const now=Date.now(),dl=new Date(t.deadline).getTime(),diff=dl-now;const isOverdue=diff<0&&t.status!=='done',isCrit=diff>=0&&diff<3600000&&t.status!=='done',isWarn=diff>=3600000&&diff<86400000&&t.status!=='done',isDone=t.status==='done';const itemCls='deadline-item'+(isDone?' done-item':isCrit||isOverdue?' crit':isWarn?' warn':'');const iconCls=isDone?'dl-icon done-icon':isCrit||isOverdue?'dl-icon crit':isWarn?'dl-icon warn':'dl-icon normal';const remCls=isCrit||isOverdue?'dl-remain crit':isWarn?'dl-remain warn':'dl-remain normal';const iconPath=isDone?'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>':isCrit||isOverdue?'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/>':'<circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/>';return `<div class="${itemCls}"><div class="${iconCls}"><svg viewBox="0 0 24 24" stroke-width="1.8">${iconPath}</svg></div><div class="dl-body"><div class="dl-top"><span class="dl-name">${esc(t.title)}</span><span class="badge cat-${t.category}">${catLabel(t.category)}</span></div><div class="dl-meta"><span class="dl-date">${formatDate(t.deadline)}</span>${t.status!=='done'?`<span class="${remCls}">${timeRemaining(t.deadline)}</span>`:''}<span class="dl-status">${sL[t.status]}</span></div></div><button class="dl-edit" onclick="editTask('${t.id}')"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div>`;}).join('');}
+function renderDashboard(){const now=Date.now(),total=tasks.length,pending=tasks.filter(t=>t.status==='pending').length,process=tasks.filter(t=>t.status==='process').length,done=tasks.filter(t=>t.status==='done').length,urgent=tasks.filter(t=>t.deadline&&t.status!=='done'&&(new Date(t.deadline).getTime()-now)<86400000).length;document.getElementById('stat-total').textContent=total;document.getElementById('stat-process').textContent=process;document.getElementById('stat-done').textContent=done;document.getElementById('stat-urgent').textContent=urgent;document.getElementById('sidebar-pending').textContent=pending;document.getElementById('sidebar-process').textContent=process;document.getElementById('sidebar-done').textContent=done;const pct=total?Math.round((done/total)*100):0;document.getElementById('sidebar-progress').style.width=pct+'%';document.getElementById('sidebar-pct').textContent=pct;const upcoming=tasks.filter(t=>t.deadline&&t.status!=='done').sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,4);document.getElementById('dashboard-deadlines').innerHTML=!upcoming.length?'<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><p>Sin deadlines próximos</p></div>':upcoming.map(t=>{const diff=new Date(t.deadline).getTime()-now,isW=diff<86400000;return`<div class="dash-row" onclick="viewTask('${t.id}')"><div class="dash-dot ${isW?'warn':'normal'}"></div><span class="dash-row-title">${esc(t.title)}</span><span class="dash-row-time ${isW?'warn':'normal'}">${timeRemaining(t.deadline)}</span></div>`;}).join('');const tE={idea:'💡',reunion:'📋',nota:'📝',recordatorio:'🔔'};document.getElementById('dashboard-ideas').innerHTML=!ideas.length?'<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="10" r="5"/><path d="M8.56 13.89L7 22l5-3 5 3-1.56-8.11"/></svg><p>Sin ideas aún</p></div>':ideas.slice(0,4).map(i=>`<div class="dash-idea-row"><span class="dash-idea-emoji">${tE[i.tag]||'💡'}</span><div class="dash-idea-info"><div class="dash-idea-name">${esc(i.title)}</div>${i.body?`<div class="dash-idea-sub">${esc(i.body)}</div>`:''}</div><button class="dash-convert" onclick="convertIdeaToTask('${i.id}')">→</button></div>`).join('');}
+function renderAll(){renderDashboard();updateBadges();const active=document.querySelector('.section.active');if(active){if(active.id==='section-kanban')renderKanban();if(active.id==='section-deadlines')renderDeadlines();if(active.id==='section-ideas')renderIdeas();}}
+function updateBadges(){document.getElementById('nav-badge-kanban').textContent=tasks.length||'';document.getElementById('nav-badge-ideas').textContent=ideas.length||'';const now=Date.now(),urg=tasks.filter(t=>t.deadline&&t.status!=='done'&&(new Date(t.deadline).getTime()-now)<86400000).length;const bu=document.getElementById('nav-badge-urgent');if(urg>0){bu.textContent=urg;bu.style.display='flex';}else bu.style.display='none';}
+function requestNotifications(){if(!('Notification'in window)){showToast('No soportado','error');return;}Notification.requestPermission().then(p=>{if(p==='granted'){showToast('🔔 Notificaciones activadas','success');document.getElementById('notif-text').textContent='Notificaciones activas';document.getElementById('notif-btn').classList.add('active');}else showToast('Notificaciones bloqueadas','error');});}
+function checkNotifications(){const now=Date.now();tasks.forEach(t=>{if(!t.deadline||t.status==='done')return;const diff=new Date(t.deadline).getTime()-now;if(diff>0&&diff<3600000&&!notified.includes(t.id+'_1h')){notified.push(t.id+'_1h');saveNotified();showToast(`⏰ "${t.title}" vence en menos de 1h`,'warning');if(Notification.permission==='granted')new Notification('⏰ Deadline próximo',{body:t.title});}if(diff<0&&diff>-300000&&!notified.includes(t.id+'_due')){notified.push(t.id+'_due');saveNotified();showToast(`🚨 VENCIDA: "${t.title}"`,'error');if(Notification.permission==='granted')new Notification('🚨 Deadline vencido',{body:t.title});}});}
+function showToast(msg,type='info'){const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;document.getElementById('toast-container').appendChild(t);setTimeout(()=>{t.classList.add('hide');setTimeout(()=>t.remove(),380);},3500);}
 function timeRemaining(deadline){const diff=new Date(deadline).getTime()-Date.now();if(diff<0)return'⚠ Vencida';const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000);if(d>0)return d+'d '+h+'h';if(h>0)return h+'h '+m+'m';return m+'m';}
 function formatDate(dt){if(!dt)return'—';return new Date(dt).toLocaleString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
 function formatDateShort(ts){return new Date(ts).toLocaleDateString('es-ES',{day:'2-digit',month:'short'});}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function catLabel(cat){return{desarrollo:'Desarrollo',diseño:'Diseño',marketing:'Marketing','reunión':'Reunión',urgente:'Urgente',otro:'Otro'}[cat]||cat;}
 function shakeEl(id){const el=document.getElementById(id);if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');el.addEventListener('animationend',()=>el.classList.remove('shake'),{once:true});el.focus();}
-
-// ── INIT ──
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closeModal('modal-task');closeModal('modal-view');}
-  if((e.ctrlKey||e.metaKey)&&e.key==='n'){e.preventDefault();openTaskModal();}
-});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('modal-task');closeModal('modal-view');}if((e.ctrlKey||e.metaKey)&&e.key==='n'){e.preventDefault();openTaskModal();}});
 document.getElementById('quick-idea-input').addEventListener('keydown',e=>{if(e.key==='Enter')addQuickIdea();});
 document.getElementById('page-date').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 if(Notification.permission==='granted'){document.getElementById('notif-text').textContent='Notificaciones activas';document.getElementById('notif-btn').classList.add('active');}
