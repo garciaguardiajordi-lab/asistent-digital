@@ -3,247 +3,296 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Asistente Empresarial 360</title>
+<title>Asistente 360 Pro</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{display:['Syne','sans-serif'],body:['DM Sans','sans-serif'],mono:['JetBrains Mono','monospace']}}}}</script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;}
-body{font-family:'DM Sans',sans-serif;}
-h1,h2,h3,h4{font-family:'Syne',sans-serif;}
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-track{background:#0f172a;}
-::-webkit-scrollbar-thumb{background:#334155;border-radius:9px;}
-.task-card{cursor:grab;transition:transform .15s,box-shadow .15s;}
-.task-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.6);}
-.task-card.dragging{opacity:.25;cursor:grabbing;}
-.kanban-col.drag-over{outline:2px dashed #38bdf8;background:rgba(14,165,233,.04);border-radius:14px;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideDown{from{opacity:0;transform:translateY(-20px)scale(.97)}to{opacity:1;transform:translateY(0)scale(1)}}
-@keyframes pulseFast{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-@keyframes urgentRing{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.6)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
-.fade-in{animation:fadeIn .3s ease-out;}
-.slide-down{animation:slideDown .4s cubic-bezier(.34,1.56,.64,1);}
-.pulse-fast{animation:pulseFast 1s ease-in-out infinite;}
-.shake{animation:shake .4s ease-in-out;}
-.urgent-ring{animation:urgentRing 2s infinite;}
-.toast{transition:all .35s cubic-bezier(.34,1.56,.64,1);}
-.toast.hide{opacity:0;transform:translateX(120%);}
-.modal-open{display:flex!important;}
-.progress-bar{transition:width .9s cubic-bezier(.4,0,.2,1);}
-.tab-btn{transition:all .15s;}
-.tab-btn.active{background:#1e293b;color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.4);}
-.notes-area{max-height:0;overflow:hidden;transition:max-height .35s ease,opacity .2s;}
-.notes-area.open{max-height:600px;opacity:1;}
-.notes-area{opacity:0;}
-/* DEPT COLORS */
-.dept-rrhh{--dc:#e879f9;--dcbg:rgba(232,121,249,.12);--dcb:rgba(232,121,249,.3);}
-.dept-ventas{--dc:#4ade80;--dcbg:rgba(74,222,128,.12);--dcb:rgba(74,222,128,.3);}
-.dept-it{--dc:#60a5fa;--dcbg:rgba(96,165,250,.12);--dcb:rgba(96,165,250,.3);}
-.dept-marketing{--dc:#fb923c;--dcbg:rgba(251,146,60,.12);--dcb:rgba(251,146,60,.3);}
-.dept-admin{--dc:#94a3b8;--dcbg:rgba(148,163,184,.12);--dcb:rgba(148,163,184,.3);}
-.dept-badge{background:var(--dcbg);color:var(--dc);border:1px solid var(--dcb);}
-.dept-border{border-color:var(--dcb)!important;border-left-color:var(--dc)!important;}
-.dept-pct{color:var(--dc);}
-.dept-bar{background:var(--dc);}
-.dept-dot{background:var(--dc);}
+  /* ── Base ── */
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; }
+  h1,h2,h3,h4,h5 { font-family: 'Syne', sans-serif; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: #0f172a; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9px; }
+
+  /* ── Kanban drag ── */
+  .task-card { cursor: grab; user-select: none; transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s; }
+  .task-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+  .task-card.is-dragging { opacity: 0.25; cursor: grabbing; transform: scale(0.97); }
+  .kanban-col { transition: background 0.2s, outline 0.2s; min-height: 140px; }
+  .kanban-col.drag-over { outline: 2px dashed #38bdf8; background: rgba(14,165,233,0.05); border-radius: 14px; }
+
+  /* ── Animations ── */
+  @keyframes fadeUp   { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes popIn    { from { opacity:0; transform:scale(0.94); } to { opacity:1; transform:scale(1); } }
+  @keyframes urgPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); } 50% { box-shadow: 0 0 0 10px rgba(239,68,68,0); } }
+  @keyframes shake    { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  @keyframes toastIn  { from{opacity:0;transform:translateX(110%)} to{opacity:1;transform:translateX(0)} }
+  .fade-up  { animation: fadeUp  0.3s ease-out; }
+  .pop-in   { animation: popIn   0.35s cubic-bezier(0.34,1.56,0.64,1); }
+  .urg-pulse{ animation: urgPulse 2s infinite; }
+  .shake    { animation: shake 0.4s ease-in-out; }
+  .toast-in { animation: toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+
+  /* ── Notes expand ── */
+  .notes-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, opacity 0.2s; opacity: 0; }
+  .notes-body.open { max-height: 600px; opacity: 1; }
+
+  /* ── Progress bar ── */
+  .prog-bar { transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+
+  /* ── Dept themes ── */
+  .dept-rrhh      { --dc:#e879f9; --dcd:rgba(232,121,249,0.14); --dcb:rgba(232,121,249,0.35); }
+  .dept-ventas    { --dc:#4ade80; --dcd:rgba(74,222,128,0.14);  --dcb:rgba(74,222,128,0.35);  }
+  .dept-it        { --dc:#60a5fa; --dcd:rgba(96,165,250,0.14);  --dcb:rgba(96,165,250,0.35);  }
+  .dept-marketing { --dc:#fb923c; --dcd:rgba(251,146,60,0.14);  --dcb:rgba(251,146,60,0.35);  }
+  .dept-none      { --dc:#94a3b8; --dcd:rgba(148,163,184,0.1);  --dcb:rgba(148,163,184,0.25); }
+  .dept-tag  { background: var(--dcd); color: var(--dc); border: 1px solid var(--dcb); }
+  .dept-line { background: var(--dc); }
+  .dept-pct  { color: var(--dc); }
+  .dept-fill { background: var(--dc); }
+
+  /* ── Tab active ── */
+  .tab.active { background: #1e293b; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+
+  /* ── Modal backdrop ── */
+  .backdrop { background: rgba(0,0,0,0.78); backdrop-filter: blur(8px); }
+
+  /* ── Field styles ── */
+  .field { width:100%; background:#1e293b; border:1px solid #334155; border-radius:.75rem; padding:.6rem 1rem; font-size:.875rem; color:#f1f5f9; font-family:'DM Sans',sans-serif; outline:none; transition:border-color .15s, box-shadow .15s; }
+  .field:focus { border-color:#38bdf8; box-shadow:0 0 0 2px rgba(56,189,248,0.2); }
+  .field::placeholder { color:#475569; }
+  .field option { background:#1e293b; }
+  label.lbl { display:block; font-size:.7rem; font-weight:600; color:#94a3b8; margin-bottom:.3rem; letter-spacing:.04em; }
 </style>
 </head>
-<body class="dark bg-slate-950 text-slate-300 min-h-screen antialiased">
+<body class="bg-slate-950 text-slate-300 min-h-screen antialiased">
 
-<!-- TOASTS -->
-<div id="toasts" class="fixed top-4 right-4 z-[200] flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+<!-- ════════════════════════════════════════
+     TOASTS
+════════════════════════════════════════ -->
+<div id="toasts" class="fixed top-4 right-4 z-[300] flex flex-col gap-2 pointer-events-none max-w-xs w-full"></div>
 
-<!-- ═══════════════════════════════════════════
-     MORNING POP-UP
-═══════════════════════════════════════════ -->
-<div id="morning-popup" class="fixed inset-0 z-[150] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-  <div class="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-2xl shadow-2xl slide-down max-h-[92vh] overflow-y-auto">
-    <!-- Header -->
-    <div class="px-7 pt-7 pb-4">
-      <div class="flex items-start justify-between gap-4 mb-1">
+<!-- ════════════════════════════════════════
+     POPUP MATUTINO
+════════════════════════════════════════ -->
+<div id="popup" class="fixed inset-0 z-[200] backdrop hidden items-center justify-center p-4">
+  <div class="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-lg shadow-2xl pop-in overflow-hidden">
+    <!-- Header gradient -->
+    <div class="bg-gradient-to-br from-sky-600/30 via-violet-600/20 to-fuchsia-600/20 px-7 pt-7 pb-5">
+      <div class="flex items-start justify-between">
         <div>
-          <p id="popup-greeting" class="text-2xl font-display font-bold text-white"></p>
-          <p id="popup-motto" class="text-sm text-slate-400 mt-0.5 italic font-light"></p>
+          <p id="pu-greeting" class="text-2xl font-bold text-white leading-tight"></p>
+          <p id="pu-motto" class="text-sm text-slate-300 mt-1 italic"></p>
         </div>
-        <button onclick="closePopup()" class="shrink-0 w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-500 hover:text-white transition-all mt-1">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <button onclick="cerrarPopup()" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 hover:text-white transition-all shrink-0 mt-0.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <p id="popup-date" class="text-xs text-slate-600 font-mono"></p>
+      <p id="pu-fecha" class="text-xs text-slate-400 mt-1 mono"></p>
     </div>
     <!-- Stats row -->
-    <div class="px-7 pb-4 grid grid-cols-3 gap-3">
-      <div class="bg-slate-800/60 rounded-2xl p-3 text-center border border-slate-700/50">
-        <p id="pop-urgent-cnt" class="font-display font-bold text-xl text-red-400">0</p>
+    <div class="grid grid-cols-3 gap-3 px-7 py-4 border-b border-slate-800">
+      <div class="text-center">
+        <p id="pu-urg" class="font-bold text-xl text-red-400">0</p>
         <p class="text-xs text-slate-500">Urgentes</p>
       </div>
-      <div class="bg-slate-800/60 rounded-2xl p-3 text-center border border-slate-700/50">
-        <p id="pop-today-cnt" class="font-display font-bold text-xl text-yellow-400">0</p>
+      <div class="text-center">
+        <p id="pu-hoy" class="font-bold text-xl text-yellow-400">0</p>
         <p class="text-xs text-slate-500">Para hoy</p>
       </div>
-      <div class="bg-slate-800/60 rounded-2xl p-3 text-center border border-slate-700/50">
-        <p id="pop-done-cnt" class="font-display font-bold text-xl text-emerald-400">0</p>
+      <div class="text-center">
+        <p id="pu-done" class="font-bold text-xl text-emerald-400">0</p>
         <p class="text-xs text-slate-500">Completadas</p>
       </div>
     </div>
-    <!-- Content -->
-    <div id="popup-body" class="px-7 pb-5 space-y-4"></div>
+    <!-- Body -->
+    <div id="pu-body" class="px-7 py-4 max-h-64 overflow-y-auto space-y-3"></div>
     <!-- Footer -->
     <div class="px-7 py-4 border-t border-slate-800 flex gap-3">
-      <button onclick="copyPopupReport()" class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all flex-1 justify-center">
+      <button onclick="copiarInformePopup()" class="flex-1 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copiar Informe para Email
+        Copiar para Email
       </button>
-      <button onclick="closePopup()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold px-5 py-2.5 rounded-xl transition-all">
+      <button onclick="cerrarPopup()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all">
         Empezar →
       </button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     MODAL: NUEVA TAREA
-═══════════════════════════════════════════ -->
-<div id="modal-task" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-  <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl fade-in max-h-[92vh] overflow-y-auto">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 sticky top-0 bg-slate-900 z-10">
-      <h3 class="font-display font-bold text-white" id="modal-task-title">Nueva Tarea</h3>
-      <button onclick="closeModal('modal-task')" class="text-slate-500 hover:text-white transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+<!-- ════════════════════════════════════════
+     MODAL TAREA
+════════════════════════════════════════ -->
+<div id="modal-tarea" class="fixed inset-0 z-[100] backdrop hidden items-center justify-center p-4">
+  <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl pop-in max-h-[92vh] overflow-y-auto">
+    <div class="sticky top-0 bg-slate-900 z-10 flex items-center justify-between px-6 py-4 border-b border-slate-800">
+      <h3 id="mt-titulo" class="font-bold text-white text-lg">Nueva Tarea</h3>
+      <button onclick="cerrarModal('modal-tarea')" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-500 hover:text-white transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
     <div class="px-6 py-5 space-y-4">
-      <input type="hidden" id="task-edit-id">
-      <!-- URGENTE -->
-      <div class="flex items-center justify-between bg-red-950/40 border border-red-500/25 rounded-xl px-4 py-3">
-        <div><p class="text-sm font-bold text-red-400">🚨 URGENTE</p><p class="text-xs text-slate-500">Sube al primero y retrasa otras tareas +2 días</p></div>
-        <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" id="task-urgent" class="sr-only peer">
-          <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+      <input type="hidden" id="mt-id">
+      <!-- URGENTE toggle -->
+      <div class="flex items-center justify-between bg-red-950/40 border border-red-800/40 rounded-xl px-4 py-3">
+        <div>
+          <p class="text-sm font-bold text-red-400">🚨 Marcar como URGENTE</p>
+          <p class="text-xs text-slate-500 mt-0.5">Sube al inicio · Retrasa otras tareas +2 días</p>
+        </div>
+        <label class="relative inline-flex cursor-pointer items-center">
+          <input type="checkbox" id="mt-urgente" class="sr-only peer">
+          <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-red-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
         </label>
       </div>
-      <div><label class="field-label">Título *</label><input id="task-title" type="text" placeholder="¿Qué hay que hacer?" class="field-input"></div>
-      <div><label class="field-label">Descripción / Notas</label><textarea id="task-desc" rows="3" placeholder="Contexto, notas de reunión, detalles..." class="field-input resize-none"></textarea></div>
+      <div>
+        <label class="lbl">Título *</label>
+        <input id="mt-titulo-inp" type="text" placeholder="¿Qué hay que hacer?" class="field" oninput="autodetectarDept()">
+      </div>
+      <div>
+        <label class="lbl">Descripción / Notas</label>
+        <textarea id="mt-desc" rows="3" placeholder="Contexto, puntos de reunión, detalles..." class="field resize-none"></textarea>
+      </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="field-label">Departamento (auto)</label>
-          <select id="task-dept" class="field-input">
+          <label class="lbl">Departamento</label>
+          <select id="mt-dept" class="field" onchange="actualizarCategorias()">
             <option value="rrhh">💜 RRHH</option>
             <option value="ventas">💚 Ventas</option>
             <option value="it">💙 IT</option>
             <option value="marketing">🧡 Marketing</option>
-            <option value="admin">🩶 Administración</option>
           </select>
-          <div id="autodetect-hint" class="hidden mt-1 text-xs text-sky-400 bg-sky-500/10 border border-sky-500/20 rounded-lg px-2.5 py-1.5">✨ <span id="autodetect-text"></span></div>
         </div>
         <div>
-          <label class="field-label">Categoría</label>
-          <select id="task-category" class="field-input" id="task-category"></select>
+          <label class="lbl">Categoría</label>
+          <select id="mt-cat" class="field"></select>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="field-label">Proyecto</label>
-          <select id="task-project" class="field-input"><option value="">Sin proyecto</option></select>
+          <label class="lbl">Proyecto</label>
+          <select id="mt-proyecto" class="field"><option value="">Sin proyecto</option></select>
         </div>
         <div>
-          <label class="field-label">Prioridad</label>
-          <select id="task-priority" class="field-input">
-            <option value="low">🟢 Baja</option><option value="medium" selected>🟡 Media</option><option value="high">🔴 Alta</option>
+          <label class="lbl">Prioridad</label>
+          <select id="mt-prio" class="field">
+            <option value="baja">🟢 Baja</option>
+            <option value="media" selected>🟡 Media</option>
+            <option value="alta">🔴 Alta</option>
           </select>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="field-label">Estado</label>
-          <select id="task-status" class="field-input">
-            <option value="pending">Pendiente</option><option value="process">En Proceso</option><option value="done">Finalizado</option>
+          <label class="lbl">Estado</label>
+          <select id="mt-estado" class="field">
+            <option value="pendiente">Pendiente</option>
+            <option value="proceso">En Proceso</option>
+            <option value="finalizado">Finalizado</option>
           </select>
         </div>
-        <div><label class="field-label">Deadline</label><input id="task-deadline" type="datetime-local" class="field-input"></div>
+        <div>
+          <label class="lbl">Deadline</label>
+          <input id="mt-deadline" type="datetime-local" class="field">
+        </div>
+      </div>
+      <div id="hint-autodetect" class="hidden bg-sky-950/50 border border-sky-800/50 rounded-xl px-3 py-2 text-xs text-sky-300">
+        ✨ Departamento detectado automáticamente
       </div>
     </div>
     <div class="px-6 py-4 border-t border-slate-800 flex gap-3 justify-end">
-      <button onclick="closeModal('modal-task')" class="text-sm text-slate-400 hover:text-white px-4 py-2 transition-colors">Cancelar</button>
-      <button onclick="saveTask()" id="task-save-btn" class="bg-sky-500 hover:bg-sky-600 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-all">Crear Tarea</button>
+      <button onclick="cerrarModal('modal-tarea')" class="text-sm text-slate-400 hover:text-white px-4 py-2 transition-colors">Cancelar</button>
+      <button onclick="guardarTarea()" id="mt-btn" class="bg-sky-500 hover:bg-sky-600 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition-all">Crear Tarea</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     MODAL: NUEVO PROYECTO
-═══════════════════════════════════════════ -->
-<div id="modal-project" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-  <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl fade-in">
+<!-- ════════════════════════════════════════
+     MODAL PROYECTO
+════════════════════════════════════════ -->
+<div id="modal-proyecto" class="fixed inset-0 z-[100] backdrop hidden items-center justify-center p-4">
+  <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl pop-in">
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800">
-      <h3 class="font-display font-bold text-white" id="modal-proj-title">Nuevo Proyecto</h3>
-      <button onclick="closeModal('modal-project')" class="text-slate-500 hover:text-white transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h3 id="mp-titulo" class="font-bold text-white text-lg">Nuevo Proyecto</h3>
+      <button onclick="cerrarModal('modal-proyecto')" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-500 hover:text-white transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
     <div class="px-6 py-5 space-y-4">
-      <input type="hidden" id="proj-edit-id">
-      <div><label class="field-label">Nombre *</label><input id="proj-name" type="text" placeholder="Nombre del proyecto..." class="field-input"></div>
-      <div><label class="field-label">Departamento</label>
-        <select id="proj-dept" class="field-input">
-          <option value="rrhh">💜 RRHH</option><option value="ventas">💚 Ventas</option><option value="it">💙 IT</option><option value="marketing">🧡 Marketing</option><option value="admin">🩶 Admin</option>
+      <input type="hidden" id="mp-id">
+      <div><label class="lbl">Nombre del Proyecto *</label><input id="mp-nombre" type="text" placeholder="Ej: Campaña Q1, Plan Onboarding..." class="field"></div>
+      <div>
+        <label class="lbl">Departamento</label>
+        <select id="mp-dept" class="field">
+          <option value="rrhh">💜 RRHH</option>
+          <option value="ventas">💚 Ventas</option>
+          <option value="it">💙 IT</option>
+          <option value="marketing">🧡 Marketing</option>
         </select>
       </div>
-      <div><label class="field-label">Palabras clave (autodetección)</label>
-        <input id="proj-keywords" type="text" placeholder="clave1, clave2, clave3" class="field-input">
-        <p class="text-xs text-slate-600 mt-1">Si el título de la tarea contiene estas palabras, se asignará automáticamente.</p>
+      <div><label class="lbl">Palabras clave (autoasignación)</label>
+        <input id="mp-keys" type="text" placeholder="onboarding, contratación, nómina" class="field">
+        <p class="text-xs text-slate-600 mt-1">Separadas por coma. Detecta el proyecto al escribir el título de la tarea.</p>
       </div>
-      <div><label class="field-label">Color</label>
-        <div class="flex gap-2 flex-wrap" id="color-picker">
-          <button onclick="selColor('#0ea5e9')" data-color="#0ea5e9" class="color-btn w-8 h-8 rounded-full bg-sky-500 ring-2 ring-white ring-offset-2 ring-offset-slate-900 transition-all"></button>
-          <button onclick="selColor('#8b5cf6')" data-color="#8b5cf6" class="color-btn w-8 h-8 rounded-full bg-violet-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button onclick="selColor('#e879f9')" data-color="#e879f9" class="color-btn w-8 h-8 rounded-full bg-fuchsia-400 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button onclick="selColor('#4ade80')" data-color="#4ade80" class="color-btn w-8 h-8 rounded-full bg-green-400 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button onclick="selColor('#fb923c')" data-color="#fb923c" class="color-btn w-8 h-8 rounded-full bg-orange-400 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button onclick="selColor('#f43f5e')" data-color="#f43f5e" class="color-btn w-8 h-8 rounded-full bg-rose-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button onclick="selColor('#fbbf24')" data-color="#fbbf24" class="color-btn w-8 h-8 rounded-full bg-amber-400 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
-          <button onclick="selColor('#06b6d4')" data-color="#06b6d4" class="color-btn w-8 h-8 rounded-full bg-cyan-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+      <div>
+        <label class="lbl">Color</label>
+        <div id="color-picker" class="flex gap-2 flex-wrap mt-1">
+          <button type="button" onclick="selColor('#0ea5e9')" data-c="#0ea5e9" class="cpick w-8 h-8 rounded-full bg-sky-500 ring-2 ring-white ring-offset-2 ring-offset-slate-900 transition-all"></button>
+          <button type="button" onclick="selColor('#8b5cf6')" data-c="#8b5cf6" class="cpick w-8 h-8 rounded-full bg-violet-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button type="button" onclick="selColor('#e879f9')" data-c="#e879f9" class="cpick w-8 h-8 rounded-full bg-fuchsia-400 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button type="button" onclick="selColor('#4ade80')" data-c="#4ade80" class="cpick w-8 h-8 rounded-full bg-green-400 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button type="button" onclick="selColor('#fb923c')" data-c="#fb923c" class="cpick w-8 h-8 rounded-full bg-orange-400 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button type="button" onclick="selColor('#f43f5e')" data-c="#f43f5e" class="cpick w-8 h-8 rounded-full bg-rose-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button type="button" onclick="selColor('#fbbf24')" data-c="#fbbf24" class="cpick w-8 h-8 rounded-full bg-amber-400 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button type="button" onclick="selColor('#06b6d4')" data-c="#06b6d4" class="cpick w-8 h-8 rounded-full bg-cyan-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
         </div>
       </div>
     </div>
     <div class="px-6 py-4 border-t border-slate-800 flex gap-3 justify-end">
-      <button onclick="closeModal('modal-project')" class="text-sm text-slate-400 hover:text-white px-4 py-2 transition-colors">Cancelar</button>
-      <button onclick="saveProject()" id="proj-save-btn" class="bg-sky-500 hover:bg-sky-600 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-all">Crear Proyecto</button>
+      <button onclick="cerrarModal('modal-proyecto')" class="text-sm text-slate-400 hover:text-white px-4 py-2 transition-colors">Cancelar</button>
+      <button onclick="guardarProyecto()" id="mp-btn" class="bg-sky-500 hover:bg-sky-600 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition-all">Crear Proyecto</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
+<!-- ════════════════════════════════════════
      HEADER
-═══════════════════════════════════════════ -->
+════════════════════════════════════════ -->
 <header class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
   <div class="max-w-screen-xl mx-auto px-4 py-3">
     <div class="flex flex-wrap items-center gap-3 mb-3">
+      <!-- Logo -->
       <div class="flex items-center gap-3 mr-auto">
-        <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-sky-500 via-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-sky-500 via-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg">
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
         <div>
-          <h1 class="font-display font-bold text-white text-sm leading-tight">Asistente 360°</h1>
-          <p class="text-xs text-slate-600 font-mono">Empresarial Pro</p>
+          <h1 class="font-bold text-white text-sm leading-tight">Asistente 360 Pro</h1>
+          <p class="text-xs text-slate-500 mono">v4.0 · Estable</p>
         </div>
       </div>
+      <!-- Actions -->
       <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="openModal('modal-task')" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition-all shadow-lg shadow-sky-500/20">
+        <button onclick="abrirModalTarea()" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition-all shadow-lg shadow-sky-500/20">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tarea
         </button>
-        <button onclick="openModal('modal-project')" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition-all">
+        <button onclick="abrirModalProyecto()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition-all">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Proyecto
         </button>
-        <button onclick="document.getElementById('morning-popup').classList.remove('hidden');document.getElementById('morning-popup').classList.add('modal-open');buildPopup();" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition-all" title="Abrir resumen del día">
+        <button onclick="abrirPopup()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition-all" title="Ver resumen del día">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Hoy
         </button>
-        <button onclick="exportData()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all" title="Exportar JSON">
+        <button onclick="exportarDatos()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all" title="Exportar datos JSON">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </button>
-        <label class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer" title="Importar JSON">
+        <label class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer" title="Importar datos JSON">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <input type="file" accept=".json" onchange="importData(event)" class="hidden">
+          <input type="file" accept=".json" onchange="importarDatos(event)" class="hidden">
         </label>
-        <button onclick="reqNotif()" id="notif-btn" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all" title="Notificaciones">
+        <button onclick="solicitarNotificaciones()" id="btn-notif" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all" title="Activar notificaciones">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         </button>
       </div>
@@ -251,931 +300,1472 @@ h1,h2,h3,h4{font-family:'Syne',sans-serif;}
     <!-- KPIs -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
       <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl px-3 py-2">
-        <p class="text-xs text-slate-500 font-mono mb-1">AVANCE</p>
+        <p class="text-xs text-slate-500 mono mb-1">AVANCE GLOBAL</p>
         <div class="flex items-center gap-2 mb-0.5">
-          <div class="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden"><div id="kpi-bar" class="progress-bar h-full rounded-full bg-gradient-to-r from-sky-500 to-emerald-400" style="width:0%"></div></div>
-          <span id="kpi-pct" class="text-xs font-mono font-bold text-sky-400 shrink-0">0%</span>
+          <div class="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+            <div id="kpi-barra" class="prog-bar h-full rounded-full bg-gradient-to-r from-sky-500 to-emerald-400" style="width:0%"></div>
+          </div>
+          <span id="kpi-pct" class="text-xs font-bold mono text-sky-400 shrink-0">0%</span>
         </div>
-        <p class="text-xs text-slate-500"><span id="kpi-done" class="text-emerald-400 font-bold">0</span>/<span id="kpi-total">0</span></p>
+        <p class="text-xs text-slate-500"><span id="kpi-done" class="text-emerald-400 font-bold">0</span>/<span id="kpi-total">0</span> tareas</p>
       </div>
       <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl px-3 py-2">
-        <p class="text-xs text-slate-500 font-mono mb-0.5">HOY</p>
-        <p id="kpi-today" class="text-lg font-display font-bold text-white">0</p>
+        <p class="text-xs text-slate-500 mono mb-0.5">HOY COMPLETADAS</p>
+        <p id="kpi-hoy" class="text-xl font-bold text-white">0</p>
         <p id="kpi-msg" class="text-xs text-slate-500 truncate">¡A por ello! 💪</p>
       </div>
       <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl px-3 py-2">
-        <p class="text-xs text-slate-500 font-mono mb-0.5">URGENTES</p>
-        <p id="kpi-urgent" class="text-lg font-display font-bold text-red-400">0</p>
-        <p class="text-xs text-slate-500">pendientes</p>
+        <p class="text-xs text-slate-500 mono mb-0.5">URGENTES</p>
+        <p id="kpi-urgentes" class="text-xl font-bold text-red-400">0</p>
+        <p class="text-xs text-slate-500">sin completar</p>
       </div>
       <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl px-3 py-2">
-        <p class="text-xs text-slate-500 font-mono mb-0.5">SALUD</p>
+        <p class="text-xs text-slate-500 mono mb-0.5">SALUD ENTREGAS</p>
         <div class="flex items-center gap-1.5">
-          <div id="health-dot" class="w-2.5 h-2.5 rounded-full bg-slate-600 shrink-0"></div>
-          <p id="health-lbl" class="text-sm font-bold text-slate-400">–</p>
+          <div id="salud-dot" class="w-2.5 h-2.5 rounded-full bg-slate-600 shrink-0"></div>
+          <p id="salud-lbl" class="text-sm font-bold text-slate-400">–</p>
         </div>
-        <p class="text-xs text-slate-500"><span id="health-ot" class="text-emerald-400 font-bold">0</span> ok · <span id="health-lt" class="text-red-400 font-bold">0</span> tarde</p>
+        <p class="text-xs text-slate-500"><span id="salud-ok" class="text-emerald-400 font-bold">0</span> ok · <span id="salud-tarde" class="text-red-400 font-bold">0</span> tarde</p>
       </div>
     </div>
   </div>
 </header>
 
-<!-- ═══════════════════════════════════════════
-     MAIN CONTENT
-═══════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════
+     MAIN
+════════════════════════════════════════ -->
 <div class="max-w-screen-xl mx-auto px-4 py-5">
+
   <!-- Tabs -->
   <div class="flex gap-1 mb-5 bg-slate-900 p-1 rounded-2xl w-fit border border-slate-800">
-    <button onclick="showTab('kanban')"   data-tab="kanban"   class="tab-btn active text-white text-sm font-bold px-4 py-2 rounded-xl">Kanban</button>
-    <button onclick="showTab('projects')" data-tab="projects" class="tab-btn text-slate-500 text-sm font-bold px-4 py-2 rounded-xl">Proyectos</button>
-    <button onclick="showTab('ideas')"    data-tab="ideas"    class="tab-btn text-slate-500 text-sm font-bold px-4 py-2 rounded-xl">Ideas</button>
-    <button onclick="showTab('stats')"    data-tab="stats"    class="tab-btn text-slate-500 text-sm font-bold px-4 py-2 rounded-xl">Stats</button>
+    <button onclick="cambiarTab('kanban')"    data-tab="kanban"    class="tab active   text-white text-sm font-bold px-4 py-2 rounded-xl transition-all">Kanban</button>
+    <button onclick="cambiarTab('proyectos')" data-tab="proyectos" class="tab text-slate-500 text-sm font-bold px-4 py-2 rounded-xl transition-all hover:text-slate-300">Proyectos</button>
+    <button onclick="cambiarTab('ideas')"     data-tab="ideas"     class="tab text-slate-500 text-sm font-bold px-4 py-2 rounded-xl transition-all hover:text-slate-300">Ideas</button>
+    <button onclick="cambiarTab('stats')"     data-tab="stats"     class="tab text-slate-500 text-sm font-bold px-4 py-2 rounded-xl transition-all hover:text-slate-300">Stats</button>
   </div>
 
-  <!-- ── KANBAN ── -->
+  <!-- ── TAB KANBAN ── -->
   <div id="tab-kanban" class="tab-content">
-    <!-- Dept filter -->
-    <div class="flex gap-2 mb-4 flex-wrap items-center">
-      <span class="text-xs text-slate-600 font-mono">DEPTO:</span>
-      <button onclick="setDeptFilter('')"         data-df="" class="df-btn text-xs px-3 py-1 rounded-lg bg-slate-800 text-slate-400 font-bold hover:bg-slate-700 transition-all">Todos</button>
-      <button onclick="setDeptFilter('rrhh')"     data-df="rrhh"      class="df-btn dept-rrhh text-xs px-3 py-1 rounded-lg dept-badge font-bold transition-all">💜 RRHH</button>
-      <button onclick="setDeptFilter('ventas')"   data-df="ventas"    class="df-btn dept-ventas text-xs px-3 py-1 rounded-lg dept-badge font-bold transition-all">💚 Ventas</button>
-      <button onclick="setDeptFilter('it')"       data-df="it"        class="df-btn dept-it text-xs px-3 py-1 rounded-lg dept-badge font-bold transition-all">💙 IT</button>
-      <button onclick="setDeptFilter('marketing')" data-df="marketing" class="df-btn dept-marketing text-xs px-3 py-1 rounded-lg dept-badge font-bold transition-all">🧡 Mkt</button>
-      <button onclick="setDeptFilter('admin')"    data-df="admin"     class="df-btn dept-admin text-xs px-3 py-1 rounded-lg dept-badge font-bold transition-all">🩶 Admin</button>
-      <div class="ml-auto flex gap-2">
-        <span class="text-xs text-slate-600 font-mono">PROYECTO:</span>
-        <div id="proj-filters" class="flex gap-2 flex-wrap"></div>
-      </div>
+    <!-- Filters -->
+    <div class="flex flex-wrap items-center gap-2 mb-4">
+      <span class="text-xs text-slate-600 mono">DEPT:</span>
+      <button onclick="setFiltro('dept','')"          data-fd="" class="fd-btn text-xs px-3 py-1 rounded-lg bg-slate-800 text-slate-400 font-bold hover:bg-slate-700 transition-all">Todos</button>
+      <button onclick="setFiltro('dept','rrhh')"      data-fd="rrhh"      class="fd-btn dept-rrhh      text-xs px-3 py-1 rounded-lg dept-tag font-bold transition-all">💜 RRHH</button>
+      <button onclick="setFiltro('dept','ventas')"    data-fd="ventas"    class="fd-btn dept-ventas    text-xs px-3 py-1 rounded-lg dept-tag font-bold transition-all">💚 Ventas</button>
+      <button onclick="setFiltro('dept','it')"        data-fd="it"        class="fd-btn dept-it        text-xs px-3 py-1 rounded-lg dept-tag font-bold transition-all">💙 IT</button>
+      <button onclick="setFiltro('dept','marketing')" data-fd="marketing" class="fd-btn dept-marketing text-xs px-3 py-1 rounded-lg dept-tag font-bold transition-all">🧡 Mkt</button>
+      <span class="text-xs text-slate-600 mono ml-2">PROY:</span>
+      <div id="filtros-proy" class="flex gap-2 flex-wrap"></div>
     </div>
+    <!-- Columns -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-        <div class="px-4 py-3.5 border-b border-slate-800 flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-slate-500"></div><h3 class="font-display font-bold text-sm text-slate-300">Pendiente</h3><span id="cnt-pending" class="ml-auto text-xs font-mono bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full">0</span></div>
-        <div id="col-pending" class="kanban-col p-3 space-y-3 min-h-48" ondragover="dragOver(event,'pending')" ondrop="dropCard(event,'pending')" ondragleave="dragLeave(event)"></div>
+        <div class="px-4 py-3.5 border-b border-slate-800 flex items-center gap-2">
+          <div class="w-2.5 h-2.5 rounded-full bg-slate-500"></div>
+          <h3 class="font-bold text-sm text-slate-300">Pendiente</h3>
+          <span id="cnt-pendiente" class="ml-auto text-xs mono bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full">0</span>
+        </div>
+        <div id="col-pendiente" class="kanban-col p-3 space-y-3"
+          ondragover="onDragOver(event,'pendiente')" ondrop="onDrop(event,'pendiente')" ondragleave="onDragLeave(event)"></div>
       </div>
       <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-        <div class="px-4 py-3.5 border-b border-slate-800 flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse"></div><h3 class="font-display font-bold text-sm text-sky-300">En Proceso</h3><span id="cnt-process" class="ml-auto text-xs font-mono bg-sky-500/20 text-sky-400 px-2 py-0.5 rounded-full">0</span></div>
-        <div id="col-process" class="kanban-col p-3 space-y-3 min-h-48" ondragover="dragOver(event,'process')" ondrop="dropCard(event,'process')" ondragleave="dragLeave(event)"></div>
+        <div class="px-4 py-3.5 border-b border-slate-800 flex items-center gap-2">
+          <div class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse"></div>
+          <h3 class="font-bold text-sm text-sky-300">En Proceso</h3>
+          <span id="cnt-proceso" class="ml-auto text-xs mono bg-sky-500/20 text-sky-400 px-2 py-0.5 rounded-full">0</span>
+        </div>
+        <div id="col-proceso" class="kanban-col p-3 space-y-3"
+          ondragover="onDragOver(event,'proceso')" ondrop="onDrop(event,'proceso')" ondragleave="onDragLeave(event)"></div>
       </div>
       <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-        <div class="px-4 py-3.5 border-b border-slate-800 flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div><h3 class="font-display font-bold text-sm text-emerald-300">Finalizado</h3><span id="cnt-done" class="ml-auto text-xs font-mono bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full">0</span></div>
-        <div id="col-done" class="kanban-col p-3 space-y-3 min-h-48" ondragover="dragOver(event,'done')" ondrop="dropCard(event,'done')" ondragleave="dragLeave(event)"></div>
+        <div class="px-4 py-3.5 border-b border-slate-800 flex items-center gap-2">
+          <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+          <h3 class="font-bold text-sm text-emerald-300">Finalizado</h3>
+          <span id="cnt-finalizado" class="ml-auto text-xs mono bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full">0</span>
+        </div>
+        <div id="col-finalizado" class="kanban-col p-3 space-y-3"
+          ondragover="onDragOver(event,'finalizado')" ondrop="onDrop(event,'finalizado')" ondragleave="onDragLeave(event)"></div>
       </div>
     </div>
   </div>
 
-  <!-- ── PROYECTOS ── -->
-  <div id="tab-projects" class="tab-content hidden">
+  <!-- ── TAB PROYECTOS ── -->
+  <div id="tab-proyectos" class="tab-content hidden">
     <div class="flex items-center justify-between mb-5">
-      <div><h2 class="font-display font-bold text-white text-xl">Proyectos</h2><p class="text-xs text-slate-500 mt-0.5">Progreso en tiempo real por tareas finalizadas</p></div>
-      <button onclick="openModal('modal-project')" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all">+ Nuevo</button>
+      <div>
+        <h2 class="font-bold text-white text-xl">Proyectos</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Progreso en tiempo real por tareas finalizadas</p>
+      </div>
+      <button onclick="abrirModalProyecto()" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all">
+        + Nuevo Proyecto
+      </button>
     </div>
-    <div id="projects-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+    <div id="lista-proyectos" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
   </div>
 
-  <!-- ── IDEAS ── -->
+  <!-- ── TAB IDEAS ── -->
   <div id="tab-ideas" class="tab-content hidden">
     <div class="max-w-2xl">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-5">
-        <h3 class="font-display font-bold text-white text-sm mb-4">Nueva Idea / Nota de Reunión</h3>
-        <input id="idea-title" type="text" placeholder="Título..." class="field-input mb-3">
-        <textarea id="idea-body" rows="3" placeholder="Descripción, notas, puntos clave..." class="field-input resize-none mb-3"></textarea>
+        <h3 class="font-bold text-white text-sm mb-4">Nueva Idea / Nota de Reunión</h3>
+        <input id="idea-titulo" type="text" placeholder="Título de la idea..." class="field mb-3">
+        <textarea id="idea-cuerpo" rows="3" placeholder="Descripción, puntos de reunión, contexto..." class="field resize-none mb-3"></textarea>
         <div class="flex gap-2">
-          <select id="idea-tag" class="field-input flex-1">
-            <option value="idea">💡 Idea</option><option value="reunion">📋 Reunión</option><option value="nota">📝 Nota</option><option value="tarea">✅ Tarea futura</option>
+          <select id="idea-tipo" class="field flex-1">
+            <option value="idea">💡 Idea</option>
+            <option value="reunion">📋 Reunión</option>
+            <option value="nota">📝 Nota</option>
+            <option value="futura">✅ Tarea futura</option>
           </select>
-          <button onclick="addIdea()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold px-5 py-2 rounded-xl text-sm transition-all">Guardar</button>
+          <button onclick="guardarIdea()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold px-5 py-2 rounded-xl text-sm transition-all">Guardar</button>
         </div>
       </div>
-      <div id="ideas-list" class="space-y-3"></div>
+      <div id="lista-ideas" class="space-y-3"></div>
     </div>
   </div>
 
-  <!-- ── STATS ── -->
+  <!-- ── TAB STATS ── -->
   <div id="tab-stats" class="tab-content hidden">
     <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">TOTAL</p><p id="st-total" class="font-display font-bold text-2xl text-white">0</p></div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">COMPLETADAS</p><p id="st-done" class="font-display font-bold text-2xl text-emerald-400">0</p></div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">A TIEMPO</p><p id="st-ontime" class="font-display font-bold text-2xl text-sky-400">0</p></div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">EXCELENTES</p><p id="st-excel" class="font-display font-bold text-2xl text-yellow-400">0</p></div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">URGENTES</p><p id="st-urgent" class="font-display font-bold text-2xl text-red-400">0</p></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">TOTAL</p><p id="st-total" class="font-bold text-2xl text-white">0</p></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">COMPLETADAS</p><p id="st-done" class="font-bold text-2xl text-emerald-400">0</p></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">A TIEMPO</p><p id="st-atiempo" class="font-bold text-2xl text-sky-400">0</p></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">EXCELENTE</p><p id="st-excel" class="font-bold text-2xl text-yellow-400">0</p></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">URGENTES</p><p id="st-urg" class="font-bold text-2xl text-red-400">0</p></div>
     </div>
-    <!-- Dept breakdown -->
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6" id="dept-stats"></div>
-    <!-- Projects stats -->
-    <div id="stats-projects"></div>
+    <!-- Salud general -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-5">
+      <h3 class="font-bold text-white text-sm mb-3">Salud de Entregas</h3>
+      <div class="flex items-center gap-4">
+        <div class="flex-1 h-3 bg-slate-800 rounded-full overflow-hidden">
+          <div id="st-salud-barra" class="prog-bar h-full rounded-full bg-emerald-500" style="width:0%"></div>
+        </div>
+        <span id="st-salud-pct" class="text-sm mono font-bold text-emerald-400 w-12 shrink-0">0%</span>
+        <span id="st-salud-badge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 shrink-0">–</span>
+      </div>
+    </div>
+    <!-- Por departamento -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6" id="stats-dept"></div>
+    <!-- Por proyecto -->
+    <div id="stats-proyectos"></div>
   </div>
-</div>
 
-<style>
-.field-label{display:block;font-size:.7rem;font-weight:600;color:#94a3b8;margin-bottom:.375rem;}
-.field-input{width:100%;background:#1e293b;border:1px solid #334155;border-radius:.75rem;padding:.625rem 1rem;font-size:.875rem;color:#f1f5f9;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .15s;}
-.field-input:focus{border-color:#0ea5e9;box-shadow:0 0 0 2px rgba(14,165,233,.15);}
-.field-input::placeholder{color:#475569;}
-.field-input option{background:#1e293b;}
-</style>
+</div><!-- /main -->
 
+<!-- ════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
 <script>
-// ══════════════════════════════════════════════════
-//  CONSTANTS
-// ══════════════════════════════════════════════════
-const MOTTOS = [
-  "Menos ruido, más enfoque.",
-  "Una tarea a la vez.",
-  "Hazlo hoy, descansa mañana.",
-  "El momentum lo es todo.",
-  "Progreso, no perfección.",
-  "Empieza. El resto llega solo.",
-  "Claridad antes que velocidad.",
-  "Lo urgente no siempre es lo importante.",
-  "Hoy defines el mañana.",
-  "Ejecuta. Mejora. Repite."
+'use strict';
+
+// ══════════════════════════════════════════
+//  CONSTANTES
+// ══════════════════════════════════════════
+const LS_TASKS    = 'a360_tareas';
+const LS_PROJECTS = 'a360_proyectos';
+const LS_IDEAS    = 'a360_ideas';
+const LS_NOTIF    = 'a360_notificados';
+
+const FRASES = [
+  'Menos ruido, más enfoque.',
+  'Una tarea a la vez.',
+  'Hazlo hoy.',
+  'El momentum lo es todo.',
+  'Empieza. Ya.',
+  'Claridad ante todo.',
+  'Progreso, no perfección.',
+  'Ejecuta y mejora.',
 ];
 
+const CATS = {
+  rrhh:      ['Onboarding','Nóminas','Selección','Formación','Cultura','Vacaciones'],
+  ventas:    ['Prospección','Cierre','Post-venta','CRM','Presentación','Seguimiento'],
+  it:        ['Soporte','Desarrollo','Seguridad','Infraestructura','Testing','Deploy'],
+  marketing: ['Redes Sociales','Campañas','SEO','Diseño','Contenido','Análisis'],
+};
+
+const KEYWORDS_DEPT = {
+  rrhh:      ['onboarding','nómina','selección','formación','contratación','empleado','candidato','entrevista','rrhh','recursos humanos','vacacion','baja','alta','despido'],
+  ventas:    ['venta','cliente','comercial','propuesta','cierre','oferta','crm','factura','revenue','prospección','negoci'],
+  it:        ['bug','código','deploy','servidor','seguridad','infraestructura','soporte','desarrollo','api','base de datos','software','it ','tech','sistema','patch'],
+  marketing: ['campaña','redes','seo','diseño','contenido','post','blog','marketing','email','newsletter','publicidad','marca'],
+};
+
 const DEPT_META = {
-  rrhh:      { label:'RRHH',           emoji:'💜', cls:'dept-rrhh',      cats:['Onboarding','Nóminas','Selección','Formación','Cultura'] },
-  ventas:    { label:'Ventas',         emoji:'💚', cls:'dept-ventas',    cats:['Prospección','Cierre','Post-venta','CRM','Presentación'] },
-  it:        { label:'IT',             emoji:'💙', cls:'dept-it',        cats:['Soporte','Desarrollo','Seguridad','Infraestructura','Testing'] },
-  marketing: { label:'Marketing',      emoji:'🧡', cls:'dept-marketing', cats:['Redes Sociales','Campañas','SEO','Diseño','Contenido'] },
-  admin:     { label:'Administración', emoji:'🩶', cls:'dept-admin',     cats:['Facturación','Gastos','Legal','Contratos','Reportes'] },
+  rrhh:      { label: 'RRHH',      emoji: '💜', cls: 'dept-rrhh'      },
+  ventas:    { label: 'Ventas',    emoji: '💚', cls: 'dept-ventas'    },
+  it:        { label: 'IT',        emoji: '💙', cls: 'dept-it'        },
+  marketing: { label: 'Marketing', emoji: '🧡', cls: 'dept-marketing' },
 };
 
-const DEPT_KEYWORDS = {
-  rrhh:      ['onboarding','nómina','nóminas','selección','formación','contratación','entrevista','candidato','empleado','vacaciones','baja','alta','rrhh','recursos humanos'],
-  ventas:    ['venta','ventas','cliente','prospección','cierre','propuesta','oferta','factura','crm','oportunidad','comercial','revenue'],
-  it:        ['bug','código','deploy','servidor','seguridad','infraestructura','soporte','desarrollo','api','base de datos','software','it','tech','sistema'],
-  marketing: ['campaña','redes','seo','diseño','contenido','post','blog','marketing','email','newsletter','marca','publicidad'],
-  admin:     ['factura','gasto','legal','contrato','presupuesto','admin','administración','impuesto','pago','proveedor'],
-};
+const HOY = new Date().toDateString();
+const DOS_DIAS_MS = 2 * 24 * 60 * 60 * 1000;
 
-const TODAY_STR = new Date().toDateString();
+// ══════════════════════════════════════════
+//  ESTADO
+// ══════════════════════════════════════════
+let tareas     = [];
+let proyectos  = [];
+let ideas      = [];
+let notificados = [];
+let colorSeleccionado = '#0ea5e9';
+let dragIdActual      = null;
+let filtroDept        = '';
+let filtroProy        = '';
 
-// ══════════════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════════════
-let tasks    = JSON.parse(localStorage.getItem('a360_tasks')    || '[]');
-let projects = JSON.parse(localStorage.getItem('a360_projects') || '[]');
-let ideas    = JSON.parse(localStorage.getItem('a360_ideas')    || '[]');
-let notified = JSON.parse(localStorage.getItem('a360_notified') || '[]');
-
-let selColor    = '#0ea5e9';
-let deptFilter  = '';
-let projFilter  = '';
-let dragId      = null;
-
-function persist() {
-  localStorage.setItem('a360_tasks',    JSON.stringify(tasks));
-  localStorage.setItem('a360_projects', JSON.stringify(projects));
-  localStorage.setItem('a360_ideas',    JSON.stringify(ideas));
-  localStorage.setItem('a360_notified', JSON.stringify(notified));
-}
-function uid() { return 'i' + Date.now() + Math.random().toString(36).slice(2,7); }
-
-// ══════════════════════════════════════════════════
-//  MORNING POP-UP
-// ══════════════════════════════════════════════════
-function buildPopup() {
-  const h   = new Date().getHours();
-  const sal = h < 12 ? '¡Buenos días!' : h < 20 ? '¡Buenas tardes!' : '¡Buenas noches!';
-  document.getElementById('popup-greeting').textContent = sal;
-  document.getElementById('popup-motto').textContent    = '"' + MOTTOS[Math.floor(Math.random()*MOTTOS.length)] + '"';
-  document.getElementById('popup-date').textContent     = new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-
-  const urgents   = tasks.filter(t => t.urgent && t.status !== 'done');
-  const todayTsk  = tasks.filter(t => t.status !== 'done' && t.deadline && new Date(t.deadline).toDateString() === TODAY_STR);
-  const doneCnt   = tasks.filter(t => t.status === 'done').length;
-
-  document.getElementById('pop-urgent-cnt').textContent = urgents.length;
-  document.getElementById('pop-today-cnt').textContent  = todayTsk.length;
-  document.getElementById('pop-done-cnt').textContent   = doneCnt;
-
-  let html = '';
-
-  // 1. Urgentes
-  if (urgents.length) {
-    html += popSection('🚨 Tareas Urgentes', '#f87171', urgents.map(popTaskRow).join(''));
+// ══════════════════════════════════════════
+//  GESTIONAR LOCAL STORAGE
+// ══════════════════════════════════════════
+function guardarEnStorage() {
+  try {
+    localStorage.setItem(LS_TASKS,    JSON.stringify(tareas));
+    localStorage.setItem(LS_PROJECTS, JSON.stringify(proyectos));
+    localStorage.setItem(LS_IDEAS,    JSON.stringify(ideas));
+    localStorage.setItem(LS_NOTIF,    JSON.stringify(notificados));
+  } catch (e) {
+    mostrarToast('Error al guardar datos en LocalStorage', 'error');
+    console.error('LocalStorage error:', e);
   }
+}
 
-  // 2. Para hoy
-  if (todayTsk.length) {
-    html += popSection('📅 Para Completar Hoy', '#fbbf24', todayTsk.map(popTaskRow).join(''));
-  } else {
-    html += popSection('📅 Para Hoy', '#64748b', '<p class="text-xs text-slate-600 py-1">No hay tareas con deadline para hoy. ✅</p>');
+function cargarDesdeStorage() {
+  try {
+    const t = localStorage.getItem(LS_TASKS);
+    const p = localStorage.getItem(LS_PROJECTS);
+    const i = localStorage.getItem(LS_IDEAS);
+    const n = localStorage.getItem(LS_NOTIF);
+    tareas     = t ? JSON.parse(t) : [];
+    proyectos  = p ? JSON.parse(p) : [];
+    ideas      = i ? JSON.parse(i) : [];
+    notificados = n ? JSON.parse(n) : [];
+  } catch (e) {
+    console.error('Error cargando storage:', e);
+    tareas = []; proyectos = []; ideas = []; notificados = [];
   }
-
-  // 3. Progreso proyectos
-  if (projects.length) {
-    const rows = projects.map(p => {
-      const pt   = tasks.filter(t => t.project === p.id);
-      const done = pt.filter(t => t.status === 'done').length;
-      const pct  = pt.length ? Math.round((done/pt.length)*100) : 0;
-      return `<div class="flex items-center gap-3 py-1.5 border-b border-slate-800 last:border-0">
-        <div class="w-2 h-2 rounded-full shrink-0" style="background:${p.color}"></div>
-        <span class="text-xs text-slate-300 flex-1 truncate">${esc(p.name)}</span>
-        <div class="w-20 h-1.5 bg-slate-800 rounded-full overflow-hidden shrink-0"><div class="h-full rounded-full" style="width:${pct}%;background:${p.color}"></div></div>
-        <span class="text-xs font-mono font-bold shrink-0" style="color:${p.color}">${pct}%</span>
-      </div>`;
-    }).join('');
-    html += popSection('📊 Proyectos', '#38bdf8', rows);
-  }
-
-  document.getElementById('popup-body').innerHTML = html;
 }
 
-function popSection(title, color, content) {
-  return `<div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4">
-    <h4 class="font-display font-bold text-sm mb-3" style="color:${color}">${title}</h4>
-    ${content}
-  </div>`;
+// ══════════════════════════════════════════
+//  EXPORTAR / IMPORTAR
+// ══════════════════════════════════════════
+function exportarDatos() {
+  const datos = { tareas, proyectos, ideas, exportadoEn: new Date().toISOString(), version: '4.0' };
+  const blob  = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+  const url   = URL.createObjectURL(blob);
+  const a     = document.createElement('a');
+  a.href = url;
+  a.download = `asistente360_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  mostrarToast('📤 Datos exportados correctamente', 'success');
 }
 
-function popTaskRow(t) {
-  const proj = t.project ? projects.find(p => p.id === t.project) : null;
-  return `<div class="flex items-center gap-2 py-1.5 border-b border-slate-800/60 last:border-0">
-    ${t.urgent ? '<span class="text-red-400 text-xs font-bold shrink-0">🚨</span>' : '<span class="w-1.5 h-1.5 rounded-full bg-slate-600 shrink-0"></span>'}
-    <span class="text-xs text-slate-200 flex-1 truncate">${esc(t.title)}</span>
-    ${proj ? `<span class="text-xs font-bold shrink-0 px-1.5 py-0.5 rounded" style="background:${proj.color}22;color:${proj.color}">${esc(proj.name)}</span>` : ''}
-    ${t.deadline ? `<span class="text-xs font-mono text-slate-500 shrink-0">${timeRem(t.deadline)}</span>` : ''}
-  </div>`;
-}
-
-function closePopup() {
-  document.getElementById('morning-popup').classList.add('hidden');
-  document.getElementById('morning-popup').classList.remove('modal-open');
-}
-
-function copyPopupReport() {
-  const h   = new Date().getHours();
-  const sal = h < 12 ? 'Buenos días' : h < 20 ? 'Buenas tardes' : 'Buenas noches';
-  const date = new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const urgents  = tasks.filter(t => t.urgent && t.status !== 'done');
-  const todayTsk = tasks.filter(t => t.status !== 'done' && t.deadline && new Date(t.deadline).toDateString() === TODAY_STR);
-
-  let txt = `${sal.toUpperCase()} — ${date.toUpperCase()}\n${'═'.repeat(48)}\n\n`;
-  if (urgents.length) {
-    txt += `🚨 URGENTES (${urgents.length})\n${'-'.repeat(30)}\n`;
-    urgents.forEach(t => { txt += `  • ${t.title}${t.deadline?' ['+fmtDate(t.deadline)+']':''}\n`; });
-    txt += '\n';
-  }
-  if (todayTsk.length) {
-    txt += `📅 PARA HOY (${todayTsk.length})\n${'-'.repeat(30)}\n`;
-    todayTsk.forEach(t => { txt += `  • ${t.title}\n`; });
-    txt += '\n';
-  }
-  if (projects.length) {
-    txt += `📊 PROYECTOS\n${'-'.repeat(30)}\n`;
-    projects.forEach(p => {
-      const pt   = tasks.filter(t => t.project === p.id);
-      const done = pt.filter(t => t.status === 'done').length;
-      const pct  = pt.length ? Math.round((done/pt.length)*100) : 0;
-      txt += `  • ${p.name}: ${pct}% (${done}/${pt.length})\n`;
-    });
-  }
-  txt += `\n${'═'.repeat(48)}\nGenerado por Asistente Empresarial 360°\n`;
-  navigator.clipboard.writeText(txt)
-    .then(() => toast('📋 Informe copiado al portapapeles', 'success'))
-    .catch(() => toast('Error al copiar', 'error'));
-}
-
-// ══════════════════════════════════════════════════
-//  TABS
-// ══════════════════════════════════════════════════
-function showTab(name) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-  document.querySelectorAll('.tab-btn').forEach(el => { el.classList.remove('active','text-white'); el.classList.add('text-slate-500'); });
-  document.getElementById('tab-'+name).classList.remove('hidden');
-  const btn = document.querySelector(`[data-tab="${name}"]`);
-  if (btn) { btn.classList.add('active','text-white'); btn.classList.remove('text-slate-500'); }
-  if (name==='kanban')   { renderKanban(); renderFilters(); }
-  if (name==='projects') renderProjects();
-  if (name==='ideas')    renderIdeas();
-  if (name==='stats')    renderStats();
-}
-
-// ══════════════════════════════════════════════════
-//  MODALS
-// ══════════════════════════════════════════════════
-function openModal(id) {
-  document.getElementById(id).classList.remove('hidden');
-  document.getElementById(id).classList.add('modal-open');
-  if (id === 'modal-task') { populateProjSelect(); updateCatSelect(); }
-}
-function closeModal(id) {
-  document.getElementById(id).classList.add('hidden');
-  document.getElementById(id).classList.remove('modal-open');
-  if (id === 'modal-task')    resetTaskForm();
-  if (id === 'modal-project') resetProjForm();
-}
-function resetTaskForm() {
-  ['task-edit-id','task-title','task-desc','task-deadline'].forEach(i => { const el=document.getElementById(i); if(el) el.value=''; });
-  document.getElementById('task-urgent').checked  = false;
-  document.getElementById('task-status').value    = 'pending';
-  document.getElementById('task-priority').value  = 'medium';
-  document.getElementById('task-dept').value      = 'rrhh';
-  document.getElementById('modal-task-title').textContent = 'Nueva Tarea';
-  document.getElementById('task-save-btn').textContent    = 'Crear Tarea';
-  document.getElementById('autodetect-hint').classList.add('hidden');
-  updateCatSelect();
-}
-function resetProjForm() {
-  ['proj-edit-id','proj-name','proj-keywords'].forEach(i => { const el=document.getElementById(i); if(el) el.value=''; });
-  document.getElementById('proj-dept').value = 'rrhh';
-  document.getElementById('modal-proj-title').textContent = 'Nuevo Proyecto';
-  document.getElementById('proj-save-btn').textContent    = 'Crear Proyecto';
-  selColor('#0ea5e9');
-}
-
-function updateCatSelect() {
-  const dept = document.getElementById('task-dept').value || 'rrhh';
-  const sel  = document.getElementById('task-category');
-  sel.innerHTML = DEPT_META[dept].cats.map(c => `<option value="${c}">${c}</option>`).join('');
-}
-document.getElementById('task-dept').addEventListener('change', updateCatSelect);
-
-function populateProjSelect() {
-  const sel = document.getElementById('task-project');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">Sin proyecto</option>' + projects.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
-  if (cur) sel.value = cur;
-}
-
-// Auto-detect dept + project from title
-function onTitleChange() {
-  const text  = (document.getElementById('task-title').value + ' ' + (document.getElementById('task-desc').value||'')).toLowerCase();
-  const editId = document.getElementById('task-edit-id').value;
-  // Dept detection
-  for (const [dept, kws] of Object.entries(DEPT_KEYWORDS)) {
-    if (kws.some(k => text.includes(k))) {
-      document.getElementById('task-dept').value = dept;
-      updateCatSelect();
-      break;
+function importarDatos(evt) {
+  const archivo = evt.target.files[0];
+  if (!archivo) return;
+  const lector = new FileReader();
+  lector.onload = (e) => {
+    try {
+      const datos = JSON.parse(e.target.result);
+      if (!Array.isArray(datos.tareas)) throw new Error('Formato inválido');
+      if (!confirm('¿Importar datos? Esto reemplazará los datos actuales.')) return;
+      tareas    = datos.tareas    || [];
+      proyectos = datos.proyectos || [];
+      ideas     = datos.ideas     || [];
+      guardarEnStorage();
+      renderizarTodo();
+      mostrarToast('📥 Datos importados correctamente', 'success');
+    } catch (err) {
+      mostrarToast('Error: archivo JSON inválido', 'error');
     }
-  }
-  // Project detection
-  if (!editId) {
-    for (const p of projects) {
-      if (!p.keywords) continue;
-      const kws = p.keywords.split(',').map(k=>k.trim().toLowerCase()).filter(Boolean);
-      if (kws.some(k => k && text.includes(k))) {
-        document.getElementById('task-project').value = p.id;
-        document.getElementById('autodetect-text').textContent = `Proyecto: "${p.name}"`;
-        document.getElementById('autodetect-hint').classList.remove('hidden');
-        return;
-      }
-    }
-    document.getElementById('autodetect-hint').classList.add('hidden');
-  }
+  };
+  lector.readAsText(archivo);
+  evt.target.value = '';
 }
-document.getElementById('task-title').addEventListener('input', onTitleChange);
-document.getElementById('task-desc').addEventListener('input',  onTitleChange);
 
-// ══════════════════════════════════════════════════
-//  TASKS CRUD
-// ══════════════════════════════════════════════════
-function saveTask() {
-  const title  = document.getElementById('task-title').value.trim();
-  if (!title) { shakeEl('task-title'); return; }
-  const editId = document.getElementById('task-edit-id').value;
-  const status = document.getElementById('task-status').value;
-  const urgent = document.getElementById('task-urgent').checked;
-  const now    = Date.now();
-  const data   = {
-    title, status, urgent,
-    desc:     document.getElementById('task-desc').value.trim(),
-    dept:     document.getElementById('task-dept').value,
-    category: document.getElementById('task-category').value,
-    project:  document.getElementById('task-project').value,
-    priority: document.getElementById('task-priority').value,
-    deadline: document.getElementById('task-deadline').value,
-    updatedAt: now,
+// ══════════════════════════════════════════
+//  ACTUALIZAR DEADLINES (lógica urgente)
+// ══════════════════════════════════════════
+function actualizarDeadlines(idExcluir) {
+  let actualizadas = 0;
+  tareas.forEach(t => {
+    if (t.id === idExcluir) return;
+    if (t.estado !== 'pendiente') return;
+    if (t.urgente) return;
+    if (!t.deadline) return;
+    const fechaActual = new Date(t.deadline);
+    if (isNaN(fechaActual.getTime())) return;
+    const nuevaFecha = new Date(fechaActual.getTime() + DOS_DIAS_MS);
+    t.deadline = nuevaFecha.toISOString().slice(0, 16);
+    actualizadas++;
+  });
+  return actualizadas;
+}
+
+// ══════════════════════════════════════════
+//  TAREAS CRUD
+// ══════════════════════════════════════════
+function generarId() {
+  return 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+}
+
+function guardarTarea() {
+  const titulo = document.getElementById('mt-titulo-inp').value.trim();
+  if (!titulo) {
+    sacudirElemento('mt-titulo-inp');
+    mostrarToast('El título es obligatorio', 'warning');
+    return;
+  }
+
+  const idEditando = document.getElementById('mt-id').value;
+  const ahora = Date.now();
+  const urgente = document.getElementById('mt-urgente').checked;
+  const nuevoEstado = document.getElementById('mt-estado').value;
+
+  const datosTarea = {
+    titulo,
+    descripcion: document.getElementById('mt-desc').value.trim(),
+    dept:        document.getElementById('mt-dept').value,
+    categoria:   document.getElementById('mt-cat').value,
+    proyecto:    document.getElementById('mt-proyecto').value,
+    prioridad:   document.getElementById('mt-prio').value,
+    estado:      nuevoEstado,
+    deadline:    document.getElementById('mt-deadline').value,
+    urgente,
+    actualizadoEn: ahora,
   };
 
-  if (editId) {
-    const idx = tasks.findIndex(t => t.id === editId);
-    if (idx !== -1) {
-      const old = tasks[idx];
-      if (status === 'done' && old.status !== 'done') {
-        data.completedAt = now; data.createdAt = old.createdAt;
-        if (old.deadline && now < new Date(old.deadline).getTime()) { data.excellence = true; data.onTime = true; toast('🌟 ¡Completada ANTES del deadline!', 'success'); }
-        else { data.onTime = false; }
+  if (idEditando) {
+    // EDITAR tarea existente
+    const idx = tareas.findIndex(t => t.id === idEditando);
+    if (idx === -1) { mostrarToast('Tarea no encontrada', 'error'); return; }
+    const tareaAnterior = tareas[idx];
+    const estadoAnterior = tareaAnterior.estado;
+
+    // Completar tarea
+    if (nuevoEstado === 'finalizado' && estadoAnterior !== 'finalizado') {
+      datosTarea.completadoEn = ahora;
+      datosTarea.creadoEn     = tareaAnterior.creadoEn;
+      if (tareaAnterior.deadline) {
+        const tiempoDeadline = new Date(tareaAnterior.deadline).getTime();
+        datosTarea.aTiempo    = ahora <= tiempoDeadline;
+        datosTarea.excelente  = datosTarea.aTiempo;
+      } else {
+        datosTarea.aTiempo   = true;
+        datosTarea.excelente = false;
       }
-      if (status !== 'done' && old.status === 'done') {
-        data.completedAt = null; data.excellence = false; data.onTime = undefined;
-        toast('↩️ Tarea reabierta. Estadísticas limpias.', 'info');
-      }
-      tasks[idx] = { ...old, ...data };
+      if (datosTarea.excelente) mostrarToast('🌟 ¡Completada antes del deadline! Rendimiento Excelente', 'success');
+      else mostrarToast('✅ Tarea completada', 'success');
     }
-    toast('✏️ Tarea actualizada', 'info');
+
+    // LIMPIAR si retrocede de finalizado
+    if (nuevoEstado !== 'finalizado' && estadoAnterior === 'finalizado') {
+      datosTarea.completadoEn = null;
+      datosTarea.aTiempo      = undefined;
+      datosTarea.excelente    = false;
+      mostrarToast('↩️ Tarea reabierta — estadísticas limpias', 'info');
+    }
+
+    tareas[idx] = { ...tareaAnterior, ...datosTarea };
+    mostrarToast('✏️ Tarea actualizada', 'info');
   } else {
-    const newTask = { id: uid(), createdAt: now, ...data };
-    if (urgent && status === 'pending') {
-      const fp = tasks.findIndex(t => t.status === 'pending');
-      fp === -1 ? tasks.push(newTask) : tasks.splice(fp, 0, newTask);
-      applyUrgentDelay(newTask.id);
-    } else { tasks.push(newTask); }
-    if (status === 'done') { newTask.completedAt = now; newTask.onTime = !!newTask.deadline && now < new Date(newTask.deadline).getTime(); if(newTask.onTime) newTask.excellence = true; }
-    toast('✅ Tarea creada', 'success');
+    // CREAR nueva tarea
+    const nuevaTarea = {
+      id:        generarId(),
+      creadoEn:  ahora,
+      ...datosTarea,
+      completadoEn: nuevoEstado === 'finalizado' ? ahora : null,
+      excelente:    false,
+      aTiempo:      undefined,
+    };
+
+    if (nuevoEstado === 'finalizado' && nuevaTarea.deadline) {
+      const tDl = new Date(nuevaTarea.deadline).getTime();
+      nuevaTarea.aTiempo   = ahora <= tDl;
+      nuevaTarea.excelente = nuevaTarea.aTiempo;
+    }
+
+    if (urgente && nuevoEstado === 'pendiente') {
+      // Insertar al inicio de las pendientes
+      const primerPendiente = tareas.findIndex(t => t.estado === 'pendiente');
+      if (primerPendiente === -1) {
+        tareas.push(nuevaTarea);
+      } else {
+        tareas.splice(primerPendiente, 0, nuevaTarea);
+      }
+      // Retrasar otras tareas pendientes
+      const afectadas = actualizarDeadlines(nuevaTarea.id);
+      mostrarToast(`🚨 URGENTE añadida al inicio. ${afectadas > 0 ? afectadas + ' tareas retrasadas +2 días.' : ''}`, 'warning');
+    } else {
+      tareas.push(nuevaTarea);
+    }
+    mostrarToast('✅ Tarea creada correctamente', 'success');
   }
-  persist(); closeModal('modal-task'); renderAll();
+
+  guardarEnStorage();
+  cerrarModal('modal-tarea');
+  renderizarTodo();
 }
 
-function applyUrgentDelay(newId) {
-  const TWO = 2*24*60*60*1000;
-  tasks.forEach(t => {
-    if (t.id === newId || t.status !== 'pending' || t.urgent || !t.deadline) return;
-    t.deadline = new Date(new Date(t.deadline).getTime()+TWO).toISOString().slice(0,16);
-  });
-  toast('⚠️ URGENTE añadida. Otras tareas retrasadas +2 días.', 'warning');
+function editarTarea(id) {
+  const tarea = tareas.find(t => t.id === id);
+  if (!tarea) return;
+
+  rellenarSelectProyectos();
+  document.getElementById('mt-id').value          = id;
+  document.getElementById('mt-titulo-inp').value   = tarea.titulo;
+  document.getElementById('mt-desc').value          = tarea.descripcion || '';
+  document.getElementById('mt-urgente').checked     = tarea.urgente || false;
+  document.getElementById('mt-dept').value          = tarea.dept || 'rrhh';
+  actualizarCategorias();
+  document.getElementById('mt-cat').value           = tarea.categoria || '';
+  document.getElementById('mt-proyecto').value      = tarea.proyecto || '';
+  document.getElementById('mt-prio').value          = tarea.prioridad || 'media';
+  document.getElementById('mt-estado').value        = tarea.estado || 'pendiente';
+  document.getElementById('mt-deadline').value      = tarea.deadline || '';
+  document.getElementById('mt-titulo').textContent  = 'Editar Tarea';
+  document.getElementById('mt-btn').textContent     = 'Guardar Cambios';
+  document.getElementById('hint-autodetect').classList.add('hidden');
+
+  abrirModal('modal-tarea');
 }
 
-function editTask(id) {
-  const t = tasks.find(t=>t.id===id); if(!t) return;
-  populateProjSelect();
-  document.getElementById('task-edit-id').value  = id;
-  document.getElementById('task-title').value    = t.title;
-  document.getElementById('task-desc').value     = t.desc||'';
-  document.getElementById('task-dept').value     = t.dept||'rrhh'; updateCatSelect();
-  document.getElementById('task-category').value = t.category||'';
-  document.getElementById('task-project').value  = t.project||'';
-  document.getElementById('task-priority').value = t.priority||'medium';
-  document.getElementById('task-status').value   = t.status;
-  document.getElementById('task-deadline').value = t.deadline||'';
-  document.getElementById('task-urgent').checked = t.urgent||false;
-  document.getElementById('modal-task-title').textContent = 'Editar Tarea';
-  document.getElementById('task-save-btn').textContent    = 'Guardar Cambios';
-  openModal('modal-task');
+function eliminarTarea(id) {
+  if (!confirm('¿Eliminar esta tarea definitivamente?')) return;
+  tareas = tareas.filter(t => t.id !== id);
+  guardarEnStorage();
+  renderizarTodo();
+  mostrarToast('🗑️ Tarea eliminada', 'info');
 }
 
-function deleteTask(id) {
-  if (!confirm('¿Eliminar esta tarea?')) return;
-  tasks = tasks.filter(t=>t.id!==id);
-  persist(); renderAll(); toast('🗑️ Tarea eliminada','info');
-}
+function moverTarea(id, direccion) {
+  const ESTADOS = ['pendiente', 'proceso', 'finalizado'];
+  const tarea = tareas.find(t => t.id === id);
+  if (!tarea) return;
 
-function moveTask(id, dir) {
-  const cols=['pending','process','done'];
-  const t = tasks.find(t=>t.id===id); if(!t) return;
-  const ni = cols.indexOf(t.status)+dir;
-  if (ni<0||ni>=3) return;
-  const prev=t.status; t.status=cols[ni]; t.updatedAt=Date.now();
-  if (t.status==='done'&&prev!=='done') {
-    t.completedAt=Date.now();
-    if(t.deadline&&Date.now()<new Date(t.deadline).getTime()){t.excellence=true;t.onTime=true;toast('🌟 ¡Completada antes del deadline!','success');}
-    else t.onTime=false;
+  const idxActual = ESTADOS.indexOf(tarea.estado);
+  const nuevoIdx  = idxActual + direccion;
+  if (nuevoIdx < 0 || nuevoIdx >= ESTADOS.length) return;
+
+  const estadoAnterior = tarea.estado;
+  const nuevoEstado    = ESTADOS[nuevoIdx];
+  const ahora = Date.now();
+
+  tarea.estado      = nuevoEstado;
+  tarea.actualizadoEn = ahora;
+
+  // Mover a finalizado
+  if (nuevoEstado === 'finalizado' && estadoAnterior !== 'finalizado') {
+    tarea.completadoEn = ahora;
+    if (tarea.deadline) {
+      const tDl = new Date(tarea.deadline).getTime();
+      tarea.aTiempo   = ahora <= tDl;
+      tarea.excelente = tarea.aTiempo;
+    } else {
+      tarea.aTiempo   = true;
+      tarea.excelente = false;
+    }
+    if (tarea.excelente) mostrarToast('🌟 ¡Rendimiento Excelente! Completada antes del deadline', 'success');
+    else mostrarToast('✅ Tarea finalizada', 'success');
   }
-  if (t.status!=='done'&&prev==='done') { t.completedAt=null; t.excellence=false; t.onTime=undefined; toast('↩️ Reabierta. Estado limpiado.','info'); }
-  persist(); renderAll();
+
+  // Retroceder de finalizado — LIMPIAR datos
+  if (nuevoEstado !== 'finalizado' && estadoAnterior === 'finalizado') {
+    tarea.completadoEn = null;
+    tarea.aTiempo      = undefined;
+    tarea.excelente    = false;
+    mostrarToast('↩️ Tarea reabierta — estadísticas limpias', 'info');
+  }
+
+  guardarEnStorage();
+  renderizarTodo();
 }
 
-// ══════════════════════════════════════════════════
-//  PROJECTS CRUD
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
+//  PROYECTOS CRUD
+// ══════════════════════════════════════════
 function selColor(c) {
-  selColor._val = c;
-  document.querySelectorAll('.color-btn').forEach(b => { b.classList.toggle('ring-white', b.dataset.color===c); b.classList.toggle('ring-transparent', b.dataset.color!==c); });
-}
-selColor._val = '#0ea5e9';
-
-function saveProject() {
-  const name = document.getElementById('proj-name').value.trim();
-  if (!name) { shakeEl('proj-name'); return; }
-  const editId = document.getElementById('proj-edit-id').value;
-  const data   = { name, dept: document.getElementById('proj-dept').value, keywords: document.getElementById('proj-keywords').value.trim(), color: selColor._val };
-  if (editId) {
-    const idx = projects.findIndex(p=>p.id===editId);
-    if(idx!==-1) projects[idx]={...projects[idx],...data};
-    toast('✏️ Proyecto actualizado','info');
-  } else { projects.push({id:uid(),createdAt:Date.now(),...data}); toast('📁 Proyecto creado','success'); }
-  persist(); closeModal('modal-project'); renderAll(); renderFilters();
+  colorSeleccionado = c;
+  document.querySelectorAll('.cpick').forEach(btn => {
+    const es = btn.dataset.c === c;
+    btn.classList.toggle('ring-white',       es);
+    btn.classList.toggle('ring-transparent', !es);
+  });
 }
 
-function editProject(id) {
-  const p = projects.find(p=>p.id===id); if(!p) return;
-  document.getElementById('proj-edit-id').value  = id;
-  document.getElementById('proj-name').value     = p.name;
-  document.getElementById('proj-dept').value     = p.dept||'rrhh';
-  document.getElementById('proj-keywords').value = p.keywords||'';
-  selColor(p.color||'#0ea5e9');
-  document.getElementById('modal-proj-title').textContent = 'Editar Proyecto';
-  document.getElementById('proj-save-btn').textContent    = 'Guardar Cambios';
-  openModal('modal-project');
-}
+function guardarProyecto() {
+  const nombre = document.getElementById('mp-nombre').value.trim();
+  if (!nombre) { sacudirElemento('mp-nombre'); mostrarToast('El nombre es obligatorio', 'warning'); return; }
 
-function deleteProject(id) {
-  if(!confirm('¿Eliminar este proyecto?')) return;
-  projects=projects.filter(p=>p.id!==id);
-  tasks.forEach(t=>{if(t.project===id)t.project='';});
-  persist(); renderAll(); renderFilters(); toast('🗑️ Proyecto eliminado','info');
-}
+  const idEditando = document.getElementById('mp-id').value;
+  const datos = {
+    nombre,
+    dept:     document.getElementById('mp-dept').value,
+    keywords: document.getElementById('mp-keys').value.trim(),
+    color:    colorSeleccionado,
+  };
 
-// ══════════════════════════════════════════════════
-//  IDEAS CRUD
-// ══════════════════════════════════════════════════
-function addIdea() {
-  const title = document.getElementById('idea-title').value.trim();
-  const body  = document.getElementById('idea-body').value.trim();
-  if(!title&&!body){shakeEl('idea-title');return;}
-  ideas.unshift({id:uid(),title:title||'Sin título',body,tag:document.getElementById('idea-tag').value,createdAt:Date.now()});
-  persist(); document.getElementById('idea-title').value=''; document.getElementById('idea-body').value=''; renderIdeas(); toast('💡 Idea guardada','success');
-}
-function deleteIdea(id){ideas=ideas.filter(i=>i.id!==id);persist();renderIdeas();}
-function idea2Task(id) {
-  const idea=ideas.find(i=>i.id===id); if(!idea) return;
-  populateProjSelect();
-  document.getElementById('task-title').value=idea.title;
-  document.getElementById('task-desc').value=idea.body||'';
-  document.getElementById('modal-task-title').textContent='Convertir Idea en Tarea';
-  document.getElementById('task-save-btn').textContent='Crear Tarea';
-  openModal('modal-task');
-}
-
-// ══════════════════════════════════════════════════
-//  DRAG & DROP
-// ══════════════════════════════════════════════════
-function dragStart(e,id){dragId=id;setTimeout(()=>{const el=document.getElementById('c'+id);if(el)el.classList.add('dragging');},0);}
-function dragEnd(){if(dragId){const el=document.getElementById('c'+dragId);if(el)el.classList.remove('dragging');}dragId=null;}
-function dragOver(e,col){e.preventDefault();document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));document.getElementById('col-'+col).classList.add('drag-over');}
-function dragLeave(){document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));}
-function dropCard(e,col){
-  e.preventDefault(); document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));
-  if(!dragId) return;
-  const t=tasks.find(t=>t.id===dragId); if(!t||t.status===col) return;
-  const prev=t.status; t.status=col; t.updatedAt=Date.now();
-  if(col==='done'&&prev!=='done'){
-    t.completedAt=Date.now();
-    if(t.deadline&&Date.now()<new Date(t.deadline).getTime()){t.excellence=true;t.onTime=true;toast('🌟 ¡Completada antes del deadline!','success');}
-    else t.onTime=false;
+  if (idEditando) {
+    const idx = proyectos.findIndex(p => p.id === idEditando);
+    if (idx !== -1) proyectos[idx] = { ...proyectos[idx], ...datos };
+    mostrarToast('✏️ Proyecto actualizado', 'info');
+  } else {
+    proyectos.push({ id: generarId(), creadoEn: Date.now(), ...datos });
+    mostrarToast('📁 Proyecto creado', 'success');
   }
-  if(col!=='done'&&prev==='done'){t.completedAt=null;t.excellence=false;t.onTime=undefined;toast('↩️ Reabierta. Estado limpiado.','info');}
-  persist(); renderAll();
+
+  guardarEnStorage();
+  cerrarModal('modal-proyecto');
+  renderizarTodo();
 }
 
-// ══════════════════════════════════════════════════
-//  FILTERS
-// ══════════════════════════════════════════════════
-function setDeptFilter(d) {
-  deptFilter=d;
-  document.querySelectorAll('.df-btn').forEach(b=>{b.style.opacity=b.dataset.df===d?'1':'0.5';b.style.fontWeight=b.dataset.df===d?'800':'600';});
-  renderKanban();
-}
-function setProjFilter(id) {
-  projFilter=id;
-  document.querySelectorAll('.pf-btn').forEach(b=>{b.style.opacity=b.dataset.pf===id?'1':'0.5';b.style.fontWeight=b.dataset.pf===id?'800':'600';});
-  renderKanban();
-}
-function renderFilters() {
-  const el=document.getElementById('proj-filters'); if(!el) return;
-  el.innerHTML=projects.map(p=>`<button onclick="setProjFilter('${p.id}')" data-pf="${p.id}" class="pf-btn text-xs px-3 py-1 rounded-lg border font-bold transition-all" style="border-color:${p.color};color:${p.color};background:${p.color}1a">${esc(p.name)}</button>`).join('');
-  if(projFilter) { const b=document.querySelector(`[data-pf="${projFilter}"]`); if(b){b.style.opacity='1';b.style.fontWeight='800';} }
+function editarProyecto(id) {
+  const p = proyectos.find(p => p.id === id);
+  if (!p) return;
+  document.getElementById('mp-id').value     = id;
+  document.getElementById('mp-nombre').value = p.nombre;
+  document.getElementById('mp-dept').value   = p.dept || 'rrhh';
+  document.getElementById('mp-keys').value   = p.keywords || '';
+  selColor(p.color || '#0ea5e9');
+  document.getElementById('mp-titulo').textContent = 'Editar Proyecto';
+  document.getElementById('mp-btn').textContent    = 'Guardar Cambios';
+  abrirModal('modal-proyecto');
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER KANBAN
-// ══════════════════════════════════════════════════
-function renderKanban() {
-  let filtered = tasks;
-  if (deptFilter)  filtered = filtered.filter(t=>t.dept===deptFilter);
-  if (projFilter)  filtered = filtered.filter(t=>t.project===projFilter);
-  const sorted = [...filtered].sort((a,b)=>{
-    if(a.status==='pending'&&b.status==='pending'){if(a.urgent&&!b.urgent)return -1;if(!a.urgent&&b.urgent)return 1;}
+function eliminarProyecto(id) {
+  if (!confirm('¿Eliminar este proyecto? Las tareas asociadas perderán el proyecto.')) return;
+  proyectos = proyectos.filter(p => p.id !== id);
+  tareas.forEach(t => { if (t.proyecto === id) t.proyecto = ''; });
+  guardarEnStorage();
+  renderizarTodo();
+  mostrarToast('🗑️ Proyecto eliminado', 'info');
+}
+
+// ══════════════════════════════════════════
+//  IDEAS CRUD
+// ══════════════════════════════════════════
+function guardarIdea() {
+  const titulo = document.getElementById('idea-titulo').value.trim();
+  const cuerpo = document.getElementById('idea-cuerpo').value.trim();
+  if (!titulo && !cuerpo) { sacudirElemento('idea-titulo'); return; }
+
+  ideas.unshift({
+    id: generarId(),
+    titulo:  titulo || 'Sin título',
+    cuerpo,
+    tipo:    document.getElementById('idea-tipo').value,
+    creadoEn: Date.now(),
+  });
+
+  guardarEnStorage();
+  document.getElementById('idea-titulo').value = '';
+  document.getElementById('idea-cuerpo').value = '';
+  renderizarIdeas();
+  mostrarToast('💡 Idea guardada', 'success');
+}
+
+function eliminarIdea(id) {
+  ideas = ideas.filter(i => i.id !== id);
+  guardarEnStorage();
+  renderizarIdeas();
+}
+
+function ideaATarea(id) {
+  const idea = ideas.find(i => i.id === id);
+  if (!idea) return;
+  rellenarSelectProyectos();
+  document.getElementById('mt-titulo-inp').value  = idea.titulo;
+  document.getElementById('mt-desc').value         = idea.cuerpo || '';
+  document.getElementById('mt-titulo').textContent = 'Convertir Idea en Tarea';
+  document.getElementById('mt-btn').textContent    = 'Crear Tarea';
+  abrirModal('modal-tarea');
+}
+
+// ══════════════════════════════════════════
+//  DRAG & DROP
+// ══════════════════════════════════════════
+function onDragStart(evt, id) {
+  dragIdActual = id;
+  setTimeout(() => {
+    const el = document.getElementById('card-' + id);
+    if (el) el.classList.add('is-dragging');
+  }, 0);
+  evt.dataTransfer.effectAllowed = 'move';
+}
+
+function onDragEnd() {
+  if (dragIdActual) {
+    const el = document.getElementById('card-' + dragIdActual);
+    if (el) el.classList.remove('is-dragging');
+  }
+  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+  dragIdActual = null;
+}
+
+function onDragOver(evt, colId) {
+  evt.preventDefault();
+  evt.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+  const colEl = document.getElementById('col-' + colId);
+  if (colEl) colEl.classList.add('drag-over');
+}
+
+function onDragLeave(evt) {
+  const el = evt.currentTarget;
+  if (el) el.classList.remove('drag-over');
+}
+
+function onDrop(evt, nuevoEstado) {
+  evt.preventDefault();
+  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+
+  if (!dragIdActual) return;
+
+  const tarea = tareas.find(t => t.id === dragIdActual);
+  if (!tarea) { dragIdActual = null; return; }
+  if (tarea.estado === nuevoEstado) { dragIdActual = null; return; }
+
+  const estadoAnterior = tarea.estado;
+  const ahora = Date.now();
+  tarea.estado       = nuevoEstado;
+  tarea.actualizadoEn = ahora;
+
+  // Arrastrar a finalizado
+  if (nuevoEstado === 'finalizado' && estadoAnterior !== 'finalizado') {
+    tarea.completadoEn = ahora;
+    if (tarea.deadline) {
+      const tDl = new Date(tarea.deadline).getTime();
+      tarea.aTiempo   = ahora <= tDl;
+      tarea.excelente = tarea.aTiempo;
+    } else {
+      tarea.aTiempo   = true;
+      tarea.excelente = false;
+    }
+    if (tarea.excelente) mostrarToast('🌟 ¡Rendimiento Excelente!', 'success');
+    else mostrarToast('✅ Tarea finalizada', 'success');
+  }
+
+  // Arrastrar fuera de finalizado — LIMPIAR
+  if (nuevoEstado !== 'finalizado' && estadoAnterior === 'finalizado') {
+    tarea.completadoEn = null;
+    tarea.aTiempo      = undefined;
+    tarea.excelente    = false;
+    mostrarToast('↩️ Reabierta — estadísticas limpias', 'info');
+  }
+
+  dragIdActual = null;
+  guardarEnStorage();
+  renderizarTodo();
+}
+
+// ══════════════════════════════════════════
+//  RENDERIZAR TAREAS (función principal)
+// ══════════════════════════════════════════
+function renderizarTareas() {
+  // Filtrar
+  let visibles = [...tareas];
+  if (filtroDept) visibles = visibles.filter(t => t.dept === filtroDept);
+  if (filtroProy) visibles = visibles.filter(t => t.proyecto === filtroProy);
+
+  // Agrupar por estado
+  const grupos = { pendiente: [], proceso: [], finalizado: [] };
+  visibles.forEach(t => {
+    if (grupos[t.estado]) grupos[t.estado].push(t);
+  });
+
+  // Ordenar pendientes: urgentes primero
+  grupos.pendiente.sort((a, b) => {
+    if (a.urgente && !b.urgente) return -1;
+    if (!a.urgente && b.urgente) return 1;
     return 0;
   });
-  const cols={pending:[],process:[],done:[]};
-  sorted.forEach(t=>{if(cols[t.status])cols[t.status].push(t);});
-  ['pending','process','done'].forEach(col=>{
-    document.getElementById('cnt-'+col).textContent=cols[col].length;
-    const el=document.getElementById('col-'+col);
-    el.innerHTML=cols[col].length ? cols[col].map(buildCard).join('') : `<div class="border-2 border-dashed border-slate-800/60 rounded-xl p-6 text-center text-xs text-slate-700">Sin tareas</div>`;
+
+  // Actualizar contadores
+  document.getElementById('cnt-pendiente').textContent  = grupos.pendiente.length;
+  document.getElementById('cnt-proceso').textContent    = grupos.proceso.length;
+  document.getElementById('cnt-finalizado').textContent = grupos.finalizado.length;
+
+  // Renderizar columnas
+  ['pendiente', 'proceso', 'finalizado'].forEach(estado => {
+    const col = document.getElementById('col-' + estado);
+    if (!col) return;
+    const lista = grupos[estado];
+    if (!lista.length) {
+      col.innerHTML = `<div class="border-2 border-dashed border-slate-800/60 rounded-xl p-6 text-center text-xs text-slate-700">Sin tareas</div>`;
+      return;
+    }
+    col.innerHTML = lista.map(t => construirCard(t, estado)).join('');
   });
 }
 
-function buildCard(t) {
-  const now  = Date.now();
-  const dl   = t.deadline ? new Date(t.deadline).getTime() : null;
-  const diff = dl ? dl-now : null;
-  const isOD = diff!==null&&diff<0&&t.status!=='done';
-  const isCR = diff!==null&&diff>=0&&diff<3600000&&t.status!=='done';
-  const isWN = diff!==null&&diff>=3600000&&diff<86400000&&t.status!=='done';
-  const dm   = DEPT_META[t.dept||'rrhh'];
-  const proj = t.project ? projects.find(p=>p.id===t.project) : null;
-  const prioC = {low:'bg-emerald-500/15 text-emerald-400',medium:'bg-yellow-500/15 text-yellow-400',high:'bg-red-500/15 text-red-400'};
-  const cols  = ['pending','process','done'];
-  const ci    = cols.indexOf(t.status);
-  const dlC   = isOD?'text-red-400':isCR?'text-orange-400':isWN?'text-yellow-400':'text-slate-500';
-  const border = t.urgent&&t.status!=='done' ? 'border-red-500/50' : isOD ? 'border-red-400/30' : isCR ? 'border-orange-400/30' : isWN ? 'border-yellow-500/25' : 'border-slate-700/50';
+function construirCard(t, estado) {
+  const ahora = Date.now();
+  const dl    = t.deadline ? new Date(t.deadline).getTime() : null;
+  const diff  = dl ? dl - ahora : null;
+  const vencida  = diff !== null && diff < 0 && estado !== 'finalizado';
+  const critica  = diff !== null && diff >= 0 && diff < 3600000 && estado !== 'finalizado';
+  const aviso    = diff !== null && diff >= 3600000 && diff < 86400000 && estado !== 'finalizado';
 
-  return `<div id="c${t.id}" class="task-card bg-slate-800/70 border ${border} rounded-xl fade-in ${dm.cls} ${t.urgent&&t.status!=='done'?'urgent-ring':''}"
-    draggable="true" ondragstart="dragStart(event,'${t.id}')" ondragend="dragEnd()">
-    ${proj ? `<div class="h-0.5 rounded-t-xl -mx-0 -mt-0" style="background:${proj.color}"></div>` : ''}
+  const dm       = DEPT_META[t.dept] || DEPT_META.it;
+  const proy     = t.proyecto ? proyectos.find(p => p.id === t.proyecto) : null;
+  const COLS     = ['pendiente', 'proceso', 'finalizado'];
+  const idxCol   = COLS.indexOf(estado);
+
+  const prioBadge = { baja: 'bg-emerald-500/15 text-emerald-400', media: 'bg-yellow-500/15 text-yellow-400', alta: 'bg-red-500/15 text-red-400' };
+  const prioFlecha = { baja: '↓', media: '=', alta: '↑' };
+  const colorDl  = vencida ? 'text-red-400' : critica ? 'text-orange-400' : aviso ? 'text-yellow-400' : 'text-slate-500';
+  const borderCard = t.urgente && estado !== 'finalizado' ? 'border-red-500/50' : vencida ? 'border-red-400/25' : critica ? 'border-orange-400/25' : aviso ? 'border-yellow-500/20' : 'border-slate-700/50';
+  const anillo     = t.urgente && estado !== 'finalizado' ? 'urg-pulse' : '';
+
+  return `
+  <div id="card-${t.id}"
+    class="task-card bg-slate-800/70 border ${borderCard} rounded-xl ${anillo} fade-up ${dm.cls}"
+    draggable="true"
+    ondragstart="onDragStart(event,'${t.id}')"
+    ondragend="onDragEnd()">
+
+    ${proy ? `<div class="h-0.5 rounded-t-xl" style="background:${proy.color}"></div>` : ''}
+
     <div class="p-3.5">
-      <!-- Header -->
+      <!-- Fila superior -->
       <div class="flex items-start gap-2 mb-2.5">
-        ${t.urgent?'<span class="shrink-0 text-xs bg-red-500 text-white font-bold px-1.5 py-0.5 rounded-md mt-0.5 pulse-fast">🚨</span>':''}
-        <p class="text-sm font-semibold text-slate-200 flex-1 leading-snug cursor-pointer hover:text-white transition-colors" onclick="editTask('${t.id}')">${esc(t.title)}</p>
-        <span class="shrink-0 text-xs px-1.5 py-0.5 rounded-md font-bold ${prioC[t.priority]||prioC.medium}">${{low:'↓',medium:'=',high:'↑'}[t.priority]||'='}</span>
+        ${t.urgente ? '<span class="shrink-0 text-xs bg-red-500 text-white font-bold px-1.5 py-0.5 rounded-md mt-0.5">🚨</span>' : ''}
+        <p class="text-sm font-semibold text-slate-200 flex-1 leading-snug cursor-pointer hover:text-white transition-colors" onclick="editarTarea('${t.id}')">${escaparHtml(t.titulo)}</p>
+        <span class="shrink-0 text-xs px-1.5 py-0.5 rounded-md font-bold ${prioBadge[t.prioridad] || prioBadge.media}">${prioFlecha[t.prioridad] || '='}</span>
       </div>
+
       <!-- Badges -->
       <div class="flex flex-wrap gap-1.5 mb-2.5">
-        <span class="text-xs dept-badge px-2 py-0.5 rounded-md font-bold">${dm.emoji} ${dm.label}</span>
-        <span class="text-xs bg-slate-700/60 text-slate-400 px-2 py-0.5 rounded-md">${esc(t.category||'')}</span>
-        ${proj?`<span class="text-xs font-bold px-2 py-0.5 rounded-md" style="background:${proj.color}22;color:${proj.color}">${esc(proj.name)}</span>`:''}
-        ${t.excellence?'<span class="text-xs bg-yellow-500/15 text-yellow-400 px-2 py-0.5 rounded-md">🌟 Excelente</span>':''}
-        ${t.status==='done'&&t.onTime===false?'<span class="text-xs bg-red-500/15 text-red-400 px-2 py-0.5 rounded-md">⏰ Tarde</span>':''}
+        <span class="text-xs dept-tag px-2 py-0.5 rounded-md font-bold">${dm.emoji} ${dm.label}</span>
+        ${t.categoria ? `<span class="text-xs bg-slate-700/60 text-slate-400 px-2 py-0.5 rounded-md">${escaparHtml(t.categoria)}</span>` : ''}
+        ${proy ? `<span class="text-xs font-bold px-2 py-0.5 rounded-md" style="background:${proy.color}22;color:${proy.color}">${escaparHtml(proy.nombre)}</span>` : ''}
+        ${t.excelente ? '<span class="text-xs bg-yellow-500/15 text-yellow-400 px-2 py-0.5 rounded-md">🌟 Excelente</span>' : ''}
+        ${estado === 'finalizado' && t.aTiempo === false ? '<span class="text-xs bg-red-500/15 text-red-400 px-2 py-0.5 rounded-md">⏰ Tarde</span>' : ''}
       </div>
+
       <!-- Deadline -->
-      ${dl?`<div class="flex items-center gap-1.5 text-xs font-mono ${dlC} mb-2.5">
+      ${dl ? `<div class="flex items-center gap-1.5 text-xs mono ${colorDl} mb-2.5">
         <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span>${t.status!=='done'?timeRem(t.deadline):'✓ '+fmtDate(t.deadline)}</span>
-      </div>`:''}
-      <!-- Expandable desc -->
-      ${t.desc?`<div>
-        <button onclick="toggleNotes('${t.id}')" class="flex items-center gap-1 text-xs text-slate-600 hover:text-slate-400 transition-colors mb-1.5">
+        <span>${estado !== 'finalizado' ? calcularTiempoRestante(t.deadline) : '✓ ' + formatearFecha(t.deadline)}</span>
+      </div>` : ''}
+
+      <!-- Descripción expandible -->
+      ${t.descripcion ? `
+      <div class="mb-2.5">
+        <button onclick="toggleNotas('${t.id}')" class="flex items-center gap-1 text-xs text-slate-600 hover:text-slate-400 transition-colors">
           <svg id="arr-${t.id}" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
           Ver notas
         </button>
-        <div id="notes-${t.id}" class="notes-area">
-          <div class="text-xs text-slate-500 bg-slate-900/70 rounded-lg p-2.5 leading-relaxed whitespace-pre-wrap">${esc(t.desc)}</div>
+        <div id="notas-${t.id}" class="notes-body mt-1.5">
+          <div class="text-xs text-slate-500 bg-slate-900/70 rounded-lg p-2.5 leading-relaxed whitespace-pre-wrap">${escaparHtml(t.descripcion)}</div>
         </div>
-      </div>`:''}
-      <!-- Actions -->
-      <div class="flex items-center gap-1 pt-2.5 border-t border-slate-700/40 mt-1">
-        <button onclick="moveTask('${t.id}',-1)" class="p-1 rounded text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${ci===0?'opacity-20 pointer-events-none':''}" title="Mover atrás"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <button onclick="moveTask('${t.id}',1)"  class="p-1 rounded text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${ci===2?'opacity-20 pointer-events-none':''}" title="Mover adelante"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>` : ''}
+
+      <!-- Acciones -->
+      <div class="flex items-center gap-1 pt-2.5 border-t border-slate-700/40">
+        <button onclick="moverTarea('${t.id}',-1)" title="Mover atrás"
+          class="p-1 rounded-lg text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${idxCol === 0 ? 'opacity-20 pointer-events-none' : ''}">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button onclick="moverTarea('${t.id}',1)" title="Mover adelante"
+          class="p-1 rounded-lg text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${idxCol === 2 ? 'opacity-20 pointer-events-none' : ''}">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
         <div class="flex-1"></div>
-        <button onclick="editTask('${t.id}')" class="p-1 rounded text-slate-600 hover:text-sky-400 hover:bg-slate-700 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-        <button onclick="deleteTask('${t.id}')" class="p-1 rounded text-slate-600 hover:text-red-400 hover:bg-slate-700 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        <button onclick="editarTarea('${t.id}')" title="Editar" class="p-1 rounded-lg text-slate-600 hover:text-sky-400 hover:bg-slate-700 transition-all">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button onclick="eliminarTarea('${t.id}')" title="Eliminar" class="p-1 rounded-lg text-slate-600 hover:text-red-400 hover:bg-slate-700 transition-all">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
       </div>
     </div>
   </div>`;
 }
 
-function toggleNotes(id) {
-  const n=document.getElementById('notes-'+id);
-  const a=document.getElementById('arr-'+id);
-  if(!n) return;
-  n.classList.toggle('open');
-  if(a) a.style.transform=n.classList.contains('open')?'rotate(180deg)':'';
+function toggleNotas(id) {
+  const notas = document.getElementById('notas-' + id);
+  const arr   = document.getElementById('arr-' + id);
+  if (!notas) return;
+  const abierto = notas.classList.toggle('open');
+  if (arr) arr.style.transform = abierto ? 'rotate(180deg)' : '';
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER PROJECTS
-// ══════════════════════════════════════════════════
-function renderProjects() {
-  const el=document.getElementById('projects-list');
-  if(!projects.length){
-    el.innerHTML=`<div class="col-span-2 border-2 border-dashed border-slate-800 rounded-2xl p-14 text-center"><p class="text-slate-500">No hay proyectos. Crea uno para organizar tus tareas.</p><button onclick="openModal('modal-project')" class="mt-4 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-4 py-2 rounded-xl">+ Crear Proyecto</button></div>`;
+// ══════════════════════════════════════════
+//  RENDERIZAR PROYECTOS
+// ══════════════════════════════════════════
+function renderizarProyectos() {
+  const lista = document.getElementById('lista-proyectos');
+  if (!lista) return;
+
+  if (!proyectos.length) {
+    lista.innerHTML = `<div class="col-span-2 border-2 border-dashed border-slate-800 rounded-2xl p-14 text-center">
+      <p class="text-slate-500 mb-3">No hay proyectos aún.</p>
+      <button onclick="abrirModalProyecto()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all">+ Crear Proyecto</button>
+    </div>`;
     return;
   }
-  el.innerHTML=projects.map(p=>{
-    const dm=DEPT_META[p.dept||'rrhh'];
-    const pt=tasks.filter(t=>t.project===p.id);
-    const pend=pt.filter(t=>t.status==='pending').length;
-    const proc=pt.filter(t=>t.status==='process').length;
-    const done=pt.filter(t=>t.status==='done').length;
-    const pct=pt.length?Math.round((done/pt.length)*100):0;
-    const ot=pt.filter(t=>t.onTime===true).length;
-    const lt=pt.filter(t=>t.onTime===false&&t.status==='done').length;
-    const hp=(ot+lt)>0?Math.round((ot/(ot+lt))*100):0;
-    const excl=pt.filter(t=>t.excellence).length;
-    const urg=pt.filter(t=>t.urgent&&t.status!=='done').length;
-    const badge=pct===100?'<span class="text-xs bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full font-bold">✓ Completado</span>':pct>50?'<span class="text-xs bg-sky-500/15 text-sky-400 px-2 py-0.5 rounded-full font-bold">En progreso</span>':'<span class="text-xs bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full font-bold">Iniciado</span>';
-    return `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all fade-in">
+
+  lista.innerHTML = proyectos.map(p => {
+    const tareasProy = tareas.filter(t => t.proyecto === p.id);
+    const pend = tareasProy.filter(t => t.estado === 'pendiente').length;
+    const proc = tareasProy.filter(t => t.estado === 'proceso').length;
+    const done = tareasProy.filter(t => t.estado === 'finalizado').length;
+    const total = tareasProy.length;
+    const pct   = total ? Math.round((done / total) * 100) : 0;
+    const ot  = tareasProy.filter(t => t.aTiempo === true).length;
+    const lt  = tareasProy.filter(t => t.aTiempo === false && t.estado === 'finalizado').length;
+    const hp  = (ot + lt) > 0 ? Math.round((ot / (ot + lt)) * 100) : 0;
+    const urg = tareasProy.filter(t => t.urgente && t.estado !== 'finalizado').length;
+    const dm  = DEPT_META[p.dept] || DEPT_META.it;
+
+    const badgeEstado = pct === 100
+      ? '<span class="text-xs bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full font-bold">✓ Completado</span>'
+      : pct > 50
+      ? '<span class="text-xs bg-sky-500/15 text-sky-400 px-2 py-0.5 rounded-full font-bold">En progreso</span>'
+      : '<span class="text-xs bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full font-bold">Iniciado</span>';
+
+    return `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-all fade-up">
       <div class="flex items-start justify-between mb-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:${p.color}20"><div class="w-4 h-4 rounded-full" style="background:${p.color}"></div></div>
-          <div><h4 class="font-display font-bold text-white text-sm">${esc(p.name)}</h4><span class="text-xs ${dm.cls} dept-badge px-2 py-0.5 rounded-md font-bold">${dm.emoji} ${dm.label}</span></div>
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:${p.color}20">
+            <div class="w-4 h-4 rounded-full" style="background:${p.color}"></div>
+          </div>
+          <div>
+            <h4 class="font-bold text-white text-sm">${escaparHtml(p.nombre)}</h4>
+            <span class="text-xs ${dm.cls} dept-tag px-2 py-0.5 rounded-md font-bold">${dm.emoji} ${dm.label}</span>
+          </div>
         </div>
-        <div class="flex items-center gap-2">${badge}${urg>0?`<span class="text-xs bg-red-500/15 text-red-400 px-2 py-0.5 rounded-full font-bold pulse-fast">🚨${urg}</span>`:''}
-          <button onclick="editProject('${p.id}')" class="p-1.5 rounded-lg text-slate-600 hover:text-sky-400 hover:bg-slate-800 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-          <button onclick="deleteProject('${p.id}')" class="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-slate-800 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        <div class="flex items-center gap-2">
+          ${badgeEstado}
+          ${urg > 0 ? `<span class="text-xs bg-red-500/15 text-red-400 px-2 py-0.5 rounded-full font-bold">🚨${urg}</span>` : ''}
+          <button onclick="editarProyecto('${p.id}')" class="p-1.5 rounded-lg text-slate-600 hover:text-sky-400 hover:bg-slate-800 transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button onclick="eliminarProyecto('${p.id}')" class="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-slate-800 transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
         </div>
       </div>
-      <!-- Progress -->
+
+      <!-- Barra de progreso principal -->
       <div class="mb-4">
-        <div class="flex justify-between mb-1.5"><span class="text-xs text-slate-500 font-mono">PROGRESO</span><span class="text-sm font-bold font-mono" style="color:${p.color}">${pct}%</span></div>
-        <div class="h-3 bg-slate-800 rounded-full overflow-hidden"><div class="progress-bar h-full rounded-full" style="width:${pct}%;background:${p.color}"></div></div>
-        <div class="flex justify-between mt-1 text-xs text-slate-600"><span>${done}/${pt.length} tareas</span>${pct===100?'<span class="text-emerald-400 font-bold">🎉 ¡Completado!</span>':''}</div>
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-xs text-slate-500 mono">PROGRESO</span>
+          <span class="text-sm font-bold mono dept-pct ${dm.cls}">${pct}%</span>
+        </div>
+        <div class="h-3 bg-slate-800 rounded-full overflow-hidden">
+          <div class="prog-bar h-full rounded-full dept-fill ${dm.cls}" style="width:${pct}%"></div>
+        </div>
+        <div class="flex justify-between mt-1 text-xs text-slate-600">
+          <span>${done} de ${total} tareas</span>
+          ${pct === 100 ? '<span class="text-emerald-400 font-bold">🎉 ¡Completado!</span>' : ''}
+        </div>
       </div>
+
+      <!-- Mini stats -->
       <div class="grid grid-cols-3 gap-2 mb-3">
         <div class="bg-slate-800/50 rounded-lg p-2 text-center"><p class="text-xs text-slate-500">Pendiente</p><p class="font-bold text-slate-300">${pend}</p></div>
         <div class="bg-slate-800/50 rounded-lg p-2 text-center"><p class="text-xs text-slate-500">Proceso</p><p class="font-bold text-sky-400">${proc}</p></div>
         <div class="bg-slate-800/50 rounded-lg p-2 text-center"><p class="text-xs text-slate-500">Fin.</p><p class="font-bold text-emerald-400">${done}</p></div>
       </div>
-      ${(ot+lt)>0?`<div class="border-t border-slate-800 pt-3">
-        <div class="flex justify-between mb-1"><span class="text-xs font-mono text-slate-500">SALUD ENTREGA</span><span class="text-xs font-mono font-bold ${hp>=80?'text-emerald-400':hp>=50?'text-yellow-400':'text-red-400'}">${hp}%</span></div>
-        <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden"><div class="progress-bar h-full rounded-full ${hp>=80?'bg-emerald-500':hp>=50?'bg-yellow-500':'bg-red-500'}" style="width:${hp}%"></div></div>
-        <div class="flex gap-3 mt-1.5 text-xs"><span class="text-emerald-400">✓${ot}</span><span class="text-red-400">✗${lt}</span>${excl>0?`<span class="text-yellow-400">🌟${excl}</span>`:''}</div>
-      </div>`:`<div class="border-t border-slate-800 pt-3 text-xs text-slate-700">Sin tareas con deadline completadas</div>`}
-      ${p.keywords?`<div class="mt-2 text-xs text-slate-700">🔑 ${esc(p.keywords)}</div>`:''}
+
+      <!-- Salud de entregas -->
+      ${(ot + lt) > 0 ? `
+      <div class="border-t border-slate-800 pt-3">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-xs mono text-slate-500">SALUD ENTREGAS</span>
+          <span class="text-xs mono font-bold ${hp >= 80 ? 'text-emerald-400' : hp >= 50 ? 'text-yellow-400' : 'text-red-400'}">${hp}%</span>
+        </div>
+        <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+          <div class="prog-bar h-full rounded-full ${hp >= 80 ? 'bg-emerald-500' : hp >= 50 ? 'bg-yellow-500' : 'bg-red-500'}" style="width:${hp}%"></div>
+        </div>
+        <div class="flex gap-3 mt-1.5 text-xs">
+          <span class="text-emerald-400">✓ ${ot} a tiempo</span>
+          <span class="text-red-400">✗ ${lt} tarde</span>
+        </div>
+      </div>` : `<div class="border-t border-slate-800 pt-3 text-xs text-slate-700">Sin tareas con deadline completadas</div>`}
+
+      ${p.keywords ? `<div class="mt-2 text-xs text-slate-700">🔑 ${escaparHtml(p.keywords)}</div>` : ''}
     </div>`;
   }).join('');
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER IDEAS
-// ══════════════════════════════════════════════════
-function renderIdeas() {
-  const el=document.getElementById('ideas-list');
-  const tc={idea:'#0ea5e9',reunion:'#8b5cf6',nota:'#10b981',tarea:'#f59e0b'};
-  const te={idea:'💡',reunion:'📋',nota:'📝',tarea:'✅'};
-  if(!ideas.length){el.innerHTML='<div class="border-2 border-dashed border-slate-800 rounded-2xl p-10 text-center text-slate-700">Sin ideas aún.</div>';return;}
-  el.innerHTML=ideas.map(i=>`
-  <div class="bg-slate-900 border border-l-4 border-slate-800 rounded-xl p-4 group fade-in" style="border-left-color:${tc[i.tag]||'#0ea5e9'}">
-    <div class="flex items-start justify-between gap-2">
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 mb-1.5"><span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">${te[i.tag]||'💡'} ${i.tag}</span><span class="text-xs text-slate-600 font-mono">${fmtDateShort(i.createdAt)}</span></div>
-        <p class="text-sm font-semibold text-slate-200 mb-1">${esc(i.title)}</p>
-        ${i.body?`<p class="text-xs text-slate-500 leading-relaxed">${esc(i.body)}</p>`:''}
+// ══════════════════════════════════════════
+//  RENDERIZAR IDEAS
+// ══════════════════════════════════════════
+function renderizarIdeas() {
+  const lista = document.getElementById('lista-ideas');
+  if (!lista) return;
+
+  const coloresTipo = { idea: '#0ea5e9', reunion: '#8b5cf6', nota: '#10b981', futura: '#f59e0b' };
+  const emojisTipo  = { idea: '💡', reunion: '📋', nota: '📝', futura: '✅' };
+
+  if (!ideas.length) {
+    lista.innerHTML = '<div class="border-2 border-dashed border-slate-800 rounded-2xl p-10 text-center text-slate-700">Sin ideas aún.</div>';
+    return;
+  }
+
+  lista.innerHTML = ideas.map(i => `
+    <div class="bg-slate-900 border border-slate-800 border-l-4 rounded-xl p-4 group fade-up" style="border-left-color:${coloresTipo[i.tipo] || '#0ea5e9'}">
+      <div class="flex items-start justify-between gap-2">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">${emojisTipo[i.tipo] || '💡'} ${i.tipo}</span>
+            <span class="text-xs text-slate-600 mono">${formatearFechaCorta(i.creadoEn)}</span>
+          </div>
+          <p class="text-sm font-semibold text-slate-200 mb-1">${escaparHtml(i.titulo)}</p>
+          ${i.cuerpo ? `<p class="text-xs text-slate-500 leading-relaxed">${escaparHtml(i.cuerpo)}</p>` : ''}
+        </div>
+        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+          <button onclick="ideaATarea('${i.id}')" title="Convertir en tarea"
+            class="p-1.5 rounded-lg bg-slate-800 hover:bg-sky-500/20 text-slate-500 hover:text-sky-400 transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          </button>
+          <button onclick="eliminarIdea('${i.id}')" title="Eliminar"
+            class="p-1.5 rounded-lg bg-slate-800 hover:bg-red-500/20 text-slate-500 hover:text-red-400 transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        </div>
       </div>
-      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-        <button onclick="idea2Task('${i.id}')" title="→ Tarea" class="p-1.5 rounded-lg bg-slate-800 hover:bg-sky-500/20 text-slate-500 hover:text-sky-400 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button>
-        <button onclick="deleteIdea('${i.id}')" title="Eliminar" class="p-1.5 rounded-lg bg-slate-800 hover:bg-red-500/20 text-slate-500 hover:text-red-400 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
-      </div>
-    </div>
-  </div>`).join('');
+    </div>`).join('');
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER STATS
-// ══════════════════════════════════════════════════
-function renderStats() {
-  const total=tasks.length, done=tasks.filter(t=>t.status==='done').length;
-  const ot=tasks.filter(t=>t.onTime===true).length, lt=tasks.filter(t=>t.onTime===false&&t.status==='done').length;
-  const excl=tasks.filter(t=>t.excellence).length, urg=tasks.filter(t=>t.urgent&&t.status!=='done').length;
-  const hp=(ot+lt)>0?Math.round((ot/(ot+lt))*100):0;
-  document.getElementById('st-total').textContent=total;
-  document.getElementById('st-done').textContent=done;
-  document.getElementById('st-ontime').textContent=ot;
-  document.getElementById('st-excel').textContent=excl;
-  document.getElementById('st-urgent').textContent=urg;
+// ══════════════════════════════════════════
+//  RENDERIZAR STATS
+// ══════════════════════════════════════════
+function renderizarStats() {
+  const total  = tareas.length;
+  const done   = tareas.filter(t => t.estado === 'finalizado').length;
+  const ot     = tareas.filter(t => t.aTiempo === true).length;
+  const tard   = tareas.filter(t => t.aTiempo === false && t.estado === 'finalizado').length;
+  const excel  = tareas.filter(t => t.excelente).length;
+  const urg    = tareas.filter(t => t.urgente && t.estado !== 'finalizado').length;
+  const hp     = (ot + tard) > 0 ? Math.round((ot / (ot + tard)) * 100) : 0;
 
-  // Dept stats
-  const dEl=document.getElementById('dept-stats');
-  dEl.innerHTML=Object.entries(DEPT_META).map(([key,dm])=>{
-    const dt=tasks.filter(t=>t.dept===key);
-    const dd=dt.filter(t=>t.status==='done').length;
-    const dp=dt.length?Math.round((dd/dt.length)*100):0;
-    return `<div class="bg-slate-900 border border-slate-800 rounded-xl p-3 ${dm.cls}">
-      <p class="text-xs font-bold dept-badge px-2 py-0.5 rounded-md w-fit mb-2">${dm.emoji} ${dm.label}</p>
-      <div class="flex justify-between mb-1"><span class="text-xs text-slate-500">${dd}/${dt.length}</span><span class="text-xs font-mono font-bold dept-pct">${dp}%</span></div>
-      <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden"><div class="progress-bar h-full dept-bar rounded-full" style="width:${dp}%"></div></div>
-    </div>`;
-  }).join('');
+  document.getElementById('st-total').textContent    = total;
+  document.getElementById('st-done').textContent     = done;
+  document.getElementById('st-atiempo').textContent  = ot;
+  document.getElementById('st-excel').textContent    = excel;
+  document.getElementById('st-urg').textContent      = urg;
 
-  // Project stats
-  const spEl=document.getElementById('stats-projects');
-  if(!projects.length){spEl.innerHTML='';return;}
-  spEl.innerHTML='<h3 class="font-display font-bold text-white mb-3">Proyectos</h3>'+projects.map(p=>{
-    const pt=tasks.filter(t=>t.project===p.id);
-    const pd=pt.filter(t=>t.status==='done').length;
-    const pp=pt.length?Math.round((pd/pt.length)*100):0;
-    const po=pt.filter(t=>t.onTime===true).length,pl=pt.filter(t=>t.onTime===false&&t.status==='done').length;
-    const ph=(po+pl)>0?Math.round((po/(po+pl))*100):0;
-    return `<div class="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-3">
-      <div class="flex items-center justify-between mb-2"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background:${p.color}"></div><span class="text-sm font-semibold text-slate-200">${esc(p.name)}</span></div><span class="text-xs font-mono font-bold" style="color:${p.color}">${pd}/${pt.length} · ${pp}%</span></div>
-      <div class="h-2.5 bg-slate-800 rounded-full overflow-hidden mb-2"><div class="progress-bar h-full rounded-full" style="width:${pp}%;background:${p.color}"></div></div>
-      ${(po+pl)>0?`<div class="flex gap-3 text-xs"><span class="text-emerald-400">✓${po} a tiempo</span><span class="text-red-400">✗${pl} tarde</span><span class="text-slate-500">Salud:${ph}%</span></div>`:''}
-    </div>`;
-  }).join('');
+  const sbEl  = document.getElementById('st-salud-barra');
+  const spEl  = document.getElementById('st-salud-pct');
+  const sbdEl = document.getElementById('st-salud-badge');
+  if (sbEl) sbEl.style.width = hp + '%';
+  if (spEl) spEl.textContent = hp + '%';
+  if (sbdEl) {
+    if      (hp >= 90) { sbdEl.textContent = '🌟 Excelente'; sbdEl.className = 'text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 shrink-0'; }
+    else if (hp >= 70) { sbdEl.textContent = '👍 Bueno';    sbdEl.className = 'text-xs font-bold px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-400 shrink-0'; }
+    else if (hp >= 50) { sbdEl.textContent = '⚠️ Regular'; sbdEl.className = 'text-xs font-bold px-2.5 py-1 rounded-lg bg-yellow-500/15 text-yellow-400 shrink-0'; }
+    else if (hp >  0)  { sbdEl.textContent = '❌ Mejorar'; sbdEl.className = 'text-xs font-bold px-2.5 py-1 rounded-lg bg-red-500/15 text-red-400 shrink-0'; }
+    else               { sbdEl.textContent = '– Sin datos'; sbdEl.className = 'text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 shrink-0'; }
+  }
+
+  // Por departamento
+  const sdEl = document.getElementById('stats-dept');
+  if (sdEl) {
+    sdEl.innerHTML = Object.entries(DEPT_META).map(([key, dm]) => {
+      const dt   = tareas.filter(t => t.dept === key);
+      const dd   = dt.filter(t => t.estado === 'finalizado').length;
+      const dpct = dt.length ? Math.round((dd / dt.length) * 100) : 0;
+      return `<div class="bg-slate-900 border border-slate-800 rounded-xl p-3 ${dm.cls}">
+        <p class="text-xs font-bold dept-tag px-2 py-0.5 rounded-md w-fit mb-2">${dm.emoji} ${dm.label}</p>
+        <div class="flex justify-between mb-1"><span class="text-xs text-slate-500">${dd}/${dt.length}</span><span class="text-xs mono font-bold dept-pct">${dpct}%</span></div>
+        <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden"><div class="prog-bar h-full dept-fill rounded-full" style="width:${dpct}%"></div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // Por proyecto
+  const spPEl = document.getElementById('stats-proyectos');
+  if (spPEl) {
+    if (!proyectos.length) { spPEl.innerHTML = ''; return; }
+    spPEl.innerHTML = '<h3 class="font-bold text-white mb-3">Proyectos</h3>' +
+      proyectos.map(p => {
+        const pt   = tareas.filter(t => t.proyecto === p.id);
+        const pd   = pt.filter(t => t.estado === 'finalizado').length;
+        const pp   = pt.length ? Math.round((pd / pt.length) * 100) : 0;
+        const pot  = pt.filter(t => t.aTiempo === true).length;
+        const plt  = pt.filter(t => t.aTiempo === false && t.estado === 'finalizado').length;
+        const pph  = (pot + plt) > 0 ? Math.round((pot / (pot + plt)) * 100) : 0;
+        return `<div class="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-3">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full" style="background:${p.color}"></div>
+              <span class="text-sm font-semibold text-slate-200">${escaparHtml(p.nombre)}</span>
+            </div>
+            <span class="text-xs mono font-bold" style="color:${p.color}">${pd}/${pt.length} · ${pp}%</span>
+          </div>
+          <div class="h-2.5 bg-slate-800 rounded-full overflow-hidden mb-2">
+            <div class="prog-bar h-full rounded-full" style="width:${pp}%;background:${p.color}"></div>
+          </div>
+          ${(pot+plt)>0 ? `<div class="flex gap-3 text-xs"><span class="text-emerald-400">✓ ${pot} a tiempo</span><span class="text-red-400">✗ ${plt} tarde</span><span class="text-slate-500">Salud: ${pph}%</span></div>` : ''}
+        </div>`;
+      }).join('');
+  }
 }
 
-// ══════════════════════════════════════════════════
-//  HEADER KPIs
-// ══════════════════════════════════════════════════
-function updateKPIs() {
-  const total=tasks.length, done=tasks.filter(t=>t.status==='done').length;
-  const pct=total?Math.round((done/total)*100):0;
-  const todayDone=tasks.filter(t=>t.status==='done'&&t.completedAt&&new Date(t.completedAt).toDateString()===TODAY_STR).length;
-  const urgent=tasks.filter(t=>t.urgent&&t.status!=='done').length;
-  const ot=tasks.filter(t=>t.onTime===true).length, lt=tasks.filter(t=>t.onTime===false&&t.status==='done').length;
-  const hp=(ot+lt)>0?Math.round((ot/(ot+lt))*100):0;
+// ══════════════════════════════════════════
+//  KPIs HEADER
+// ══════════════════════════════════════════
+function actualizarKPIs() {
+  const total    = tareas.length;
+  const done     = tareas.filter(t => t.estado === 'finalizado').length;
+  const pct      = total ? Math.round((done / total) * 100) : 0;
+  const hoyDone  = tareas.filter(t => t.estado === 'finalizado' && t.completadoEn && new Date(t.completadoEn).toDateString() === HOY).length;
+  const urgentes = tareas.filter(t => t.urgente && t.estado !== 'finalizado').length;
+  const ot       = tareas.filter(t => t.aTiempo === true).length;
+  const tard     = tareas.filter(t => t.aTiempo === false && t.estado === 'finalizado').length;
+  const hp       = (ot + tard) > 0 ? Math.round((ot / (ot + tard)) * 100) : 0;
 
-  document.getElementById('kpi-done').textContent=done;
-  document.getElementById('kpi-total').textContent=total;
-  document.getElementById('kpi-bar').style.width=pct+'%';
-  document.getElementById('kpi-pct').textContent=pct+'%';
-  document.getElementById('kpi-today').textContent=todayDone;
-  document.getElementById('kpi-urgent').textContent=urgent;
-  document.getElementById('health-ot').textContent=ot;
-  document.getElementById('health-lt').textContent=lt;
+  const el = (id) => document.getElementById(id);
+  el('kpi-done').textContent    = done;
+  el('kpi-total').textContent   = total;
+  el('kpi-barra').style.width   = pct + '%';
+  el('kpi-pct').textContent     = pct + '%';
+  el('kpi-hoy').textContent     = hoyDone;
+  el('kpi-urgentes').textContent = urgentes;
+  el('salud-ok').textContent    = ot;
+  el('salud-tarde').textContent  = tard;
 
-  const msgs=['¡A por ello! 💪','¡Primera! 🚀',`¡${todayDone} completadas hoy! 🔥`,`¡Máquina! ${todayDone} hechas 🏆`];
-  document.getElementById('kpi-msg').textContent=todayDone===0?msgs[0]:todayDone===1?msgs[1]:todayDone<5?msgs[2]:msgs[3];
+  const mensajes = ['¡A por ello! 💪', '¡Primera completada! 🚀', `${hoyDone} tareas hoy 🔥`, `¡Imparable! ${hoyDone} 🏆`];
+  el('kpi-msg').textContent = hoyDone === 0 ? mensajes[0] : hoyDone === 1 ? mensajes[1] : hoyDone < 5 ? mensajes[2] : mensajes[3];
 
-  const dot=document.getElementById('health-dot'),lbl=document.getElementById('health-lbl');
-  if(!done){dot.className='w-2.5 h-2.5 rounded-full bg-slate-600 shrink-0';lbl.textContent='–';lbl.className='text-sm font-bold text-slate-400';}
-  else if(hp>=80){dot.className='w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0';lbl.textContent='Excelente';lbl.className='text-sm font-bold text-emerald-400';}
-  else if(hp>=50){dot.className='w-2.5 h-2.5 rounded-full bg-yellow-400 shrink-0';lbl.textContent='Regular';lbl.className='text-sm font-bold text-yellow-400';}
-  else{dot.className='w-2.5 h-2.5 rounded-full bg-red-400 shrink-0';lbl.textContent='Bajo';lbl.className='text-sm font-bold text-red-400';}
+  const dot = el('salud-dot'), lbl = el('salud-lbl');
+  if (!done)      { dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-600 shrink-0'; lbl.textContent = '–'; lbl.className = 'text-sm font-bold text-slate-400'; }
+  else if(hp>=80) { dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0'; lbl.textContent = 'Excelente'; lbl.className = 'text-sm font-bold text-emerald-400'; }
+  else if(hp>=50) { dot.className = 'w-2.5 h-2.5 rounded-full bg-yellow-400 shrink-0'; lbl.textContent = 'Regular'; lbl.className = 'text-sm font-bold text-yellow-400'; }
+  else            { dot.className = 'w-2.5 h-2.5 rounded-full bg-red-400 shrink-0'; lbl.textContent = 'Bajo'; lbl.className = 'text-sm font-bold text-red-400'; }
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER ALL
-// ══════════════════════════════════════════════════
-function renderAll() {
-  updateKPIs();
-  const active=document.querySelector('.tab-content:not(.hidden)');
-  if(!active) return;
-  if(active.id==='tab-kanban'){renderKanban();renderFilters();}
-  if(active.id==='tab-projects') renderProjects();
-  if(active.id==='tab-ideas')    renderIdeas();
-  if(active.id==='tab-stats')    renderStats();
+// ══════════════════════════════════════════
+//  RENDERIZAR TODO
+// ══════════════════════════════════════════
+function renderizarTodo() {
+  actualizarKPIs();
+  renderizarFiltrosProy();
+  const tabActiva = document.querySelector('.tab-content:not(.hidden)');
+  if (!tabActiva) return;
+  const id = tabActiva.id;
+  if (id === 'tab-kanban')    renderizarTareas();
+  if (id === 'tab-proyectos') renderizarProyectos();
+  if (id === 'tab-ideas')     renderizarIdeas();
+  if (id === 'tab-stats')     renderizarStats();
 }
 
-// ══════════════════════════════════════════════════
-//  NOTIFICATIONS
-// ══════════════════════════════════════════════════
-function reqNotif() {
-  if(!('Notification'in window)){toast('Navegador no soporta notificaciones','error');return;}
-  Notification.requestPermission().then(p=>{
-    if(p==='granted'){toast('🔔 Notificaciones activadas','success');document.getElementById('notif-btn').classList.add('text-sky-400');}
-    else toast('Permiso denegado','error');
+// ══════════════════════════════════════════
+//  FILTROS
+// ══════════════════════════════════════════
+function setFiltro(tipo, valor) {
+  if (tipo === 'dept') filtroDept = valor;
+  if (tipo === 'proy') filtroProy = valor;
+  actualizarBotonesFiltro();
+  renderizarTareas();
+}
+
+function actualizarBotonesFiltro() {
+  document.querySelectorAll('.fd-btn').forEach(btn => {
+    const activo = btn.dataset.fd === filtroDept;
+    btn.style.opacity    = activo ? '1' : '0.5';
+    btn.style.fontWeight = activo ? '800' : '600';
+  });
+  document.querySelectorAll('.fp-btn').forEach(btn => {
+    const activo = btn.dataset.fp === filtroProy;
+    btn.style.opacity    = activo ? '1' : '0.5';
+    btn.style.fontWeight = activo ? '800' : '600';
   });
 }
-function checkNotif() {
-  const now=Date.now();
-  tasks.forEach(t=>{
-    if(!t.deadline||t.status==='done') return;
-    const diff=new Date(t.deadline).getTime()-now;
-    const k1='n1h'+t.id, k30='n30'+t.id, kd='ndl'+t.id;
-    if(diff>0&&diff<3600000&&!notified.includes(k1)){notified.push(k1);persist();toast(`⏰ "${t.title}" vence en <1h`,'warning');if(Notification.permission==='granted')new Notification('⏰ Deadline en 1h',{body:t.title});}
-    if(diff>0&&diff<1800000&&!notified.includes(k30)){notified.push(k30);persist();if(Notification.permission==='granted')new Notification('⚠️ 30 minutos',{body:`"${t.title}" vence pronto`});}
-    if(diff<0&&diff>-300000&&!notified.includes(kd)){notified.push(kd);persist();toast(`🚨 VENCIDA: "${t.title}"`,'error');if(Notification.permission==='granted')new Notification('🚨 Vencida',{body:t.title});}
+
+function renderizarFiltrosProy() {
+  const cont = document.getElementById('filtros-proy');
+  if (!cont) return;
+  cont.innerHTML = proyectos.map(p =>
+    `<button onclick="setFiltro('proy','${p.id}')" data-fp="${p.id}" class="fp-btn text-xs px-3 py-1 rounded-lg border font-bold transition-all"
+      style="border-color:${p.color};color:${p.color};background:${p.color}1a">${escaparHtml(p.nombre)}</button>`
+  ).join('');
+  if (filtroProy) { const b = cont.querySelector(`[data-fp="${filtroProy}"]`); if (b) { b.style.opacity='1'; b.style.fontWeight='800'; } }
+}
+
+// ══════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════
+function cambiarTab(nombre) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.classList.remove('active','text-white');
+    btn.classList.add('text-slate-500');
+  });
+  const tabEl = document.getElementById('tab-' + nombre);
+  const btnEl = document.querySelector(`[data-tab="${nombre}"]`);
+  if (tabEl) tabEl.classList.remove('hidden');
+  if (btnEl) { btnEl.classList.add('active','text-white'); btnEl.classList.remove('text-slate-500'); }
+
+  if (nombre === 'kanban')    { renderizarTareas(); renderizarFiltrosProy(); }
+  if (nombre === 'proyectos') renderizarProyectos();
+  if (nombre === 'ideas')     renderizarIdeas();
+  if (nombre === 'stats')     renderizarStats();
+}
+
+// ══════════════════════════════════════════
+//  MODALS
+// ══════════════════════════════════════════
+function abrirModal(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('hidden');
+  el.classList.add('flex');
+}
+
+function cerrarModal(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('hidden');
+  el.classList.remove('flex');
+  if (id === 'modal-tarea')    resetearFormTarea();
+  if (id === 'modal-proyecto') resetearFormProyecto();
+}
+
+function abrirModalTarea() {
+  rellenarSelectProyectos();
+  actualizarCategorias();
+  abrirModal('modal-tarea');
+}
+
+function abrirModalProyecto() {
+  abrirModal('modal-proyecto');
+}
+
+function resetearFormTarea() {
+  document.getElementById('mt-id').value          = '';
+  document.getElementById('mt-titulo-inp').value   = '';
+  document.getElementById('mt-desc').value          = '';
+  document.getElementById('mt-deadline').value      = '';
+  document.getElementById('mt-urgente').checked     = false;
+  document.getElementById('mt-estado').value        = 'pendiente';
+  document.getElementById('mt-prio').value          = 'media';
+  document.getElementById('mt-dept').value          = 'rrhh';
+  document.getElementById('mt-titulo').textContent  = 'Nueva Tarea';
+  document.getElementById('mt-btn').textContent     = 'Crear Tarea';
+  document.getElementById('hint-autodetect').classList.add('hidden');
+  actualizarCategorias();
+}
+
+function resetearFormProyecto() {
+  document.getElementById('mp-id').value      = '';
+  document.getElementById('mp-nombre').value  = '';
+  document.getElementById('mp-keys').value    = '';
+  document.getElementById('mp-dept').value    = 'rrhh';
+  document.getElementById('mp-titulo').textContent = 'Nuevo Proyecto';
+  document.getElementById('mp-btn').textContent    = 'Crear Proyecto';
+  selColor('#0ea5e9');
+}
+
+function rellenarSelectProyectos() {
+  const sel = document.getElementById('mt-proyecto');
+  const val = sel.value;
+  sel.innerHTML = '<option value="">Sin proyecto</option>' +
+    proyectos.map(p => `<option value="${p.id}">${escaparHtml(p.nombre)}</option>`).join('');
+  if (val) sel.value = val;
+}
+
+function actualizarCategorias() {
+  const dept  = document.getElementById('mt-dept').value || 'rrhh';
+  const cats  = CATS[dept] || [];
+  const sel   = document.getElementById('mt-cat');
+  const valAnt = sel.value;
+  sel.innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
+  if (cats.includes(valAnt)) sel.value = valAnt;
+}
+
+function autodetectarDept() {
+  const texto = document.getElementById('mt-titulo-inp').value.toLowerCase();
+  const idEditando = document.getElementById('mt-id').value;
+  for (const [dept, kws] of Object.entries(KEYWORDS_DEPT)) {
+    if (kws.some(k => texto.includes(k))) {
+      document.getElementById('mt-dept').value = dept;
+      actualizarCategorias();
+      if (!idEditando) {
+        document.getElementById('hint-autodetect').classList.remove('hidden');
+      }
+      break;
+    }
+  }
+  // Autodetectar proyecto
+  if (!idEditando) {
+    for (const p of proyectos) {
+      if (!p.keywords) continue;
+      const kws = p.keywords.split(',').map(k => k.trim().toLowerCase()).filter(Boolean);
+      if (kws.some(k => k && texto.includes(k))) {
+        document.getElementById('mt-proyecto').value = p.id;
+        return;
+      }
+    }
+  }
+}
+
+// ══════════════════════════════════════════
+//  POPUP MATUTINO
+// ══════════════════════════════════════════
+function construirPopup() {
+  const h   = new Date().getHours();
+  const sal = h < 12 ? '¡Buenos días! ☀️' : h < 20 ? '¡Buenas tardes! 🌤️' : '¡Buenas noches! 🌙';
+  document.getElementById('pu-greeting').textContent = sal;
+  document.getElementById('pu-motto').textContent    = '"' + FRASES[Math.floor(Math.random() * FRASES.length)] + '"';
+  document.getElementById('pu-fecha').textContent    = new Date().toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const urgentes  = tareas.filter(t => t.urgente && t.estado !== 'finalizado');
+  const paraHoy   = tareas.filter(t => t.estado !== 'finalizado' && t.deadline && new Date(t.deadline).toDateString() === HOY);
+  const doneCnt   = tareas.filter(t => t.estado === 'finalizado').length;
+
+  document.getElementById('pu-urg').textContent  = urgentes.length;
+  document.getElementById('pu-hoy').textContent  = paraHoy.length;
+  document.getElementById('pu-done').textContent = doneCnt;
+
+  const secciones = [];
+
+  // 1. Urgentes
+  if (urgentes.length) {
+    const filas = urgentes.map(t => filaTareaPopup(t)).join('');
+    secciones.push(seccionPopup('🚨 Tareas Urgentes', '#f87171', filas));
+  }
+
+  // 2. Para hoy
+  if (paraHoy.length) {
+    const filas = paraHoy.map(t => filaTareaPopup(t)).join('');
+    secciones.push(seccionPopup('📅 Para Hoy', '#fbbf24', filas));
+  } else {
+    secciones.push(seccionPopup('📅 Para Hoy', '#64748b', '<p class="text-xs text-slate-600 py-1">Sin tareas con deadline para hoy. ✅</p>'));
+  }
+
+  // 3. Proyectos
+  if (proyectos.length) {
+    const filas = proyectos.map(p => {
+      const pt   = tareas.filter(t => t.proyecto === p.id);
+      const done = pt.filter(t => t.estado === 'finalizado').length;
+      const pct  = pt.length ? Math.round((done / pt.length) * 100) : 0;
+      return `<div class="flex items-center gap-3 py-1.5 border-b border-slate-800 last:border-0">
+        <div class="w-2 h-2 rounded-full shrink-0" style="background:${p.color}"></div>
+        <span class="text-xs text-slate-300 flex-1 truncate">${escaparHtml(p.nombre)}</span>
+        <div class="w-20 h-1.5 bg-slate-800 rounded-full overflow-hidden shrink-0">
+          <div class="h-full rounded-full" style="width:${pct}%;background:${p.color}"></div>
+        </div>
+        <span class="text-xs mono font-bold shrink-0" style="color:${p.color}">${pct}%</span>
+      </div>`;
+    }).join('');
+    secciones.push(seccionPopup('📊 Proyectos', '#38bdf8', filas));
+  }
+
+  document.getElementById('pu-body').innerHTML = secciones.join('');
+}
+
+function seccionPopup(titulo, color, contenido) {
+  return `<div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4">
+    <h4 class="font-bold text-sm mb-3" style="color:${color}">${titulo}</h4>
+    ${contenido}
+  </div>`;
+}
+
+function filaTareaPopup(t) {
+  const proy = t.proyecto ? proyectos.find(p => p.id === t.proyecto) : null;
+  return `<div class="flex items-center gap-2 py-1.5 border-b border-slate-800/60 last:border-0">
+    ${t.urgente ? '<span class="text-red-400 text-xs font-bold shrink-0">🚨</span>' : '<span class="w-1.5 h-1.5 rounded-full bg-slate-600 shrink-0"></span>'}
+    <span class="text-xs text-slate-200 flex-1 truncate">${escaparHtml(t.titulo)}</span>
+    ${proy ? `<span class="text-xs font-bold shrink-0 px-1.5 py-0.5 rounded" style="background:${proy.color}22;color:${proy.color}">${escaparHtml(proy.nombre)}</span>` : ''}
+    ${t.deadline ? `<span class="text-xs mono text-slate-500 shrink-0">${calcularTiempoRestante(t.deadline)}</span>` : ''}
+  </div>`;
+}
+
+function abrirPopup() {
+  construirPopup();
+  const popup = document.getElementById('popup');
+  popup.classList.remove('hidden');
+  popup.classList.add('flex');
+}
+
+function cerrarPopup() {
+  const popup = document.getElementById('popup');
+  popup.classList.add('hidden');
+  popup.classList.remove('flex');
+}
+
+function copiarInformePopup() {
+  const h    = new Date().getHours();
+  const sal  = h < 12 ? 'Buenos días' : h < 20 ? 'Buenas tardes' : 'Buenas noches';
+  const fecha = new Date().toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const urg  = tareas.filter(t => t.urgente && t.estado !== 'finalizado');
+  const hoy  = tareas.filter(t => t.estado !== 'finalizado' && t.deadline && new Date(t.deadline).toDateString() === HOY);
+
+  let txt = `${sal.toUpperCase()} — ${fecha.toUpperCase()}\n${'═'.repeat(50)}\n\n`;
+
+  if (urg.length) {
+    txt += `🚨 URGENTES (${urg.length})\n${'-'.repeat(30)}\n`;
+    urg.forEach(t => { txt += `  • ${t.titulo}${t.deadline ? ' [' + formatearFecha(t.deadline) + ']' : ''}\n`; });
+    txt += '\n';
+  }
+  if (hoy.length) {
+    txt += `📅 PARA HOY (${hoy.length})\n${'-'.repeat(30)}\n`;
+    hoy.forEach(t => { txt += `  • ${t.titulo}\n`; });
+    txt += '\n';
+  }
+  if (proyectos.length) {
+    txt += `📊 PROYECTOS\n${'-'.repeat(30)}\n`;
+    proyectos.forEach(p => {
+      const pt   = tareas.filter(t => t.proyecto === p.id);
+      const done = pt.filter(t => t.estado === 'finalizado').length;
+      const pct  = pt.length ? Math.round((done / pt.length) * 100) : 0;
+      txt += `  • ${p.nombre}: ${pct}% (${done}/${pt.length})\n`;
+    });
+  }
+  txt += `\n${'═'.repeat(50)}\nGenerado por Asistente 360 Pro\n`;
+
+  navigator.clipboard.writeText(txt)
+    .then(() => mostrarToast('📋 Informe copiado al portapapeles', 'success'))
+    .catch(() => mostrarToast('No se pudo copiar. Revisa permisos del navegador.', 'error'));
+}
+
+// ══════════════════════════════════════════
+//  NOTIFICACIONES
+// ══════════════════════════════════════════
+function solicitarNotificaciones() {
+  if (!('Notification' in window)) { mostrarToast('Tu navegador no soporta notificaciones', 'error'); return; }
+  Notification.requestPermission().then(p => {
+    if (p === 'granted') { mostrarToast('🔔 Notificaciones activadas', 'success'); document.getElementById('btn-notif').classList.add('text-sky-400'); }
+    else mostrarToast('Permiso de notificaciones denegado', 'error');
   });
 }
 
-// ══════════════════════════════════════════════════
-//  EXPORT / IMPORT
-// ══════════════════════════════════════════════════
-function exportData() {
-  const data={tasks,projects,ideas,version:'360',exportedAt:new Date().toISOString()};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=Object.assign(document.createElement('a'),{href:url,download:`asistente360_${new Date().toISOString().slice(0,10)}.json`});
-  a.click();URL.revokeObjectURL(url);toast('📤 Exportado','success');
-}
-function importData(e) {
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=ev=>{
-    try{
-      const d=JSON.parse(ev.target.result);
-      if(!d.tasks){toast('Archivo no válido','error');return;}
-      if(!confirm('¿Importar? Esto reemplaza los datos actuales.'))return;
-      tasks=d.tasks||[];projects=d.projects||[];ideas=d.ideas||[];
-      persist();renderAll();renderFilters();toast('📥 Importado','success');
-    }catch{toast('Error al leer','error');}
-  };
-  r.readAsText(f);e.target.value='';
+function verificarNotificaciones() {
+  if (Notification.permission !== 'granted') return;
+  const ahora = Date.now();
+  tareas.forEach(t => {
+    if (!t.deadline || t.estado === 'finalizado') return;
+    const diff = new Date(t.deadline).getTime() - ahora;
+    const k1h  = 'k1h_' + t.id;
+    const k30  = 'k30_' + t.id;
+    const kVen = 'kVen_' + t.id;
+
+    if (diff > 0 && diff < 3600000 && !notificados.includes(k1h)) {
+      notificados.push(k1h);
+      new Notification('⏰ Deadline en 1 hora', { body: t.titulo });
+      mostrarToast(`⏰ "${t.titulo}" vence en menos de 1 hora`, 'warning');
+    }
+    if (diff > 0 && diff < 1800000 && !notificados.includes(k30)) {
+      notificados.push(k30);
+      new Notification('⚠️ ¡30 minutos!', { body: t.titulo });
+    }
+    if (diff < 0 && diff > -300000 && !notificados.includes(kVen)) {
+      notificados.push(kVen);
+      new Notification('🚨 Deadline vencido', { body: t.titulo });
+      mostrarToast(`🚨 VENCIDA: "${t.titulo}"`, 'error');
+    }
+  });
+  guardarEnStorage();
 }
 
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 //  TOASTS
-// ══════════════════════════════════════════════════
-function toast(msg,type='info'){
-  const c={success:'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',error:'bg-red-500/15 border-red-500/30 text-red-300',warning:'bg-yellow-500/15 border-yellow-500/30 text-yellow-300',info:'bg-sky-500/15 border-sky-500/30 text-sky-300'};
-  const t=document.createElement('div');
-  t.className=`toast pointer-events-auto ${c[type]||c.info} border backdrop-blur-sm rounded-xl px-4 py-3 text-sm font-semibold shadow-2xl`;
-  t.textContent=msg;
+// ══════════════════════════════════════════
+function mostrarToast(mensaje, tipo = 'info') {
+  const colores = {
+    success: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',
+    error:   'bg-red-500/15 border-red-500/30 text-red-300',
+    warning: 'bg-yellow-500/15 border-yellow-500/30 text-yellow-300',
+    info:    'bg-sky-500/15 border-sky-500/30 text-sky-300',
+  };
+  const t = document.createElement('div');
+  t.className = `pointer-events-auto toast-in ${colores[tipo] || colores.info} border backdrop-blur-sm rounded-xl px-4 py-3 text-sm font-semibold shadow-2xl`;
+  t.textContent = mensaje;
   document.getElementById('toasts').appendChild(t);
-  setTimeout(()=>{t.classList.add('hide');setTimeout(()=>t.remove(),400);},5000);
+  setTimeout(() => {
+    t.style.transition = 'all 0.3s ease';
+    t.style.opacity    = '0';
+    t.style.transform  = 'translateX(110%)';
+    setTimeout(() => t.remove(), 320);
+  }, 5000);
 }
 
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 //  HELPERS
-// ══════════════════════════════════════════════════
-function timeRem(dl){
-  const d=new Date(dl).getTime()-Date.now();
-  if(d<0)return'⚠ Vencida';
-  const days=Math.floor(d/86400000),h=Math.floor((d%86400000)/3600000),m=Math.floor((d%3600000)/60000);
-  if(days>0)return`${days}d ${h}h`;if(h>0)return`${h}h ${m}m`;return`${m}m`;
+// ══════════════════════════════════════════
+function calcularTiempoRestante(deadline) {
+  if (!deadline) return '';
+  const diff = new Date(deadline).getTime() - Date.now();
+  if (diff < 0) return '⚠ Vencida';
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  if (d > 0) return `${d}d ${h}h`;
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
 }
-function fmtDate(dt){if(!dt)return'–';return new Date(dt).toLocaleString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
-function fmtDateShort(ts){return new Date(ts).toLocaleDateString('es-ES',{day:'2-digit',month:'short'});}
-function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function shakeEl(id){const el=document.getElementById(id);if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');el.addEventListener('animationend',()=>el.classList.remove('shake'),{once:true});el.focus();}
 
-// ══════════════════════════════════════════════════
-//  KEYBOARD SHORTCUTS
-// ══════════════════════════════════════════════════
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closeModal('modal-task');closeModal('modal-project');closePopup();}
-  if((e.ctrlKey||e.metaKey)&&e.key==='n'){e.preventDefault();openModal('modal-task');}
-  if((e.ctrlKey||e.metaKey)&&e.key==='p'){e.preventDefault();openModal('modal-project');}
+function formatearFecha(dt) {
+  if (!dt) return '–';
+  return new Date(dt).toLocaleString('es-ES', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function formatearFechaCorta(ts) {
+  return new Date(ts).toLocaleDateString('es-ES', { day:'2-digit', month:'short' });
+}
+
+function escaparHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+function sacudirElemento(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('shake');
+  void el.offsetWidth; // forzar reflow
+  el.classList.add('shake');
+  el.addEventListener('animationend', () => el.classList.remove('shake'), { once: true });
+  el.focus();
+}
+
+// ══════════════════════════════════════════
+//  TECLAS RÁPIDAS
+// ══════════════════════════════════════════
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    cerrarModal('modal-tarea');
+    cerrarModal('modal-proyecto');
+    cerrarPopup();
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+    e.preventDefault();
+    abrirModalTarea();
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+    e.preventDefault();
+    abrirModalProyecto();
+  }
 });
 
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 //  INIT
-// ══════════════════════════════════════════════════
-if(Notification.permission==='granted') document.getElementById('notif-btn').classList.add('text-sky-400');
-renderAll();
-renderFilters();
-checkNotif();
-// Auto-open morning popup
-buildPopup();
-document.getElementById('morning-popup').classList.remove('hidden');
-document.getElementById('morning-popup').classList.add('modal-open');
-setInterval(()=>{checkNotif();updateKPIs();},30000);
+// ══════════════════════════════════════════
+(function inicializar() {
+  // 1. Cargar datos
+  cargarDesdeStorage();
+
+  // 2. Configurar notificaciones
+  if (Notification.permission === 'granted') {
+    document.getElementById('btn-notif').classList.add('text-sky-400');
+  }
+
+  // 3. Render inicial
+  renderizarTodo();
+  renderizarFiltrosProy();
+
+  // 4. Abrir popup matutino
+  construirPopup();
+  abrirPopup();
+
+  // 5. Timers
+  setInterval(verificarNotificaciones, 30000);
+  setInterval(() => { actualizarKPIs(); renderizarTareas(); }, 60000);
+})();
 </script>
 </body>
 </html>
