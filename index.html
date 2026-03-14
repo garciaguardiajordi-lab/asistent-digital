@@ -1,459 +1,612 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Asistente Pro · Gestión de Proyectos</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        fontFamily: {
-          display: ['Syne', 'sans-serif'],
-          body: ['DM Sans', 'sans-serif'],
-          mono: ['JetBrains Mono', 'monospace'],
-        },
-        colors: {
-          brand: {
-            50: '#f0f9ff',
-            100: '#e0f2fe',
-            400: '#38bdf8',
-            500: '#0ea5e9',
-            600: '#0284c7',
-            700: '#0369a1',
-          },
-          surface: {
-            900: '#0a0f1e',
-            800: '#0f172a',
-            750: '#131c35',
-            700: '#1e293b',
-            600: '#273449',
-            500: '#334155',
-            400: '#475569',
-          },
-        },
-        boxShadow: {
-          glow: '0 0 20px rgba(14,165,233,0.15)',
-          'glow-sm': '0 0 10px rgba(14,165,233,0.1)',
-          card: '0 4px 24px rgba(0,0,0,0.4)',
-        },
-        animation: {
-          'fade-in': 'fadeIn 0.3s ease-out',
-          'slide-up': 'slideUp 0.3s ease-out',
-          'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
-          'shake': 'shake 0.5s ease-in-out',
-          'countdown': 'countdown 1s linear',
-        },
-        keyframes: {
-          fadeIn: { from: { opacity: 0 }, to: { opacity: 1 } },
-          slideUp: { from: { opacity: 0, transform: 'translateY(12px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
-          pulseSoft: { '0%,100%': { opacity: 1 }, '50%': { opacity: 0.6 } },
-          shake: { '0%,100%': { transform: 'translateX(0)' }, '25%': { transform: 'translateX(-6px)' }, '75%': { transform: 'translateX(6px)' } },
-        }
-      }
-    }
-  }
-</script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
-  * { box-sizing: border-box; }
-  body { font-family: 'DM Sans', sans-serif; background: #0a0f1e; }
-  h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
-  .font-mono { font-family: 'JetBrains Mono', monospace; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track { background: #0f172a; }
-  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9px; }
-  ::-webkit-scrollbar-thumb:hover { background: #475569; }
+:root {
+  --bg-base: #0a0f1e;
+  --bg-900: #0f172a;
+  --bg-800: #131c35;
+  --bg-700: #1e293b;
+  --bg-600: #273449;
+  --bg-500: #334155;
+  --bg-400: #475569;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+  --border: #1e293b;
+  --border-mid: #273449;
+  --brand: #0ea5e9;
+  --brand-dark: #0284c7;
+  --brand-light: #38bdf8;
+  --emerald: #34d399;
+  --emerald-bg: rgba(52,211,153,0.1);
+  --red: #f87171;
+  --red-bg: rgba(248,113,113,0.1);
+  --orange: #fb923c;
+  --orange-bg: rgba(251,146,60,0.1);
+  --yellow: #fbbf24;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
 
-  /* Mesh background */
-  .mesh-bg {
-    background-color: #0a0f1e;
-    background-image:
-      radial-gradient(ellipse 80% 60% at 20% -10%, rgba(14,165,233,0.08) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 110%, rgba(99,102,241,0.06) 0%, transparent 60%);
-  }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(14,165,233,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 110%, rgba(99,102,241,0.06) 0%, transparent 60%);
+}
+h1,h2,h3,h4 { font-family: var(--font-display); }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-900); }
+::-webkit-scrollbar-thumb { background: var(--bg-500); border-radius: 9px; }
 
-  /* Kanban column */
-  .kanban-col { min-height: 200px; }
-  .kanban-col.drag-over { outline: 2px dashed #38bdf8; background: rgba(14,165,233,0.04); border-radius: 12px; }
+.app { display: flex; height: 100vh; overflow: hidden; }
 
-  /* Task card */
-  .task-card { cursor: grab; transition: transform 0.15s, box-shadow 0.15s; }
-  .task-card:active { cursor: grabbing; }
-  .task-card.dragging { opacity: 0.4; transform: scale(0.98); }
-  .task-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+#sidebar {
+  width: 240px; background: var(--bg-900);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.sidebar-logo {
+  padding: 18px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-icon {
+  width: 36px; height: 36px; background: var(--brand);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.logo-icon svg { width: 18px; height: 18px; stroke: white; fill: none; }
+.logo-title { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.logo-sub { font-size: 11px; color: var(--text-faint); }
 
-  /* Urgency pulse */
-  .urgent-pulse { animation: pulseSoft 1.5s ease-in-out infinite; }
+nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+.nav-item {
+  width: 100%; display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: var(--radius-sm);
+  color: var(--text-muted); font-size: 13px; font-weight: 500;
+  border: none; background: none; cursor: pointer;
+  transition: all 0.15s; text-align: left; margin-bottom: 2px;
+}
+.nav-item:hover { background: var(--bg-700); color: var(--text-primary); }
+.nav-item.active { background: rgba(14,165,233,0.12); color: var(--brand-light); }
+.nav-item svg { width: 16px; height: 16px; stroke: currentColor; fill: none; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto; font-family: var(--font-mono); font-size: 10px;
+  min-width: 18px; height: 18px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 5px; background: var(--bg-600); color: var(--text-muted);
+}
+.nav-badge.urgent { background: rgba(239,68,68,0.8); color: white; }
 
-  /* Tag badge */
-  .badge { font-size: 0.68rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.03em; }
+.sidebar-stats { padding: 12px 14px; border-top: 1px solid var(--border); }
+.stats-label { font-size: 10px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--font-mono); margin-bottom: 10px; }
+.stat-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+.stat-row span:first-child { color: var(--text-faint); }
+.stat-row span:last-child { font-family: var(--font-mono); color: var(--text-muted); }
+.stat-row.process span:last-child { color: var(--brand-light); }
+.stat-row.done span:last-child { color: var(--emerald); }
+.progress-wrap { height: 5px; background: var(--bg-700); border-radius: 9px; overflow: hidden; margin-top: 10px; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--brand), var(--emerald)); border-radius: 9px; transition: width 0.6s ease; }
+.progress-pct { font-size: 10px; color: var(--text-faint); text-align: right; margin-top: 4px; font-family: var(--font-mono); }
 
-  /* Toast */
-  .toast { transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); }
-  .toast.hide { opacity: 0; transform: translateX(120%); }
+.sidebar-notif { padding: 8px 10px 12px; }
+#notif-btn {
+  width: 100%; display: flex; align-items: center; gap: 8px;
+  font-size: 11px; color: var(--text-faint); background: none; border: none;
+  cursor: pointer; padding: 7px 10px; border-radius: var(--radius-sm);
+  transition: all 0.15s; text-align: left;
+}
+#notif-btn:hover { background: var(--bg-700); color: var(--text-secondary); }
+#notif-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
+#notif-btn.active { color: var(--brand-light); }
 
-  /* Modal backdrop */
-  .modal-backdrop { background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); }
+main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+header {
+  background: rgba(15,23,42,0.8); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+}
+.header-menu-btn { display: none; background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px; }
+.header-menu-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; }
+.header-title { flex: 1; }
+.header-title h2 { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.header-title p { font-size: 11px; color: var(--text-faint); font-family: var(--font-mono); }
+.btn-primary {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--brand); color: white; border: none;
+  padding: 8px 16px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background 0.15s; white-space: nowrap;
+}
+.btn-primary:hover { background: var(--brand-dark); }
+.btn-primary svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
 
-  /* Nav active */
-  .nav-item.active { background: rgba(14,165,233,0.12); color: #38bdf8; }
-  .nav-item.active .nav-icon { color: #38bdf8; }
+.content { flex: 1; overflow-y: auto; padding: 20px; }
 
-  /* Sidebar */
-  #sidebar { transition: transform 0.3s ease; }
-  @media(max-width:768px) {
-    #sidebar { transform: translateX(-100%); position:fixed; z-index:50; height:100vh; }
-    #sidebar.open { transform: translateX(0); }
-    #overlay { display:none; }
-    #overlay.show { display:block; }
-  }
+.section { display: none; }
+.section.active { display: block; animation: fadeIn 0.25s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* Progress bar */
-  .progress-bar { transition: width 0.6s ease; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card {
+  background: var(--bg-900); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px; transition: border-color 0.15s;
+}
+.stat-card:hover { border-color: var(--bg-500); }
+.stat-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+.stat-icon {
+  width: 34px; height: 34px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center; background: var(--bg-700);
+}
+.stat-icon svg { width: 16px; height: 16px; stroke: var(--text-muted); fill: none; }
+.stat-icon.brand { background: rgba(14,165,233,0.12); }
+.stat-icon.brand svg { stroke: var(--brand-light); }
+.stat-icon.emerald { background: var(--emerald-bg); }
+.stat-icon.emerald svg { stroke: var(--emerald); }
+.stat-icon.red { background: var(--red-bg); }
+.stat-icon.red svg { stroke: var(--red); }
+.stat-tag { font-size: 10px; color: var(--text-faint); font-family: var(--font-mono); }
+.stat-num { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--text-primary); }
+.stat-num.brand { color: var(--brand-light); }
+.stat-num.emerald { color: var(--emerald); }
+.stat-num.red { color: var(--red); }
+.stat-label { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
 
-  /* Input focus */
-  input:focus, textarea:focus, select:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(14,165,233,0.3);
-  }
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.dash-card { background: var(--bg-900); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; }
+.dash-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.dash-card-header h3 { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.link-btn { background: none; border: none; font-size: 12px; color: var(--brand-light); cursor: pointer; }
+.link-btn:hover { color: var(--brand); }
 
-  /* Section fade */
-  .section { display: none; }
-  .section.active { display: block; animation: fadeIn 0.3s ease-out; }
+.empty-state { border: 2px dashed var(--border); border-radius: var(--radius); padding: 24px; text-align: center; }
+.empty-state svg { width: 32px; height: 32px; stroke: var(--bg-500); fill: none; margin: 0 auto 8px; display: block; }
+.empty-state p { font-size: 12px; color: var(--text-faint); }
 
-  /* Status colors */
-  .status-pending { color: #94a3b8; }
-  .status-process { color: #38bdf8; }
-  .status-done { color: #34d399; }
+.quick-idea-row { display: flex; gap: 8px; margin-top: 14px; }
 
-  /* Category colors */
-  .cat-desarrollo { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
-  .cat-diseño { background: rgba(236,72,153,0.12); color: #f472b6; border: 1px solid rgba(236,72,153,0.25); }
-  .cat-marketing { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
-  .cat-reunión { background: rgba(20,184,166,0.12); color: #2dd4bf; border: 1px solid rgba(20,184,166,0.25); }
-  .cat-urgente { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
-  .cat-otro { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.3); }
+.kanban-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.kanban-col-wrap { background: var(--bg-900); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.kanban-col-header { padding: 12px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.col-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.col-dot.pending { background: var(--bg-400); }
+.col-dot.process { background: var(--brand-light); animation: pulse 2s infinite; }
+.col-dot.done { background: var(--emerald); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.kanban-col-header h3 { font-family: var(--font-display); font-size: 12px; font-weight: 700; }
+.kanban-col-header h3.pending { color: #94a3b8; }
+.kanban-col-header h3.process { color: var(--brand-light); }
+.kanban-col-header h3.done { color: var(--emerald); }
+.col-count { margin-left: auto; font-family: var(--font-mono); font-size: 10px; padding: 2px 7px; border-radius: 9px; background: var(--bg-600); color: var(--text-muted); }
+.col-count.process { background: rgba(14,165,233,0.15); color: var(--brand-light); }
+.col-count.done { background: rgba(52,211,153,0.12); color: var(--emerald); }
 
-  /* Deadline urgency */
-  .deadline-critical { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.4) !important; }
-  .deadline-warning { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.35) !important; }
+.kanban-col { padding: 10px; min-height: 180px; }
+.kanban-col.drag-over { outline: 2px dashed var(--brand-light); border-radius: var(--radius-sm); background: rgba(14,165,233,0.04); }
 
-  /* Idea card */
-  .idea-card { border-left: 3px solid #38bdf8; }
+.task-card {
+  background: var(--bg-800); border: 1px solid var(--border-mid);
+  border-radius: var(--radius); padding: 12px; margin-bottom: 8px;
+  cursor: grab; transition: transform 0.15s, box-shadow 0.15s;
+  animation: fadeIn 0.25s ease-out;
+}
+.task-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.task-card:active { cursor: grabbing; }
+.task-card.dragging { opacity: 0.35; }
+.task-card.critical { border-color: rgba(239,68,68,0.5); background: rgba(239,68,68,0.05); }
+.task-card.warning { border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.05); }
+.task-card.critical.urgent-pulse { animation: urgentPulse 1.5s ease-in-out infinite; }
+@keyframes urgentPulse { 0%,100%{opacity:1} 50%{opacity:0.65} }
 
-  /* Empty state */
-  .empty-state { border: 2px dashed #1e293b; }
+.card-top { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 6px; }
+.prio-icon { font-size: 10px; margin-top: 1px; flex-shrink: 0; font-family: var(--font-mono); }
+.prio-icon.low { color: var(--emerald); }
+.prio-icon.medium { color: var(--yellow); }
+.prio-icon.high { color: var(--red); }
+.card-title { font-size: 13px; font-weight: 500; color: var(--text-primary); flex: 1; cursor: pointer; line-height: 1.4; }
+.card-title:hover { color: white; }
+.card-desc { font-size: 11px; color: var(--text-faint); margin-bottom: 8px; line-height: 1.5; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.card-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.card-deadline { display: flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+.card-deadline svg { width: 11px; height: 11px; stroke: currentColor; fill: none; flex-shrink: 0; }
+.card-deadline span { font-size: 11px; font-family: var(--font-mono); }
+.card-deadline.normal { color: var(--text-faint); }
+.card-deadline.warn { color: var(--orange); }
+.card-deadline.crit { color: var(--red); }
+.card-actions { display: flex; align-items: center; gap: 2px; padding-top: 8px; border-top: 1px solid var(--border); }
+.card-btn { background: none; border: none; cursor: pointer; padding: 5px; border-radius: 6px; color: var(--text-faint); transition: all 0.15s; display: flex; align-items: center; }
+.card-btn:hover { background: var(--bg-600); color: var(--text-secondary); }
+.card-btn.disabled { opacity: 0.25; pointer-events: none; }
+.card-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; }
+.card-spacer { flex: 1; }
 
-  /* Checkbox custom */
-  .custom-check { accent-color: #0ea5e9; }
+.badge { font-size: 10px; font-family: var(--font-mono); padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
+.cat-desarrollo { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+.cat-diseño { background: rgba(236,72,153,0.12); color: #f472b6; border: 1px solid rgba(236,72,153,0.25); }
+.cat-marketing { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
+.cat-reunión { background: rgba(20,184,166,0.12); color: #2dd4bf; border: 1px solid rgba(20,184,166,0.25); }
+.cat-urgente { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+.cat-otro { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.3); }
 
-  /* Number badge */
-  .count-badge { font-size: 0.65rem; min-width: 18px; height: 18px; }
+.idea-form { background: var(--bg-900); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; margin-bottom: 16px; max-width: 680px; }
+.idea-form h3 { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 14px; }
+.idea-form-row { display: flex; gap: 10px; margin-top: 10px; }
 
-  /* Timeline dot */
-  .timeline-dot::before { content: ''; position:absolute; left: -1px; top: 50%; transform: translateY(-50%); width: 8px; height: 8px; background: #38bdf8; border-radius: 50%; box-shadow: 0 0 8px rgba(56,189,248,0.5); }
+.idea-card {
+  background: var(--bg-900); border: 1px solid var(--border);
+  border-left: 3px solid var(--brand-light);
+  border-radius: var(--radius); padding: 14px;
+  max-width: 680px; margin-bottom: 10px; transition: border-color 0.15s; animation: fadeIn 0.25s ease-out;
+}
+.idea-card:hover { border-color: var(--bg-500); }
+.idea-card-inner { display: flex; gap: 12px; }
+.idea-card-body { flex: 1; min-width: 0; }
+.idea-card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.idea-tag { font-size: 10px; background: rgba(14,165,233,0.1); color: var(--brand-light); border: 1px solid rgba(14,165,233,0.2); padding: 1px 6px; border-radius: 6px; font-family: var(--font-mono); }
+.idea-date { font-size: 10px; color: var(--text-faint); font-family: var(--font-mono); }
+.idea-title-text { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 2px; }
+.idea-body-text { font-size: 12px; color: var(--text-faint); line-height: 1.5; }
+.idea-actions { display: flex; flex-direction: column; gap: 4px; opacity: 0; transition: opacity 0.15s; flex-shrink: 0; }
+.idea-card:hover .idea-actions { opacity: 1; }
+.icon-btn { background: none; border: none; cursor: pointer; padding: 5px; border-radius: 6px; color: var(--text-faint); transition: all 0.15s; display: flex; align-items: center; }
+.icon-btn:hover { background: var(--bg-700); color: var(--text-secondary); }
+.icon-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
+
+.deadline-item {
+  background: var(--bg-900); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 10px; transition: border-color 0.15s; animation: fadeIn 0.25s ease-out;
+}
+.deadline-item:hover { border-color: var(--bg-500); }
+.deadline-item.warn { border-color: rgba(251,146,60,0.35); background: rgba(251,146,60,0.04); }
+.deadline-item.crit { border-color: rgba(239,68,68,0.45); background: rgba(239,68,68,0.05); }
+.deadline-item.done-item { opacity: 0.55; }
+.dl-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--bg-700); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.dl-icon svg { width: 15px; height: 15px; stroke: currentColor; fill: none; }
+.dl-icon.normal { color: var(--text-faint); }
+.dl-icon.warn { color: var(--orange); background: var(--orange-bg); }
+.dl-icon.crit { color: var(--red); background: var(--red-bg); }
+.dl-icon.done-icon { color: var(--emerald); background: var(--emerald-bg); }
+.dl-body { flex: 1; min-width: 0; }
+.dl-top { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; flex-wrap: wrap; }
+.dl-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.dl-meta { display: flex; align-items: center; gap: 12px; }
+.dl-date { font-size: 11px; color: var(--text-faint); font-family: var(--font-mono); }
+.dl-remain { font-size: 11px; font-family: var(--font-mono); }
+.dl-remain.normal { color: var(--brand-light); }
+.dl-remain.warn { color: var(--orange); }
+.dl-remain.crit { color: var(--red); }
+.dl-status { font-size: 11px; color: var(--text-faint); }
+.dl-edit { background: none; border: none; cursor: pointer; padding: 5px; border-radius: 6px; color: var(--text-faint); flex-shrink: 0; transition: all 0.15s; }
+.dl-edit:hover { background: var(--bg-700); color: var(--brand-light); }
+.dl-edit svg { width: 14px; height: 14px; stroke: currentColor; fill: none; display: block; }
+
+.dash-row { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; border-radius: 6px; padding: 6px 4px; }
+.dash-row:last-child { border-bottom: none; }
+.dash-row:hover { background: rgba(255,255,255,0.03); }
+.dash-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dash-dot.normal { background: var(--brand-light); }
+.dash-dot.warn { background: var(--orange); }
+.dash-row-title { flex: 1; font-size: 12px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dash-row-time { font-size: 11px; font-family: var(--font-mono); flex-shrink: 0; }
+.dash-row-time.warn { color: var(--orange); }
+.dash-row-time.normal { color: var(--text-faint); }
+
+.dash-idea-row { display: flex; align-items: flex-start; gap: 8px; padding: 6px 4px; border-bottom: 1px solid var(--border); }
+.dash-idea-row:last-child { border-bottom: none; }
+.dash-idea-emoji { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.dash-idea-info { flex: 1; min-width: 0; }
+.dash-idea-name { font-size: 12px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dash-idea-sub { font-size: 11px; color: var(--text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dash-convert { background: none; border: none; cursor: pointer; font-size: 12px; color: var(--brand-light); flex-shrink: 0; }
+.dash-convert:hover { color: var(--brand); }
+
+input[type="text"], input[type="datetime-local"], textarea, select {
+  background: var(--bg-700); border: 1px solid var(--bg-500);
+  border-radius: var(--radius-sm); padding: 9px 12px;
+  color: var(--text-primary); font-size: 13px; font-family: var(--font-body);
+  width: 100%; transition: border-color 0.15s; outline: none;
+}
+input[type="text"]:focus, input[type="datetime-local"]:focus, textarea:focus, select:focus {
+  border-color: var(--brand); box-shadow: 0 0 0 2px rgba(14,165,233,0.2);
+}
+input::placeholder, textarea::placeholder { color: var(--text-faint); }
+textarea { resize: none; line-height: 1.5; }
+select { color: var(--text-secondary); cursor: pointer; }
+option { background: var(--bg-700); }
+label { font-size: 11px; color: var(--text-muted); font-weight: 500; display: block; margin-bottom: 5px; }
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-group { display: flex; flex-direction: column; }
+
+.prio-row { display: flex; gap: 8px; }
+.prio-btn {
+  flex: 1; padding: 7px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 500;
+  border: 1px solid var(--bg-500); background: var(--bg-700); color: var(--text-faint);
+  cursor: pointer; transition: all 0.15s;
+}
+.prio-btn.active-low { border-color: var(--emerald); color: var(--emerald); background: rgba(52,211,153,0.08); }
+.prio-btn.active-medium { border-color: var(--yellow); color: var(--yellow); background: rgba(251,191,36,0.08); }
+.prio-btn.active-high { border-color: var(--red); color: var(--red); background: rgba(248,113,113,0.08); }
+
+.modal-backdrop { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); }
+.modal-backdrop.open { display: flex; }
+.modal { background: var(--bg-900); border: 1px solid var(--border); border-radius: var(--radius-lg); width: 100%; max-width: 500px; box-shadow: var(--shadow); animation: fadeIn 0.2s ease-out; max-height: 90vh; overflow-y: auto; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.modal-header h3 { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.modal-close { background: none; border: none; cursor: pointer; color: var(--text-faint); padding: 4px; border-radius: 6px; transition: color 0.15s; }
+.modal-close:hover { color: var(--text-primary); }
+.modal-close svg { width: 18px; height: 18px; stroke: currentColor; fill: none; display: block; }
+.modal-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid var(--border); }
+.btn-secondary { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 13px; padding: 8px 14px; border-radius: var(--radius-sm); transition: color 0.15s; }
+.btn-secondary:hover { color: var(--text-primary); }
+
+.view-badges { display: flex; align-items: center; gap: 8px; }
+.prio-tag { font-size: 10px; padding: 2px 8px; border-radius: 6px; font-family: var(--font-mono); }
+.prio-tag.low { background: rgba(52,211,153,0.12); color: var(--emerald); }
+.prio-tag.medium { background: rgba(251,191,36,0.1); color: var(--yellow); }
+.prio-tag.high { background: var(--red-bg); color: var(--red); }
+.view-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.view-info-box { background: var(--bg-700); border-radius: var(--radius-sm); padding: 10px 12px; }
+.view-info-box p:first-child { font-size: 10px; color: var(--text-faint); margin-bottom: 3px; }
+.view-info-box p:last-child { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+.view-countdown { background: var(--bg-700); border-radius: var(--radius-sm); padding: 10px; text-align: center; margin-top: 4px; }
+.view-countdown p:first-child { font-size: 10px; color: var(--text-faint); margin-bottom: 3px; }
+.view-countdown p:last-child { font-family: var(--font-mono); color: var(--brand-light); font-weight: 500; }
+.view-footer-btns { display: flex; gap: 8px; }
+.btn-edit { display: flex; align-items: center; gap: 6px; background: var(--bg-700); border: none; color: var(--text-muted); padding: 7px 14px; border-radius: var(--radius-sm); font-size: 12px; cursor: pointer; transition: all 0.15s; }
+.btn-edit:hover { background: var(--bg-600); color: var(--text-primary); }
+.btn-edit svg { width: 13px; height: 13px; stroke: currentColor; fill: none; }
+.btn-delete { display: flex; align-items: center; gap: 6px; background: rgba(239,68,68,0.1); border: none; color: var(--red); padding: 7px 14px; border-radius: var(--radius-sm); font-size: 12px; cursor: pointer; transition: all 0.15s; }
+.btn-delete:hover { background: rgba(239,68,68,0.2); }
+.btn-delete svg { width: 13px; height: 13px; stroke: currentColor; fill: none; }
+
+#toast-container { position: fixed; top: 16px; right: 16px; z-index: 100; display: flex; flex-direction: column; gap: 8px; pointer-events: none; max-width: 320px; }
+.toast { padding: 11px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; border: 1px solid; backdrop-filter: blur(8px); transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1); pointer-events: auto; }
+.toast.success { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.3); color: #6ee7b7; }
+.toast.error { background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.3); color: #fca5a5; }
+.toast.warning { background: rgba(251,146,60,0.12); border-color: rgba(251,146,60,0.3); color: #fdba74; }
+.toast.info { background: rgba(14,165,233,0.12); border-color: rgba(14,165,233,0.3); color: #7dd3fc; }
+.toast.hide { opacity: 0; transform: translateX(100%); }
+
+#overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 40; }
+
+@media (max-width: 900px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .dash-grid { grid-template-columns: 1fr; }
+  .kanban-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  #sidebar { position: fixed; z-index: 50; height: 100vh; transform: translateX(-100%); }
+  #sidebar.open { transform: translateX(0); }
+  #overlay.show { display: block; }
+  .header-menu-btn { display: block; }
+  .btn-primary span { display: none; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+.shake { animation: shake 0.4s ease-in-out; }
 </style>
 </head>
-<body class="mesh-bg text-slate-200 min-h-screen antialiased">
+<body>
 
-<!-- Mobile overlay -->
-<div id="overlay" class="fixed inset-0 bg-black/60 z-40" onclick="closeSidebar()"></div>
+<div id="overlay" onclick="closeSidebar()"></div>
+<div id="toast-container"></div>
 
-<!-- Toast container -->
-<div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
-
-<!-- Layout -->
-<div class="flex h-screen overflow-hidden">
-
-  <!-- SIDEBAR -->
-  <aside id="sidebar" class="w-64 bg-surface-800 border-r border-surface-700 flex flex-col shrink-0">
-    <!-- Logo -->
-    <div class="px-5 py-5 border-b border-surface-700">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center shadow-glow-sm">
-          <i data-lucide="zap" class="w-5 h-5 text-white"></i>
-        </div>
-        <div>
-          <h1 class="text-sm font-display font-700 text-white leading-tight">Asistente Pro</h1>
-          <p class="text-xs text-slate-500">Gestión de Proyectos</p>
-        </div>
+<div class="app">
+  <aside id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <div>
+        <div class="logo-title">Asistente Pro</div>
+        <div class="logo-sub">Gestión de Proyectos</div>
       </div>
     </div>
-
-    <!-- Nav -->
-    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-      <button onclick="showSection('dashboard')" class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-700 transition-all text-sm font-medium" data-section="dashboard">
-        <i data-lucide="layout-dashboard" class="nav-icon w-4 h-4 shrink-0"></i>
-        <span>Panel Principal</span>
+    <nav>
+      <button class="nav-item active" onclick="showSection('dashboard')" data-section="dashboard">
+        <svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Panel Principal
       </button>
-      <button onclick="showSection('kanban')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-700 transition-all text-sm font-medium" data-section="kanban">
-        <i data-lucide="kanban" class="nav-icon w-4 h-4 shrink-0"></i>
-        <span>Tablero Kanban</span>
-        <span id="nav-badge-kanban" class="count-badge ml-auto bg-surface-600 text-slate-400 rounded-full flex items-center justify-center font-mono"></span>
+      <button class="nav-item" onclick="showSection('kanban')" data-section="kanban">
+        <svg viewBox="0 0 24 24" stroke-width="1.8"><rect x="3" y="3" width="4" height="18"/><rect x="10" y="3" width="4" height="12"/><rect x="17" y="3" width="4" height="15"/></svg>
+        Tablero Kanban
+        <span id="nav-badge-kanban" class="nav-badge"></span>
       </button>
-      <button onclick="showSection('ideas')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-700 transition-all text-sm font-medium" data-section="ideas">
-        <i data-lucide="lightbulb" class="nav-icon w-4 h-4 shrink-0"></i>
-        <span>Ideas Rápidas</span>
-        <span id="nav-badge-ideas" class="count-badge ml-auto bg-surface-600 text-slate-400 rounded-full flex items-center justify-center font-mono"></span>
+      <button class="nav-item" onclick="showSection('ideas')" data-section="ideas">
+        <svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="10" r="5"/><path d="M8.56 13.89L7 22l5-3 5 3-1.56-8.11"/></svg>
+        Ideas Rápidas
+        <span id="nav-badge-ideas" class="nav-badge"></span>
       </button>
-      <button onclick="showSection('deadlines')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-700 transition-all text-sm font-medium" data-section="deadlines">
-        <i data-lucide="clock" class="nav-icon w-4 h-4 shrink-0"></i>
-        <span>Deadlines</span>
-        <span id="nav-badge-urgent" class="count-badge ml-auto bg-red-500/80 text-white rounded-full flex items-center justify-center font-mono hidden"></span>
+      <button class="nav-item" onclick="showSection('deadlines')" data-section="deadlines">
+        <svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+        Deadlines
+        <span id="nav-badge-urgent" class="nav-badge urgent" style="display:none"></span>
       </button>
     </nav>
-
-    <!-- Stats mini -->
-    <div class="px-4 py-4 border-t border-surface-700">
-      <p class="text-xs text-slate-600 uppercase tracking-widest mb-3 font-mono">Resumen</p>
-      <div class="space-y-2">
-        <div class="flex justify-between text-xs">
-          <span class="text-slate-500">Pendientes</span>
-          <span id="sidebar-pending" class="font-mono text-slate-400">0</span>
-        </div>
-        <div class="flex justify-between text-xs">
-          <span class="text-slate-500">En proceso</span>
-          <span id="sidebar-process" class="font-mono text-brand-400">0</span>
-        </div>
-        <div class="flex justify-between text-xs">
-          <span class="text-slate-500">Finalizadas</span>
-          <span id="sidebar-done" class="font-mono text-emerald-400">0</span>
-        </div>
-      </div>
-      <!-- Progress -->
-      <div class="mt-3">
-        <div class="h-1.5 bg-surface-700 rounded-full overflow-hidden">
-          <div id="sidebar-progress" class="progress-bar h-full bg-gradient-to-r from-brand-500 to-emerald-400 rounded-full" style="width:0%"></div>
-        </div>
-        <p class="text-xs text-slate-600 mt-1 text-right font-mono"><span id="sidebar-pct">0</span>% completado</p>
-      </div>
+    <div class="sidebar-stats">
+      <div class="stats-label">Resumen</div>
+      <div class="stat-row"><span>Pendientes</span><span id="sidebar-pending">0</span></div>
+      <div class="stat-row process"><span>En proceso</span><span id="sidebar-process">0</span></div>
+      <div class="stat-row done"><span>Finalizadas</span><span id="sidebar-done">0</span></div>
+      <div class="progress-wrap"><div class="progress-bar" id="sidebar-progress" style="width:0%"></div></div>
+      <div class="progress-pct"><span id="sidebar-pct">0</span>% completado</div>
     </div>
-
-    <!-- Notification toggle -->
-    <div class="px-4 pb-4">
-      <button onclick="requestNotifications()" id="notif-btn" class="w-full flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors py-2 px-3 rounded-lg hover:bg-surface-700">
-        <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+    <div class="sidebar-notif">
+      <button id="notif-btn" onclick="requestNotifications()">
+        <svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span id="notif-text">Activar notificaciones</span>
       </button>
     </div>
   </aside>
 
-  <!-- MAIN -->
-  <main class="flex-1 flex flex-col overflow-hidden">
-
-    <!-- Top bar -->
-    <header class="bg-surface-800/80 backdrop-blur border-b border-surface-700 px-5 py-3.5 flex items-center gap-4 shrink-0">
-      <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white">
-        <i data-lucide="menu" class="w-5 h-5"></i>
+  <main>
+    <header>
+      <button class="header-menu-btn" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
-      <div class="flex-1">
-        <h2 id="page-title" class="text-base font-display font-700 text-white">Panel Principal</h2>
-        <p id="page-date" class="text-xs text-slate-500 font-mono"></p>
+      <div class="header-title">
+        <h2 id="page-title">Panel Principal</h2>
+        <p id="page-date"></p>
       </div>
-      <button onclick="openModal('modal-task')" class="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-xl transition-all shadow-glow-sm hover:shadow-glow">
-        <i data-lucide="plus" class="w-4 h-4"></i>
-        <span class="hidden sm:inline">Nueva Tarea</span>
+      <button class="btn-primary" onclick="openTaskModal()">
+        <svg viewBox="0 0 24 24" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Nueva Tarea</span>
       </button>
     </header>
 
-    <!-- Content area -->
-    <div class="flex-1 overflow-y-auto p-5">
+    <div class="content">
 
-      <!-- ===== DASHBOARD ===== -->
       <div id="section-dashboard" class="section active">
-        <!-- Stat cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div class="bg-surface-800 border border-surface-700 rounded-2xl p-4 hover:border-surface-600 transition-colors">
-            <div class="flex items-start justify-between mb-3">
-              <div class="w-9 h-9 rounded-xl bg-slate-700 flex items-center justify-center">
-                <i data-lucide="circle-dot" class="w-4 h-4 text-slate-400"></i>
-              </div>
-              <span class="text-xs font-mono text-slate-600">TOTAL</span>
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <span class="stat-tag">TOTAL</span>
             </div>
-            <p class="text-2xl font-display font-800 text-white" id="stat-total">0</p>
-            <p class="text-xs text-slate-500 mt-0.5">Todas las tareas</p>
+            <div class="stat-num" id="stat-total">0</div>
+            <div class="stat-label">Todas las tareas</div>
           </div>
-          <div class="bg-surface-800 border border-surface-700 rounded-2xl p-4 hover:border-brand-500/30 transition-colors">
-            <div class="flex items-start justify-between mb-3">
-              <div class="w-9 h-9 rounded-xl bg-brand-500/15 flex items-center justify-center">
-                <i data-lucide="loader" class="w-4 h-4 text-brand-400"></i>
-              </div>
-              <span class="text-xs font-mono text-slate-600">ACTIVO</span>
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div class="stat-icon brand"><svg viewBox="0 0 24 24" stroke-width="1.8"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg></div>
+              <span class="stat-tag">ACTIVO</span>
             </div>
-            <p class="text-2xl font-display font-800 text-brand-400" id="stat-process">0</p>
-            <p class="text-xs text-slate-500 mt-0.5">En proceso</p>
+            <div class="stat-num brand" id="stat-process">0</div>
+            <div class="stat-label">En proceso</div>
           </div>
-          <div class="bg-surface-800 border border-surface-700 rounded-2xl p-4 hover:border-emerald-500/30 transition-colors">
-            <div class="flex items-start justify-between mb-3">
-              <div class="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
-              </div>
-              <span class="text-xs font-mono text-slate-600">LISTO</span>
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div class="stat-icon emerald"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+              <span class="stat-tag">LISTO</span>
             </div>
-            <p class="text-2xl font-display font-800 text-emerald-400" id="stat-done">0</p>
-            <p class="text-xs text-slate-500 mt-0.5">Finalizadas</p>
+            <div class="stat-num emerald" id="stat-done">0</div>
+            <div class="stat-label">Finalizadas</div>
           </div>
-          <div class="bg-surface-800 border border-surface-700 rounded-2xl p-4 hover:border-red-500/30 transition-colors">
-            <div class="flex items-start justify-between mb-3">
-              <div class="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center">
-                <i data-lucide="alert-triangle" class="w-4 h-4 text-red-400"></i>
-              </div>
-              <span class="text-xs font-mono text-slate-600">URGENTE</span>
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div class="stat-icon red"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <span class="stat-tag">URGENTE</span>
             </div>
-            <p class="text-2xl font-display font-800 text-red-400" id="stat-urgent">0</p>
-            <p class="text-xs text-slate-500 mt-0.5">Próximas 24h</p>
+            <div class="stat-num red" id="stat-urgent">0</div>
+            <div class="stat-label">Próximas 24h</div>
           </div>
         </div>
-
-        <!-- Próximos deadlines + ideas recientes -->
-        <div class="grid lg:grid-cols-2 gap-5">
-          <!-- Próximos deadlines -->
-          <div class="bg-surface-800 border border-surface-700 rounded-2xl p-5">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="font-display font-700 text-white text-sm">Próximos Deadlines</h3>
-              <button onclick="showSection('deadlines')" class="text-xs text-brand-400 hover:text-brand-300 font-medium">Ver todos →</button>
+        <div class="dash-grid">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <h3>Próximos Deadlines</h3>
+              <button class="link-btn" onclick="showSection('deadlines')">Ver todos →</button>
             </div>
-            <div id="dashboard-deadlines" class="space-y-2">
-              <div class="empty-state rounded-xl p-6 text-center">
-                <i data-lucide="calendar-check" class="w-8 h-8 text-slate-700 mx-auto mb-2"></i>
-                <p class="text-sm text-slate-600">Sin deadlines próximos</p>
-              </div>
-            </div>
+            <div id="dashboard-deadlines"></div>
           </div>
-
-          <!-- Ideas recientes -->
-          <div class="bg-surface-800 border border-surface-700 rounded-2xl p-5">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="font-display font-700 text-white text-sm">Ideas Recientes</h3>
-              <button onclick="showSection('ideas')" class="text-xs text-brand-400 hover:text-brand-300 font-medium">Ver todas →</button>
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <h3>Ideas Recientes</h3>
+              <button class="link-btn" onclick="showSection('ideas')">Ver todas →</button>
             </div>
-            <div id="dashboard-ideas" class="space-y-2">
-              <div class="empty-state rounded-xl p-6 text-center">
-                <i data-lucide="lightbulb" class="w-8 h-8 text-slate-700 mx-auto mb-2"></i>
-                <p class="text-sm text-slate-600">Aún no hay ideas guardadas</p>
-              </div>
-            </div>
-            <!-- Quick idea input -->
-            <div class="mt-4 flex gap-2">
-              <input type="text" id="quick-idea-input" placeholder="Añadir idea rápida..." class="flex-1 bg-surface-700 border border-surface-600 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-brand-500 transition-colors">
-              <button onclick="addQuickIdea()" class="bg-surface-700 hover:bg-surface-600 border border-surface-600 rounded-xl px-3 py-2 text-slate-400 hover:text-white transition-all">
-                <i data-lucide="plus" class="w-4 h-4"></i>
+            <div id="dashboard-ideas"></div>
+            <div class="quick-idea-row">
+              <input type="text" id="quick-idea-input" placeholder="Añadir idea rápida...">
+              <button class="btn-primary" onclick="addQuickIdea()" style="padding:8px 12px;flex-shrink:0;">
+                <svg viewBox="0 0 24 24" stroke-width="2.5" style="width:14px;height:14px;stroke:white;fill:none;display:block"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ===== KANBAN ===== -->
       <div id="section-kanban" class="section">
-        <div class="grid md:grid-cols-3 gap-4">
-
-          <!-- PENDIENTE -->
-          <div class="bg-surface-800 border border-surface-700 rounded-2xl overflow-hidden">
-            <div class="px-4 py-3.5 border-b border-surface-700 flex items-center gap-2.5">
-              <div class="w-2 h-2 rounded-full bg-slate-500"></div>
-              <h3 class="font-display font-700 text-sm text-slate-300">Pendiente</h3>
-              <span id="count-pending" class="ml-auto count-badge bg-surface-600 text-slate-400 rounded-full flex items-center justify-center font-mono text-xs px-2">0</span>
+        <div class="kanban-grid">
+          <div class="kanban-col-wrap">
+            <div class="kanban-col-header">
+              <div class="col-dot pending"></div>
+              <h3 class="pending">Pendiente</h3>
+              <span class="col-count" id="count-pending">0</span>
             </div>
-            <div id="col-pending" class="kanban-col p-3 space-y-2.5 min-h-48"
-              ondragover="dragOver(event,'pending')" ondrop="drop(event,'pending')" ondragleave="dragLeave(event)">
-            </div>
+            <div class="kanban-col" id="col-pending" ondragover="dragOver(event,'pending')" ondrop="drop(event,'pending')" ondragleave="dragLeave()"></div>
           </div>
-
-          <!-- EN PROCESO -->
-          <div class="bg-surface-800 border border-surface-700 rounded-2xl overflow-hidden">
-            <div class="px-4 py-3.5 border-b border-surface-700 flex items-center gap-2.5">
-              <div class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></div>
-              <h3 class="font-display font-700 text-sm text-brand-300">En Proceso</h3>
-              <span id="count-process" class="ml-auto count-badge bg-brand-500/20 text-brand-400 rounded-full flex items-center justify-center font-mono text-xs px-2">0</span>
+          <div class="kanban-col-wrap">
+            <div class="kanban-col-header">
+              <div class="col-dot process"></div>
+              <h3 class="process">En Proceso</h3>
+              <span class="col-count process" id="count-process">0</span>
             </div>
-            <div id="col-process" class="kanban-col p-3 space-y-2.5 min-h-48"
-              ondragover="dragOver(event,'process')" ondrop="drop(event,'process')" ondragleave="dragLeave(event)">
-            </div>
+            <div class="kanban-col" id="col-process" ondragover="dragOver(event,'process')" ondrop="drop(event,'process')" ondragleave="dragLeave()"></div>
           </div>
-
-          <!-- FINALIZADO -->
-          <div class="bg-surface-800 border border-surface-700 rounded-2xl overflow-hidden">
-            <div class="px-4 py-3.5 border-b border-surface-700 flex items-center gap-2.5">
-              <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-              <h3 class="font-display font-700 text-sm text-emerald-300">Finalizado</h3>
-              <span id="count-done" class="ml-auto count-badge bg-emerald-500/15 text-emerald-400 rounded-full flex items-center justify-center font-mono text-xs px-2">0</span>
+          <div class="kanban-col-wrap">
+            <div class="kanban-col-header">
+              <div class="col-dot done"></div>
+              <h3 class="done">Finalizado</h3>
+              <span class="col-count done" id="count-done">0</span>
             </div>
-            <div id="col-done" class="kanban-col p-3 space-y-2.5 min-h-48"
-              ondragover="dragOver(event,'done')" ondrop="drop(event,'done')" ondragleave="dragLeave(event)">
-            </div>
+            <div class="kanban-col" id="col-done" ondragover="dragOver(event,'done')" ondrop="drop(event,'done')" ondragleave="dragLeave()"></div>
           </div>
-
         </div>
       </div>
 
-      <!-- ===== IDEAS ===== -->
       <div id="section-ideas" class="section">
-        <div class="max-w-2xl">
-          <!-- Add idea -->
-          <div class="bg-surface-800 border border-surface-700 rounded-2xl p-5 mb-5">
-            <h3 class="font-display font-700 text-white mb-4 text-sm">Nueva Idea / Nota de Reunión</h3>
-            <div class="space-y-3">
-              <input type="text" id="idea-title" placeholder="Título de la idea..." class="w-full bg-surface-700 border border-surface-600 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-brand-500 transition-colors">
-              <textarea id="idea-body" rows="3" placeholder="Detalle, contexto o notas de la reunión..." class="w-full bg-surface-700 border border-surface-600 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-brand-500 transition-colors resize-none"></textarea>
-              <div class="flex gap-3">
-                <select id="idea-tag" class="flex-1 bg-surface-700 border border-surface-600 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:border-brand-500 transition-colors">
-                  <option value="idea">💡 Idea</option>
-                  <option value="reunion">📋 Reunión</option>
-                  <option value="nota">📝 Nota</option>
-                  <option value="recordatorio">🔔 Recordatorio</option>
-                </select>
-                <button onclick="addIdea()" class="bg-brand-500 hover:bg-brand-600 text-white font-medium px-5 py-2 rounded-xl text-sm transition-all shadow-glow-sm">
-                  Guardar Idea
-                </button>
-              </div>
-            </div>
+        <div class="idea-form">
+          <h3>Nueva Idea / Nota de Reunión</h3>
+          <div class="form-group"><input type="text" id="idea-title" placeholder="Título de la idea..."></div>
+          <div class="form-group" style="margin-top:10px"><textarea id="idea-body" rows="3" placeholder="Detalle, contexto o notas de la reunión..."></textarea></div>
+          <div class="idea-form-row">
+            <select id="idea-tag" style="flex:1">
+              <option value="idea">💡 Idea</option>
+              <option value="reunion">📋 Reunión</option>
+              <option value="nota">📝 Nota</option>
+              <option value="recordatorio">🔔 Recordatorio</option>
+            </select>
+            <button class="btn-primary" onclick="addIdea()">Guardar Idea</button>
           </div>
-
-          <!-- Ideas list -->
-          <div id="ideas-list" class="space-y-3"></div>
         </div>
+        <div id="ideas-list"></div>
       </div>
 
-      <!-- ===== DEADLINES ===== -->
       <div id="section-deadlines" class="section">
-        <div id="deadlines-list" class="space-y-3"></div>
+        <div id="deadlines-list"></div>
       </div>
 
-    </div><!-- end content area -->
+    </div>
   </main>
 </div>
 
-<!-- ===== MODAL: NUEVA TAREA ===== -->
-<div id="modal-task" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-  <div class="modal-backdrop absolute inset-0" onclick="closeModal('modal-task')"></div>
-  <div class="relative w-full max-w-lg bg-surface-800 border border-surface-700 rounded-2xl shadow-card animate-slide-up">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-surface-700">
-      <h3 class="font-display font-700 text-white" id="modal-task-title">Nueva Tarea</h3>
-      <button onclick="closeModal('modal-task')" class="text-slate-500 hover:text-white transition-colors">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
+<!-- MODAL TAREA -->
+<div id="modal-task" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-task-title">Nueva Tarea</h3>
+      <button class="modal-close" onclick="closeModal('modal-task')"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-    <div class="px-6 py-5 space-y-4">
+    <div class="modal-body">
       <input type="hidden" id="task-edit-id">
-      <div>
-        <label class="text-xs text-slate-400 font-medium mb-1.5 block">Título *</label>
-        <input type="text" id="task-title" placeholder="Nombre de la tarea..." class="w-full bg-surface-700 border border-surface-600 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-brand-500 transition-colors">
-      </div>
-      <div>
-        <label class="text-xs text-slate-400 font-medium mb-1.5 block">Descripción / Notas</label>
-        <textarea id="task-desc" rows="3" placeholder="Descripción detallada, contexto o notas de reunión..." class="w-full bg-surface-700 border border-surface-600 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-brand-500 transition-colors resize-none"></textarea>
-      </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="text-xs text-slate-400 font-medium mb-1.5 block">Categoría</label>
-          <select id="task-category" class="w-full bg-surface-700 border border-surface-600 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:border-brand-500 transition-colors">
+      <div class="form-group"><label>Título *</label><input type="text" id="task-title" placeholder="Nombre de la tarea..."></div>
+      <div class="form-group"><label>Descripción / Notas</label><textarea id="task-desc" rows="3" placeholder="Descripción detallada..."></textarea></div>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Categoría</label>
+          <select id="task-category">
             <option value="desarrollo">🖥️ Desarrollo</option>
             <option value="diseño">🎨 Diseño</option>
             <option value="marketing">📣 Marketing</option>
@@ -462,556 +615,269 @@
             <option value="otro">📌 Otro</option>
           </select>
         </div>
-        <div>
-          <label class="text-xs text-slate-400 font-medium mb-1.5 block">Estado inicial</label>
-          <select id="task-status" class="w-full bg-surface-700 border border-surface-600 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:border-brand-500 transition-colors">
+        <div class="form-group">
+          <label>Estado</label>
+          <select id="task-status">
             <option value="pending">Pendiente</option>
             <option value="process">En Proceso</option>
             <option value="done">Finalizado</option>
           </select>
         </div>
       </div>
-      <div>
-        <label class="text-xs text-slate-400 font-medium mb-1.5 block">Fecha y Hora de Entrega</label>
-        <input type="datetime-local" id="task-deadline" class="w-full bg-surface-700 border border-surface-600 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:border-brand-500 transition-colors">
-      </div>
-      <div>
-        <label class="text-xs text-slate-400 font-medium mb-1.5 block">Prioridad</label>
-        <div class="flex gap-2">
-          <button type="button" onclick="setPriority('low')" id="prio-low" class="flex-1 py-2 rounded-xl text-xs font-medium border border-surface-600 bg-surface-700 text-slate-400 hover:border-emerald-500/50 hover:text-emerald-400 transition-all">Baja</button>
-          <button type="button" onclick="setPriority('medium')" id="prio-medium" class="flex-1 py-2 rounded-xl text-xs font-medium border border-surface-600 bg-surface-700 text-slate-400 hover:border-yellow-500/50 hover:text-yellow-400 transition-all">Media</button>
-          <button type="button" onclick="setPriority('high')" id="prio-high" class="flex-1 py-2 rounded-xl text-xs font-medium border border-surface-600 bg-surface-700 text-slate-400 hover:border-red-500/50 hover:text-red-400 transition-all">Alta</button>
+      <div class="form-group"><label>Fecha y Hora de Entrega</label><input type="datetime-local" id="task-deadline"></div>
+      <div class="form-group">
+        <label>Prioridad</label>
+        <div class="prio-row">
+          <button type="button" class="prio-btn" id="prio-low" onclick="setPriority('low')">▼ Baja</button>
+          <button type="button" class="prio-btn active-medium" id="prio-medium" onclick="setPriority('medium')">■ Media</button>
+          <button type="button" class="prio-btn" id="prio-high" onclick="setPriority('high')">▲ Alta</button>
         </div>
       </div>
     </div>
-    <div class="px-6 py-4 border-t border-surface-700 flex gap-3 justify-end">
-      <button onclick="closeModal('modal-task')" class="px-4 py-2 text-sm text-slate-400 hover:text-white transition-colors">Cancelar</button>
-      <button onclick="saveTask()" class="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 py-2 rounded-xl text-sm transition-all shadow-glow-sm">
-        <span id="modal-task-btn">Crear Tarea</span>
-      </button>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-task')">Cancelar</button>
+      <button class="btn-primary" onclick="saveTask()"><span id="modal-task-btn">Crear Tarea</span></button>
     </div>
   </div>
 </div>
 
-<!-- ===== MODAL: VER TAREA ===== -->
-<div id="modal-view" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-  <div class="modal-backdrop absolute inset-0" onclick="closeModal('modal-view')"></div>
-  <div class="relative w-full max-w-lg bg-surface-800 border border-surface-700 rounded-2xl shadow-card animate-slide-up">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-surface-700">
-      <div class="flex items-center gap-3">
-        <span id="view-category-badge" class="badge px-2.5 py-1 rounded-lg">—</span>
-        <span id="view-priority-badge" class="text-xs px-2 py-0.5 rounded-md font-mono"></span>
+<!-- MODAL VER -->
+<div id="modal-view" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="view-badges">
+        <span id="view-category-badge" class="badge">—</span>
+        <span id="view-priority-badge" class="prio-tag"></span>
       </div>
-      <button onclick="closeModal('modal-view')" class="text-slate-500 hover:text-white transition-colors">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
+      <button class="modal-close" onclick="closeModal('modal-view')"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-    <div class="px-6 py-5">
-      <h3 id="view-title" class="font-display font-700 text-white text-lg mb-2"></h3>
-      <p id="view-desc" class="text-sm text-slate-400 leading-relaxed mb-4"></p>
-      <div class="grid grid-cols-2 gap-3 text-sm">
-        <div class="bg-surface-700 rounded-xl p-3">
-          <p class="text-xs text-slate-500 mb-1">Estado</p>
-          <p id="view-status" class="font-medium text-slate-300"></p>
-        </div>
-        <div class="bg-surface-700 rounded-xl p-3">
-          <p class="text-xs text-slate-500 mb-1">Deadline</p>
-          <p id="view-deadline" class="font-medium text-slate-300 font-mono text-xs"></p>
-        </div>
+    <div class="modal-body">
+      <div>
+        <h3 id="view-title" style="font-size:17px;color:var(--text-primary);margin-bottom:6px;"></h3>
+        <p id="view-desc" style="font-size:13px;color:var(--text-muted);line-height:1.6;"></p>
       </div>
-      <div id="view-countdown" class="mt-3 bg-surface-700 rounded-xl p-3 text-center hidden">
-        <p class="text-xs text-slate-500 mb-1">Tiempo restante</p>
-        <p id="view-countdown-val" class="font-mono text-brand-400 font-medium"></p>
+      <div class="view-info-grid">
+        <div class="view-info-box"><p>Estado</p><p id="view-status"></p></div>
+        <div class="view-info-box"><p>Deadline</p><p id="view-deadline" style="font-family:var(--font-mono);font-size:11px;"></p></div>
+      </div>
+      <div class="view-countdown" id="view-countdown" style="display:none">
+        <p>Tiempo restante</p><p id="view-countdown-val"></p>
       </div>
     </div>
-    <div class="px-6 py-4 border-t border-surface-700 flex gap-2 justify-end">
-      <button onclick="editTaskFromView()" class="flex items-center gap-1.5 px-4 py-2 text-sm text-slate-400 hover:text-white bg-surface-700 hover:bg-surface-600 rounded-xl transition-all">
-        <i data-lucide="edit-2" class="w-3.5 h-3.5"></i> Editar
-      </button>
-      <button onclick="deleteTaskFromView()" class="flex items-center gap-1.5 px-4 py-2 text-sm text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 rounded-xl transition-all">
-        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Eliminar
-      </button>
+    <div class="modal-footer">
+      <div class="view-footer-btns">
+        <button class="btn-edit" onclick="editTaskFromView()"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar</button>
+        <button class="btn-delete" onclick="deleteTaskFromView()"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Eliminar</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-// ==========================================
-//  STATE & STORAGE
-// ==========================================
 let tasks = JSON.parse(localStorage.getItem('pm_tasks') || '[]');
 let ideas = JSON.parse(localStorage.getItem('pm_ideas') || '[]');
-let notifiedTasks = JSON.parse(localStorage.getItem('pm_notified') || '[]');
-let draggedTaskId = null;
-let currentPriority = 'medium';
-let viewingTaskId = null;
-let tickerInterval = null;
+let notified = JSON.parse(localStorage.getItem('pm_notified') || '[]');
+let dragId = null, currentPrio = 'medium', viewingId = null;
 
 function save() {
   localStorage.setItem('pm_tasks', JSON.stringify(tasks));
   localStorage.setItem('pm_ideas', JSON.stringify(ideas));
-  localStorage.setItem('pm_notified', JSON.stringify(notifiedTasks));
+  localStorage.setItem('pm_notified', JSON.stringify(notified));
 }
+function uid() { return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); }
 
-function genId() {
-  return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2,6);
-}
-
-// ==========================================
-//  NAVIGATION
-// ==========================================
-const sectionTitles = {
-  dashboard: 'Panel Principal',
-  kanban: 'Tablero Kanban',
-  ideas: 'Ideas Rápidas',
-  deadlines: 'Deadlines y Recordatorios'
-};
-
+const titles = { dashboard:'Panel Principal', kanban:'Tablero Kanban', ideas:'Ideas Rápidas', deadlines:'Deadlines' };
 function showSection(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('section-' + name).classList.add('active');
-  const btn = document.querySelector(`[data-section="${name}"]`);
+  const btn = document.querySelector('[data-section="' + name + '"]');
   if (btn) btn.classList.add('active');
-  document.getElementById('page-title').textContent = sectionTitles[name] || name;
+  document.getElementById('page-title').textContent = titles[name] || name;
   if (name === 'kanban') renderKanban();
   if (name === 'ideas') renderIdeas();
   if (name === 'deadlines') renderDeadlines();
   if (name === 'dashboard') renderDashboard();
   closeSidebar();
 }
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('show'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
 
-function toggleSidebar() {
-  const sb = document.getElementById('sidebar');
-  const ov = document.getElementById('overlay');
-  sb.classList.toggle('open');
-  ov.classList.toggle('show');
-}
-
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('overlay').classList.remove('show');
-}
-
-// ==========================================
-//  MODAL
-// ==========================================
-function openModal(id) {
-  const el = document.getElementById(id);
-  el.classList.remove('hidden');
-  el.classList.add('flex');
-  // Reset form if new task
-  if (id === 'modal-task' && !document.getElementById('task-edit-id').value) {
-    resetTaskForm();
-  }
-}
-
+function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) {
-  const el = document.getElementById(id);
-  el.classList.add('hidden');
-  el.classList.remove('flex');
-  if (id === 'modal-task') {
-    document.getElementById('task-edit-id').value = '';
-    document.getElementById('modal-task-title').textContent = 'Nueva Tarea';
-    document.getElementById('modal-task-btn').textContent = 'Crear Tarea';
-  }
+  document.getElementById(id).classList.remove('open');
+  if (id === 'modal-task') { document.getElementById('task-edit-id').value = ''; document.getElementById('modal-task-title').textContent = 'Nueva Tarea'; document.getElementById('modal-task-btn').textContent = 'Crear Tarea'; }
 }
-
+function openTaskModal() { resetTaskForm(); openModal('modal-task'); }
 function resetTaskForm() {
-  document.getElementById('task-edit-id').value = '';
-  document.getElementById('task-title').value = '';
-  document.getElementById('task-desc').value = '';
+  ['task-edit-id','task-title','task-desc','task-deadline'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('task-category').value = 'desarrollo';
   document.getElementById('task-status').value = 'pending';
-  document.getElementById('task-deadline').value = '';
   setPriority('medium');
 }
-
-// ==========================================
-//  PRIORITY BUTTONS
-// ==========================================
 function setPriority(p) {
-  currentPriority = p;
-  const colors = { low: 'border-emerald-500 text-emerald-400 bg-emerald-500/10', medium: 'border-yellow-500 text-yellow-400 bg-yellow-500/10', high: 'border-red-500 text-red-400 bg-red-500/10' };
-  ['low','medium','high'].forEach(pr => {
-    const btn = document.getElementById('prio-' + pr);
-    if (pr === p) {
-      btn.className = `flex-1 py-2 rounded-xl text-xs font-medium border ${colors[pr]} transition-all`;
-    } else {
-      btn.className = 'flex-1 py-2 rounded-xl text-xs font-medium border border-surface-600 bg-surface-700 text-slate-400 hover:border-slate-500 transition-all';
-    }
-  });
+  currentPrio = p;
+  ['low','medium','high'].forEach(pr => { document.getElementById('prio-' + pr).className = 'prio-btn' + (pr === p ? ' active-' + pr : ''); });
 }
 
-// ==========================================
-//  TASKS CRUD
-// ==========================================
 function saveTask() {
   const title = document.getElementById('task-title').value.trim();
-  if (!title) { shake('task-title'); return; }
-
+  if (!title) { shakeEl('task-title'); return; }
   const editId = document.getElementById('task-edit-id').value;
-  const taskData = {
-    title,
-    desc: document.getElementById('task-desc').value.trim(),
-    category: document.getElementById('task-category').value,
-    status: document.getElementById('task-status').value,
-    deadline: document.getElementById('task-deadline').value,
-    priority: currentPriority,
-    createdAt: editId ? undefined : Date.now(),
-    updatedAt: Date.now()
-  };
-
-  if (editId) {
-    const idx = tasks.findIndex(t => t.id === editId);
-    if (idx !== -1) {
-      tasks[idx] = { ...tasks[idx], ...taskData };
-      showToast('✏️ Tarea actualizada', 'success');
-    }
-  } else {
-    tasks.push({ id: genId(), ...taskData });
-    showToast('✅ Tarea creada correctamente', 'success');
-  }
-
-  save();
-  closeModal('modal-task');
-  renderAll();
+  const data = { title, desc: document.getElementById('task-desc').value.trim(), category: document.getElementById('task-category').value, status: document.getElementById('task-status').value, deadline: document.getElementById('task-deadline').value, priority: currentPrio, updatedAt: Date.now() };
+  if (editId) { const i = tasks.findIndex(t => t.id === editId); if (i !== -1) { tasks[i] = { ...tasks[i], ...data }; showToast('✏️ Tarea actualizada', 'success'); } }
+  else { tasks.push({ id: uid(), ...data, createdAt: Date.now() }); showToast('✅ Tarea creada', 'success'); }
+  save(); closeModal('modal-task'); renderAll();
 }
-
-function deleteTask(id) {
-  tasks = tasks.filter(t => t.id !== id);
-  save();
-  renderAll();
-  showToast('🗑️ Tarea eliminada', 'info');
-}
-
+function deleteTask(id) { tasks = tasks.filter(t => t.id !== id); save(); renderAll(); showToast('🗑️ Eliminada', 'info'); }
 function editTask(id) {
-  const task = tasks.find(t => t.id === id);
-  if (!task) return;
+  const t = tasks.find(t => t.id === id); if (!t) return;
   document.getElementById('task-edit-id').value = id;
-  document.getElementById('task-title').value = task.title;
-  document.getElementById('task-desc').value = task.desc || '';
-  document.getElementById('task-category').value = task.category;
-  document.getElementById('task-status').value = task.status;
-  document.getElementById('task-deadline').value = task.deadline || '';
-  setPriority(task.priority || 'medium');
+  document.getElementById('task-title').value = t.title;
+  document.getElementById('task-desc').value = t.desc || '';
+  document.getElementById('task-category').value = t.category;
+  document.getElementById('task-status').value = t.status;
+  document.getElementById('task-deadline').value = t.deadline || '';
+  setPriority(t.priority || 'medium');
   document.getElementById('modal-task-title').textContent = 'Editar Tarea';
   document.getElementById('modal-task-btn').textContent = 'Guardar Cambios';
   openModal('modal-task');
 }
-
 function moveTask(id, dir) {
   const cols = ['pending','process','done'];
-  const task = tasks.find(t => t.id === id);
-  if (!task) return;
-  const idx = cols.indexOf(task.status);
-  if (dir === 1 && idx < 2) task.status = cols[idx+1];
-  if (dir === -1 && idx > 0) task.status = cols[idx-1];
-  save();
-  renderAll();
+  const t = tasks.find(t => t.id === id); if (!t) return;
+  const i = cols.indexOf(t.status);
+  if (dir === 1 && i < 2) t.status = cols[i+1];
+  if (dir === -1 && i > 0) t.status = cols[i-1];
+  save(); renderAll();
 }
-
 function viewTask(id) {
-  const task = tasks.find(t => t.id === id);
-  if (!task) return;
-  viewingTaskId = id;
-  const catLabels = { desarrollo:'🖥️ Desarrollo', diseño:'🎨 Diseño', marketing:'📣 Marketing', 'reunión':'📋 Reunión', urgente:'🔥 Urgente', otro:'📌 Otro' };
-  const statusLabels = { pending:'Pendiente', process:'En Proceso', done:'Finalizado' };
-  const prioLabels = { low:'Baja', medium:'Media', high:'Alta' };
-  const prioColors = { low:'bg-emerald-500/15 text-emerald-400', medium:'bg-yellow-500/15 text-yellow-400', high:'bg-red-500/15 text-red-400' };
-
-  document.getElementById('view-title').textContent = task.title;
-  document.getElementById('view-desc').textContent = task.desc || 'Sin descripción';
-  document.getElementById('view-category-badge').textContent = catLabels[task.category] || task.category;
-  document.getElementById('view-category-badge').className = `badge px-2.5 py-1 rounded-lg cat-${task.category}`;
-  document.getElementById('view-priority-badge').textContent = prioLabels[task.priority] || 'Media';
-  document.getElementById('view-priority-badge').className = `text-xs px-2 py-0.5 rounded-md font-mono ${prioColors[task.priority] || prioColors.medium}`;
-  document.getElementById('view-status').textContent = statusLabels[task.status];
-  document.getElementById('view-deadline').textContent = task.deadline ? formatDate(task.deadline) : 'Sin fecha límite';
-
-  const cdv = document.getElementById('view-countdown');
-  if (task.deadline && task.status !== 'done') {
-    cdv.classList.remove('hidden');
-    document.getElementById('view-countdown-val').textContent = timeRemaining(task.deadline);
-  } else {
-    cdv.classList.add('hidden');
-  }
-
+  const t = tasks.find(t => t.id === id); if (!t) return;
+  viewingId = id;
+  const sL = { pending:'Pendiente', process:'En Proceso', done:'Finalizado' };
+  const pL = { low:'Baja', medium:'Media', high:'Alta' };
+  document.getElementById('view-title').textContent = t.title;
+  document.getElementById('view-desc').textContent = t.desc || 'Sin descripción';
+  const cb = document.getElementById('view-category-badge'); cb.textContent = catLabel(t.category); cb.className = 'badge cat-' + t.category;
+  const pb = document.getElementById('view-priority-badge'); pb.textContent = pL[t.priority] || 'Media'; pb.className = 'prio-tag ' + (t.priority || 'medium');
+  document.getElementById('view-status').textContent = sL[t.status];
+  document.getElementById('view-deadline').textContent = t.deadline ? formatDate(t.deadline) : 'Sin fecha límite';
+  const cd = document.getElementById('view-countdown');
+  if (t.deadline && t.status !== 'done') { cd.style.display = 'block'; document.getElementById('view-countdown-val').textContent = timeRemaining(t.deadline); }
+  else cd.style.display = 'none';
   openModal('modal-view');
 }
+function editTaskFromView() { closeModal('modal-view'); if (viewingId) editTask(viewingId); }
+function deleteTaskFromView() { closeModal('modal-view'); if (viewingId) deleteTask(viewingId); }
 
-function editTaskFromView() {
-  closeModal('modal-view');
-  if (viewingTaskId) editTask(viewingTaskId);
-}
-
-function deleteTaskFromView() {
-  closeModal('modal-view');
-  if (viewingTaskId) deleteTask(viewingTaskId);
-}
-
-// ==========================================
-//  IDEAS CRUD
-// ==========================================
 function addIdea() {
   const title = document.getElementById('idea-title').value.trim();
   const body = document.getElementById('idea-body').value.trim();
-  const tag = document.getElementById('idea-tag').value;
-  if (!title && !body) { shake('idea-title'); return; }
-  ideas.unshift({ id: genId(), title: title || 'Sin título', body, tag, createdAt: Date.now() });
-  save();
-  document.getElementById('idea-title').value = '';
-  document.getElementById('idea-body').value = '';
-  renderIdeas();
-  renderDashboard();
-  updateBadges();
-  showToast('💡 Idea guardada', 'success');
+  if (!title && !body) { shakeEl('idea-title'); return; }
+  ideas.unshift({ id: uid(), title: title || 'Sin título', body, tag: document.getElementById('idea-tag').value, createdAt: Date.now() });
+  save(); document.getElementById('idea-title').value = ''; document.getElementById('idea-body').value = '';
+  renderIdeas(); renderDashboard(); updateBadges(); showToast('💡 Idea guardada', 'success');
 }
-
 function addQuickIdea() {
-  const input = document.getElementById('quick-idea-input');
-  const val = input.value.trim();
-  if (!val) return;
-  ideas.unshift({ id: genId(), title: val, body: '', tag: 'idea', createdAt: Date.now() });
-  save();
-  input.value = '';
-  renderDashboard();
-  updateBadges();
-  showToast('💡 Idea añadida', 'success');
+  const input = document.getElementById('quick-idea-input'); const val = input.value.trim(); if (!val) return;
+  ideas.unshift({ id: uid(), title: val, body: '', tag: 'idea', createdAt: Date.now() });
+  save(); input.value = ''; renderDashboard(); updateBadges(); showToast('💡 Idea añadida', 'success');
 }
-
-function deleteIdea(id) {
-  ideas = ideas.filter(i => i.id !== id);
-  save();
-  renderIdeas();
-  renderDashboard();
-  updateBadges();
-}
-
+function deleteIdea(id) { ideas = ideas.filter(i => i.id !== id); save(); renderIdeas(); renderDashboard(); updateBadges(); }
 function convertIdeaToTask(id) {
-  const idea = ideas.find(i => i.id === id);
-  if (!idea) return;
-  // Pre-fill task modal
+  const idea = ideas.find(i => i.id === id); if (!idea) return;
+  resetTaskForm();
   document.getElementById('task-title').value = idea.title;
   document.getElementById('task-desc').value = idea.body || '';
-  document.getElementById('task-edit-id').value = '';
-  document.getElementById('modal-task-title').textContent = 'Convertir Idea en Tarea';
+  document.getElementById('modal-task-title').textContent = 'Convertir en Tarea';
   document.getElementById('modal-task-btn').textContent = 'Crear Tarea';
   openModal('modal-task');
 }
 
-// ==========================================
-//  DRAG AND DROP
-// ==========================================
-function dragStart(e, id) {
-  draggedTaskId = id;
-  setTimeout(() => {
-    const el = document.getElementById('card-' + id);
-    if (el) el.classList.add('dragging');
-  }, 0);
-}
-
-function dragEnd(e) {
-  if (draggedTaskId) {
-    const el = document.getElementById('card-' + draggedTaskId);
-    if (el) el.classList.remove('dragging');
-  }
-  draggedTaskId = null;
-}
-
-function dragOver(e, col) {
-  e.preventDefault();
-  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
-  document.getElementById('col-' + col).classList.add('drag-over');
-}
-
-function dragLeave(e) {
-  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
-}
-
+function dragStart(e, id) { dragId = id; setTimeout(() => { const el = document.getElementById('card-' + id); if (el) el.classList.add('dragging'); }, 0); }
+function dragEnd() { if (dragId) { const el = document.getElementById('card-' + dragId); if (el) el.classList.remove('dragging'); } dragId = null; }
+function dragOver(e, col) { e.preventDefault(); document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over')); document.getElementById('col-' + col).classList.add('drag-over'); }
+function dragLeave() { document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over')); }
 function drop(e, col) {
-  e.preventDefault();
-  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
-  if (draggedTaskId) {
-    const task = tasks.find(t => t.id === draggedTaskId);
-    if (task && task.status !== col) {
-      task.status = col;
-      save();
-      renderAll();
-    }
-  }
+  e.preventDefault(); document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+  if (dragId) { const t = tasks.find(t => t.id === dragId); if (t && t.status !== col) { t.status = col; save(); renderAll(); } }
 }
 
-// ==========================================
-//  RENDER KANBAN
-// ==========================================
 function renderKanban() {
-  const cols = { pending: [], process: [], done: [] };
-  tasks.forEach(t => { if (cols[t.status] !== undefined) cols[t.status].push(t); });
+  const cols = { pending:[], process:[], done:[] };
+  tasks.forEach(t => { if (cols[t.status]) cols[t.status].push(t); });
   Object.entries(cols).forEach(([col, arr]) => {
+    document.getElementById('count-' + col).textContent = arr.length;
     const el = document.getElementById('col-' + col);
-    const countEl = document.getElementById('count-' + col);
-    countEl.textContent = arr.length;
-    if (!arr.length) {
-      el.innerHTML = `<div class="empty-state rounded-xl p-5 text-center"><p class="text-xs text-slate-600">Sin tareas</p></div>`;
-      return;
-    }
-    el.innerHTML = arr.map(t => renderCard(t)).join('');
+    if (!arr.length) { el.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="15" x2="12" y2="15"/></svg><p>Sin tareas</p></div>'; return; }
+    el.innerHTML = arr.map(t => buildCard(t)).join('');
   });
-  lucide.createIcons();
 }
 
-function renderCard(t) {
+function buildCard(t) {
   const now = Date.now();
   const dl = t.deadline ? new Date(t.deadline).getTime() : null;
   const diff = dl ? dl - now : null;
-  const isCritical = diff !== null && diff < 3600000 && t.status !== 'done';
-  const isWarning = diff !== null && diff < 86400000 && diff >= 3600000 && t.status !== 'done';
   const isOverdue = diff !== null && diff < 0 && t.status !== 'done';
-
-  const urgClass = isOverdue ? 'deadline-critical urgent-pulse' : isCritical ? 'deadline-critical' : isWarning ? 'deadline-warning' : '';
-  const prioIcon = { low: '▼', medium: '■', high: '▲' }[t.priority] || '■';
-  const prioColor = { low: 'text-emerald-400', medium: 'text-yellow-400', high: 'text-red-400' }[t.priority] || 'text-yellow-400';
-  const cols = ['pending','process','done'];
-  const ci = cols.indexOf(t.status);
-
-  return `
-  <div id="card-${t.id}" class="task-card bg-surface-750 border border-surface-600 rounded-xl p-3.5 ${urgClass} animate-slide-up"
-       draggable="true" ondragstart="dragStart(event,'${t.id}')" ondragend="dragEnd(event)">
-    <!-- Header -->
-    <div class="flex items-start gap-2 mb-2">
-      <span class="${prioColor} text-xs mt-0.5 shrink-0 font-mono">${prioIcon}</span>
-      <p class="text-sm font-medium text-slate-200 flex-1 leading-snug cursor-pointer hover:text-white" onclick="viewTask('${t.id}')">${escHtml(t.title)}</p>
+  const isCrit = diff !== null && diff >= 0 && diff < 3600000 && t.status !== 'done';
+  const isWarn = diff !== null && diff >= 3600000 && diff < 86400000 && t.status !== 'done';
+  const cardCls = isOverdue || isCrit ? 'task-card critical' + (isOverdue ? ' urgent-pulse' : '') : isWarn ? 'task-card warning' : 'task-card';
+  const dlCls = isOverdue || isCrit ? 'card-deadline crit' : isWarn ? 'card-deadline warn' : 'card-deadline normal';
+  const cols = ['pending','process','done']; const ci = cols.indexOf(t.status);
+  const prioIcon = { low:'▼', medium:'■', high:'▲' }[t.priority] || '■';
+  return `<div id="card-${t.id}" class="${cardCls}" draggable="true" ondragstart="dragStart(event,'${t.id}')" ondragend="dragEnd()">
+    <div class="card-top">
+      <span class="prio-icon ${t.priority||'medium'}">${prioIcon}</span>
+      <span class="card-title" onclick="viewTask('${t.id}')">${esc(t.title)}</span>
     </div>
-    ${t.desc ? `<p class="text-xs text-slate-500 mb-2.5 leading-relaxed line-clamp-2">${escHtml(t.desc)}</p>` : ''}
-    <!-- Category -->
-    <div class="flex items-center gap-1.5 mb-2.5">
-      <span class="badge cat-${t.category} px-2 py-0.5 rounded-md">${catLabel(t.category)}</span>
-    </div>
-    <!-- Deadline -->
-    ${t.deadline ? `
-    <div class="flex items-center gap-1.5 mb-2.5">
-      <i data-lucide="clock" class="w-3 h-3 ${isOverdue ? 'text-red-400' : isWarning||isCritical ? 'text-orange-400' : 'text-slate-500'} shrink-0"></i>
-      <span class="text-xs font-mono ${isOverdue ? 'text-red-400' : isWarning||isCritical ? 'text-orange-400' : 'text-slate-500'}">${t.status !== 'done' ? timeRemaining(t.deadline) : formatDate(t.deadline)}</span>
-    </div>` : ''}
-    <!-- Actions -->
-    <div class="flex items-center gap-1 pt-2 border-t border-surface-600">
-      <button onclick="moveTask('${t.id}',-1)" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-surface-600 transition-all ${ci===0?'opacity-30 pointer-events-none':''}" title="Mover atrás">
-        <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
-      </button>
-      <button onclick="moveTask('${t.id}',1)" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-surface-600 transition-all ${ci===2?'opacity-30 pointer-events-none':''}" title="Mover adelante">
-        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-      </button>
-      <div class="flex-1"></div>
-      <button onclick="editTask('${t.id}')" class="p-1.5 rounded-lg text-slate-500 hover:text-brand-400 hover:bg-surface-600 transition-all" title="Editar">
-        <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
-      </button>
-      <button onclick="deleteTask('${t.id}')" class="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-surface-600 transition-all" title="Eliminar">
-        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-      </button>
+    ${t.desc ? `<div class="card-desc">${esc(t.desc)}</div>` : ''}
+    <div class="card-meta"><span class="badge cat-${t.category}">${catLabel(t.category)}</span></div>
+    ${dl ? `<div class="${dlCls}"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg><span>${t.status!=='done' ? timeRemaining(t.deadline) : formatDate(t.deadline)}</span></div>` : ''}
+    <div class="card-actions">
+      <button class="card-btn ${ci===0?'disabled':''}" onclick="moveTask('${t.id}',-1)"><svg viewBox="0 0 24 24" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="card-btn ${ci===2?'disabled':''}" onclick="moveTask('${t.id}',1)"><svg viewBox="0 0 24 24" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="card-spacer"></div>
+      <button class="card-btn" onclick="editTask('${t.id}')"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      <button class="card-btn" onclick="deleteTask('${t.id}')"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
     </div>
   </div>`;
 }
 
-// ==========================================
-//  RENDER IDEAS
-// ==========================================
 function renderIdeas() {
   const el = document.getElementById('ideas-list');
-  if (!ideas.length) {
-    el.innerHTML = `<div class="empty-state rounded-2xl p-10 text-center"><i data-lucide="lightbulb" class="w-10 h-10 text-slate-700 mx-auto mb-3"></i><p class="text-slate-600">Aún no hay ideas guardadas</p></div>`;
-    lucide.createIcons(); return;
-  }
   const tagLabels = { idea:'💡 Idea', reunion:'📋 Reunión', nota:'📝 Nota', recordatorio:'🔔 Recordatorio' };
-  el.innerHTML = ideas.map(i => `
-  <div class="idea-card bg-surface-800 border border-surface-700 rounded-xl p-4 animate-slide-up group hover:border-surface-600 transition-colors">
-    <div class="flex items-start gap-3">
-      <div class="flex-1">
-        <div class="flex items-center gap-2 mb-1">
-          <span class="text-xs bg-brand-500/10 text-brand-400 border border-brand-500/20 px-2 py-0.5 rounded-md font-mono">${tagLabels[i.tag]||i.tag}</span>
-          <span class="text-xs text-slate-600 font-mono">${formatDateShort(i.createdAt)}</span>
-        </div>
-        <h4 class="text-sm font-display font-700 text-slate-200 mb-1">${escHtml(i.title)}</h4>
-        ${i.body ? `<p class="text-xs text-slate-500 leading-relaxed">${escHtml(i.body)}</p>` : ''}
-      </div>
-      <div class="flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-        <button onclick="convertIdeaToTask('${i.id}')" class="p-1.5 rounded-lg text-slate-500 hover:text-brand-400 hover:bg-surface-700 transition-all" title="Convertir en tarea">
-          <i data-lucide="arrow-right-circle" class="w-3.5 h-3.5"></i>
-        </button>
-        <button onclick="deleteIdea('${i.id}')" class="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-surface-700 transition-all" title="Eliminar">
-          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-        </button>
-      </div>
-    </div>
-  </div>`).join('');
-  lucide.createIcons();
+  if (!ideas.length) { el.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="10" r="5"/><path d="M8.56 13.89L7 22l5-3 5 3-1.56-8.11"/></svg><p>Sin ideas guardadas</p></div>'; return; }
+  el.innerHTML = ideas.map(i => `<div class="idea-card"><div class="idea-card-inner"><div class="idea-card-body"><div class="idea-card-meta"><span class="idea-tag">${tagLabels[i.tag]||i.tag}</span><span class="idea-date">${formatDateShort(i.createdAt)}</span></div><div class="idea-title-text">${esc(i.title)}</div>${i.body?`<div class="idea-body-text">${esc(i.body)}</div>`:''}</div><div class="idea-actions"><button class="icon-btn" onclick="convertIdeaToTask('${i.id}')" title="Convertir en tarea"><svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button><button class="icon-btn" onclick="deleteIdea('${i.id}')" title="Eliminar"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div></div></div>`).join('');
 }
 
-// ==========================================
-//  RENDER DEADLINES
-// ==========================================
 function renderDeadlines() {
   const el = document.getElementById('deadlines-list');
   const withDl = tasks.filter(t => t.deadline).sort((a,b) => new Date(a.deadline)-new Date(b.deadline));
-  if (!withDl.length) {
-    el.innerHTML = `<div class="empty-state rounded-2xl p-10 text-center"><i data-lucide="calendar-x" class="w-10 h-10 text-slate-700 mx-auto mb-3"></i><p class="text-slate-600">No hay tareas con fecha límite</p><button onclick="openModal('modal-task')" class="mt-4 text-sm text-brand-400 hover:text-brand-300">+ Nueva tarea con deadline</button></div>`;
-    lucide.createIcons(); return;
-  }
-  const statusLabels = { pending:'Pendiente', process:'En Proceso', done:'Finalizado' };
+  if (!withDl.length) { el.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><p>No hay tareas con fecha límite</p></div>'; return; }
+  const sL = { pending:'Pendiente', process:'En Proceso', done:'Finalizado' };
   el.innerHTML = withDl.map(t => {
-    const now = Date.now();
-    const dl = new Date(t.deadline).getTime();
-    const diff = dl - now;
+    const now = Date.now(), dl = new Date(t.deadline).getTime(), diff = dl - now;
     const isOverdue = diff < 0 && t.status !== 'done';
-    const isCritical = diff < 3600000 && diff >= 0 && t.status !== 'done';
-    const isWarning = diff < 86400000 && diff >= 3600000 && t.status !== 'done';
-    const borderCls = isOverdue ? 'border-red-500/50 bg-red-500/5' : isCritical ? 'border-red-400/30 bg-red-500/5' : isWarning ? 'border-yellow-500/30 bg-yellow-500/5' : t.status === 'done' ? 'border-emerald-500/20 bg-emerald-500/5 opacity-60' : 'border-surface-700';
-    const icon = isOverdue ? 'alert-octagon' : isCritical ? 'alert-triangle' : isWarning ? 'clock' : t.status === 'done' ? 'check-circle' : 'calendar';
-    const iconColor = isOverdue ? 'text-red-400' : isCritical ? 'text-red-400' : isWarning ? 'text-yellow-400' : t.status === 'done' ? 'text-emerald-400' : 'text-slate-500';
-    return `
-    <div class="bg-surface-800 border ${borderCls} rounded-xl p-4 flex items-center gap-4 hover:border-surface-500 transition-colors animate-slide-up">
-      <div class="w-9 h-9 rounded-xl bg-surface-700 flex items-center justify-center shrink-0">
-        <i data-lucide="${icon}" class="w-4 h-4 ${iconColor}"></i>
-      </div>
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 mb-0.5">
-          <p class="text-sm font-medium text-slate-200 truncate">${escHtml(t.title)}</p>
-          <span class="badge cat-${t.category} px-2 py-0.5 rounded-md shrink-0">${catLabel(t.category)}</span>
-        </div>
-        <div class="flex items-center gap-3 text-xs">
-          <span class="text-slate-500 font-mono">${formatDate(t.deadline)}</span>
-          ${t.status !== 'done' ? `<span class="font-mono ${isOverdue?'text-red-400':isCritical?'text-red-400':isWarning?'text-yellow-400':'text-brand-400'}">${timeRemaining(t.deadline)}</span>` : ''}
-          <span class="text-slate-600">${statusLabels[t.status]}</span>
-        </div>
-      </div>
-      <div class="flex gap-1 shrink-0">
-        <button onclick="editTask('${t.id}')" class="p-1.5 rounded-lg text-slate-500 hover:text-brand-400 hover:bg-surface-700 transition-all">
-          <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
-        </button>
-      </div>
-    </div>`;
+    const isCrit = diff >= 0 && diff < 3600000 && t.status !== 'done';
+    const isWarn = diff >= 3600000 && diff < 86400000 && t.status !== 'done';
+    const isDone = t.status === 'done';
+    const itemCls = 'deadline-item' + (isDone?' done-item':isCrit||isOverdue?' crit':isWarn?' warn':'');
+    const iconCls = isDone?'dl-icon done-icon':isCrit||isOverdue?'dl-icon crit':isWarn?'dl-icon warn':'dl-icon normal';
+    const remCls = isCrit||isOverdue?'dl-remain crit':isWarn?'dl-remain warn':'dl-remain normal';
+    const iconPath = isDone ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>' : (isCrit||isOverdue) ? '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/>' : '<circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/>';
+    return `<div class="${itemCls}"><div class="${iconCls}"><svg viewBox="0 0 24 24" stroke-width="1.8">${iconPath}</svg></div><div class="dl-body"><div class="dl-top"><span class="dl-name">${esc(t.title)}</span><span class="badge cat-${t.category}">${catLabel(t.category)}</span></div><div class="dl-meta"><span class="dl-date">${formatDate(t.deadline)}</span>${t.status!=='done'?`<span class="${remCls}">${timeRemaining(t.deadline)}</span>`:''}<span class="dl-status">${sL[t.status]}</span></div></div><button class="dl-edit" onclick="editTask('${t.id}')"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div>`;
   }).join('');
-  lucide.createIcons();
 }
 
-// ==========================================
-//  RENDER DASHBOARD
-// ==========================================
 function renderDashboard() {
   const now = Date.now();
-  const total = tasks.length;
-  const pending = tasks.filter(t => t.status==='pending').length;
-  const process = tasks.filter(t => t.status==='process').length;
-  const done = tasks.filter(t => t.status==='done').length;
-  const urgent = tasks.filter(t => t.deadline && t.status!=='done' && (new Date(t.deadline).getTime()-now) < 86400000).length;
-
-  // Stats
+  const total = tasks.length, pending = tasks.filter(t=>t.status==='pending').length;
+  const process = tasks.filter(t=>t.status==='process').length, done = tasks.filter(t=>t.status==='done').length;
+  const urgent = tasks.filter(t=>t.deadline&&t.status!=='done'&&(new Date(t.deadline).getTime()-now)<86400000).length;
   document.getElementById('stat-total').textContent = total;
   document.getElementById('stat-process').textContent = process;
   document.getElementById('stat-done').textContent = done;
   document.getElementById('stat-urgent').textContent = urgent;
-
-  // Sidebar stats
   document.getElementById('sidebar-pending').textContent = pending;
   document.getElementById('sidebar-process').textContent = process;
   document.getElementById('sidebar-done').textContent = done;
@@ -1019,252 +885,81 @@ function renderDashboard() {
   document.getElementById('sidebar-progress').style.width = pct + '%';
   document.getElementById('sidebar-pct').textContent = pct;
 
-  // Upcoming deadlines (next 3)
-  const upcoming = tasks.filter(t => t.deadline && t.status!=='done')
-    .sort((a,b) => new Date(a.deadline)-new Date(b.deadline)).slice(0,3);
+  const upcoming = tasks.filter(t=>t.deadline&&t.status!=='done').sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,4);
   const ddEl = document.getElementById('dashboard-deadlines');
-  if (!upcoming.length) {
-    ddEl.innerHTML = `<div class="empty-state rounded-xl p-6 text-center"><i data-lucide="calendar-check" class="w-8 h-8 text-slate-700 mx-auto mb-2"></i><p class="text-sm text-slate-600">Sin deadlines próximos</p></div>`;
-  } else {
-    ddEl.innerHTML = upcoming.map(t => {
-      const diff = new Date(t.deadline).getTime() - now;
-      const isW = diff < 86400000;
-      return `<div class="flex items-center gap-3 py-2 border-b border-surface-700 last:border-0 cursor-pointer hover:bg-surface-750 rounded-lg px-1 transition-colors" onclick="viewTask('${t.id}')">
-        <div class="w-1.5 h-1.5 rounded-full ${isW ? 'bg-orange-400' : 'bg-brand-400'} shrink-0"></div>
-        <p class="text-sm text-slate-300 flex-1 truncate">${escHtml(t.title)}</p>
-        <span class="text-xs font-mono ${isW?'text-orange-400':'text-slate-500'} shrink-0">${timeRemaining(t.deadline)}</span>
-      </div>`;
-    }).join('');
-  }
+  ddEl.innerHTML = !upcoming.length ? '<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><p>Sin deadlines próximos</p></div>'
+    : upcoming.map(t => { const diff=new Date(t.deadline).getTime()-now; const isW=diff<86400000; return `<div class="dash-row" onclick="viewTask('${t.id}')"><div class="dash-dot ${isW?'warn':'normal'}"></div><span class="dash-row-title">${esc(t.title)}</span><span class="dash-row-time ${isW?'warn':'normal'}">${timeRemaining(t.deadline)}</span></div>`; }).join('');
 
-  // Recent ideas
-  const recentIdeas = ideas.slice(0,3);
+  const tagEmoji = { idea:'💡', reunion:'📋', nota:'📝', recordatorio:'🔔' };
   const idEl = document.getElementById('dashboard-ideas');
-  if (!recentIdeas.length) {
-    idEl.innerHTML = `<div class="empty-state rounded-xl p-6 text-center"><i data-lucide="lightbulb" class="w-8 h-8 text-slate-700 mx-auto mb-2"></i><p class="text-sm text-slate-600">Aún no hay ideas guardadas</p></div>`;
-  } else {
-    const tagLabels = { idea:'💡', reunion:'📋', nota:'📝', recordatorio:'🔔' };
-    idEl.innerHTML = recentIdeas.map(i => `
-    <div class="flex items-start gap-2.5 py-2 border-b border-surface-700 last:border-0">
-      <span class="text-sm">${tagLabels[i.tag]||'💡'}</span>
-      <div class="flex-1 min-w-0">
-        <p class="text-sm text-slate-300 truncate">${escHtml(i.title)}</p>
-        ${i.body ? `<p class="text-xs text-slate-600 truncate">${escHtml(i.body)}</p>` : ''}
-      </div>
-      <button onclick="convertIdeaToTask('${i.id}')" class="shrink-0 text-xs text-brand-400 hover:text-brand-300" title="Convertir en tarea">→</button>
-    </div>`).join('');
-  }
-
-  lucide.createIcons();
+  idEl.innerHTML = !ideas.length ? '<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="10" r="5"/><path d="M8.56 13.89L7 22l5-3 5 3-1.56-8.11"/></svg><p>Sin ideas aún</p></div>'
+    : ideas.slice(0,4).map(i=>`<div class="dash-idea-row"><span class="dash-idea-emoji">${tagEmoji[i.tag]||'💡'}</span><div class="dash-idea-info"><div class="dash-idea-name">${esc(i.title)}</div>${i.body?`<div class="dash-idea-sub">${esc(i.body)}</div>`:''}</div><button class="dash-convert" onclick="convertIdeaToTask('${i.id}')">→</button></div>`).join('');
 }
 
-// ==========================================
-//  RENDER ALL
-// ==========================================
 function renderAll() {
-  renderKanban();
-  renderDashboard();
-  updateBadges();
-  // Re-render current section if needed
-  const activeSection = document.querySelector('.section.active');
-  if (activeSection) {
-    const id = activeSection.id;
-    if (id === 'section-deadlines') renderDeadlines();
-    if (id === 'section-ideas') renderIdeas();
+  renderDashboard(); updateBadges();
+  const active = document.querySelector('.section.active');
+  if (active) {
+    if (active.id==='section-kanban') renderKanban();
+    if (active.id==='section-deadlines') renderDeadlines();
+    if (active.id==='section-ideas') renderIdeas();
   }
 }
-
 function updateBadges() {
-  const total = tasks.length;
-  const b = document.getElementById('nav-badge-kanban');
-  b.textContent = total || '';
-
-  const ib = document.getElementById('nav-badge-ideas');
-  ib.textContent = ideas.length || '';
-
+  document.getElementById('nav-badge-kanban').textContent = tasks.length || '';
+  document.getElementById('nav-badge-ideas').textContent = ideas.length || '';
   const now = Date.now();
-  const urgCount = tasks.filter(t => t.deadline && t.status!=='done' && (new Date(t.deadline).getTime()-now)<86400000).length;
-  const ub = document.getElementById('nav-badge-urgent');
-  if (urgCount > 0) { ub.textContent = urgCount; ub.classList.remove('hidden'); }
-  else ub.classList.add('hidden');
+  const urg = tasks.filter(t=>t.deadline&&t.status!=='done'&&(new Date(t.deadline).getTime()-now)<86400000).length;
+  const bu = document.getElementById('nav-badge-urgent');
+  if (urg > 0) { bu.textContent = urg; bu.style.display = 'flex'; } else bu.style.display = 'none';
 }
 
-// ==========================================
-//  TIME HELPERS
-// ==========================================
+function requestNotifications() {
+  if (!('Notification' in window)) { showToast('No soportado', 'error'); return; }
+  Notification.requestPermission().then(p => {
+    if (p==='granted') { showToast('🔔 Notificaciones activadas','success'); document.getElementById('notif-text').textContent='Notificaciones activas'; document.getElementById('notif-btn').classList.add('active'); }
+    else showToast('Notificaciones bloqueadas','error');
+  });
+}
+function checkNotifications() {
+  const now = Date.now();
+  tasks.forEach(t => {
+    if (!t.deadline || t.status==='done') return;
+    const diff = new Date(t.deadline).getTime() - now;
+    if (diff>0&&diff<3600000&&!notified.includes(t.id+'_1h')) { notified.push(t.id+'_1h'); save(); showToast(`⏰ "${t.title}" vence en menos de 1h`,'warning'); if (Notification.permission==='granted') new Notification('⏰ Deadline próximo',{body:t.title}); }
+    if (diff<0&&diff>-300000&&!notified.includes(t.id+'_due')) { notified.push(t.id+'_due'); save(); showToast(`🚨 VENCIDA: "${t.title}"`,'error'); if (Notification.permission==='granted') new Notification('🚨 Deadline vencido',{body:t.title}); }
+  });
+}
+
+function showToast(msg, type='info') {
+  const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(() => { t.classList.add('hide'); setTimeout(() => t.remove(), 380); }, 3500);
+}
+
 function timeRemaining(deadline) {
   const diff = new Date(deadline).getTime() - Date.now();
   if (diff < 0) return '⚠ Vencida';
-  const d = Math.floor(diff/86400000);
-  const h = Math.floor((diff%86400000)/3600000);
-  const m = Math.floor((diff%3600000)/60000);
-  if (d > 0) return `${d}d ${h}h restante${d>1?'s':''}`;
-  if (h > 0) return `${h}h ${m}m restante${h>1?'s':''}`;
-  return `${m}m restante${m!==1?'s':''}`;
+  const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000);
+  if (d>0) return d+'d '+h+'h'; if (h>0) return h+'h '+m+'m'; return m+'m';
 }
+function formatDate(dt) { if (!dt) return '—'; return new Date(dt).toLocaleString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function formatDateShort(ts) { return new Date(ts).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}); }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function catLabel(cat) { return {desarrollo:'Desarrollo',diseño:'Diseño',marketing:'Marketing','reunión':'Reunión',urgente:'Urgente',otro:'Otro'}[cat]||cat; }
+function shakeEl(id) { const el=document.getElementById(id); if(!el)return; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); el.addEventListener('animationend',()=>el.classList.remove('shake'),{once:true}); el.focus(); }
 
-function formatDate(dt) {
-  if (!dt) return '—';
-  return new Date(dt).toLocaleString('es-ES', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-}
-
-function formatDateShort(ts) {
-  return new Date(ts).toLocaleDateString('es-ES', { day:'2-digit', month:'short' });
-}
-
-// ==========================================
-//  NOTIFICATIONS
-// ==========================================
-function requestNotifications() {
-  if (!('Notification' in window)) { showToast('Tu navegador no soporta notificaciones', 'error'); return; }
-  Notification.requestPermission().then(p => {
-    if (p === 'granted') {
-      showToast('🔔 Notificaciones activadas', 'success');
-      document.getElementById('notif-text').textContent = 'Notificaciones activas';
-      document.getElementById('notif-btn').classList.add('text-brand-400');
-    } else {
-      showToast('Notificaciones bloqueadas', 'error');
-    }
-  });
-}
-
-function checkDeadlineNotifications() {
-  const now = Date.now();
-  tasks.forEach(t => {
-    if (!t.deadline || t.status === 'done') return;
-    const diff = new Date(t.deadline).getTime() - now;
-    // Notify when less than 1h remaining and not already notified
-    if (diff > 0 && diff < 3600000 && !notifiedTasks.includes(t.id + '_1h')) {
-      notifiedTasks.push(t.id + '_1h');
-      save();
-      showToast(`⏰ "${t.title}" vence en menos de 1 hora`, 'warning');
-      if (Notification.permission === 'granted') {
-        new Notification('⏰ Deadline próximo – Asistente Pro', {
-          body: `"${t.title}" vence en menos de 1 hora`,
-          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%230ea5e9"><circle cx="12" cy="12" r="10"/></svg>'
-        });
-      }
-    }
-    // Notify at deadline
-    if (diff < 0 && diff > -300000 && !notifiedTasks.includes(t.id + '_due')) {
-      notifiedTasks.push(t.id + '_due');
-      save();
-      showToast(`🚨 DEADLINE VENCIDO: "${t.title}"`, 'error');
-      if (Notification.permission === 'granted') {
-        new Notification('🚨 Deadline Vencido – Asistente Pro', { body: `"${t.title}" ha llegado a su fecha límite` });
-      }
-    }
-  });
-}
-
-// ==========================================
-//  TOASTS
-// ==========================================
-function showToast(msg, type='info') {
-  const colors = {
-    success: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',
-    error: 'bg-red-500/15 border-red-500/30 text-red-300',
-    warning: 'bg-yellow-500/15 border-yellow-500/30 text-yellow-300',
-    info: 'bg-brand-500/15 border-brand-500/30 text-brand-300'
-  };
-  const toast = document.createElement('div');
-  toast.className = `toast pointer-events-auto ${colors[type]||colors.info} border backdrop-blur-sm rounded-xl px-4 py-3 text-sm font-medium shadow-card`;
-  toast.textContent = msg;
-  const container = document.getElementById('toast-container');
-  container.appendChild(toast);
-  setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 400); }, 4000);
-}
-
-// ==========================================
-//  SHAKE ANIMATION
-// ==========================================
-function shake(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.style.animation = '';
-  void el.offsetWidth;
-  el.style.animation = 'shake 0.5s ease-in-out';
-  el.addEventListener('animationend', () => el.style.animation = '', { once: true });
-  el.focus();
-}
-
-// ==========================================
-//  UTILITY
-// ==========================================
-function escHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function catLabel(cat) {
-  const labels = { desarrollo:'Desarrollo', diseño:'Diseño', marketing:'Marketing', 'reunión':'Reunión', urgente:'Urgente', otro:'Otro' };
-  return labels[cat] || cat;
-}
-
-// ==========================================
-//  DATE HEADER
-// ==========================================
-function updateDateHeader() {
-  const now = new Date();
-  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
-  document.getElementById('page-date').textContent = now.toLocaleDateString('es-ES', opts);
-}
-
-// ==========================================
-//  TICKER (updates every 30s)
-// ==========================================
-function startTicker() {
-  clearInterval(tickerInterval);
-  tickerInterval = setInterval(() => {
-    checkDeadlineNotifications();
-    updateBadges();
-    const activeSection = document.querySelector('.section.active');
-    if (activeSection) {
-      const id = activeSection.id;
-      if (id === 'section-kanban') renderKanban();
-      if (id === 'section-deadlines') renderDeadlines();
-      if (id === 'section-dashboard') renderDashboard();
-    }
-  }, 30000);
-}
-
-// ==========================================
-//  KEYBOARD SHORTCUTS
-// ==========================================
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    closeModal('modal-task');
-    closeModal('modal-view');
-  }
-  if ((e.ctrlKey||e.metaKey) && e.key === 'n') {
-    e.preventDefault();
-    openModal('modal-task');
-  }
+  if (e.key==='Escape') { closeModal('modal-task'); closeModal('modal-view'); }
+  if ((e.ctrlKey||e.metaKey)&&e.key==='n') { e.preventDefault(); openTaskModal(); }
 });
+document.getElementById('quick-idea-input').addEventListener('keydown', e => { if(e.key==='Enter') addQuickIdea(); });
 
-// Enter on quick idea
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('quick-idea-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') addQuickIdea();
-  });
-});
-
-// ==========================================
-//  INIT
-// ==========================================
-window.addEventListener('DOMContentLoaded', () => {
-  lucide.createIcons();
-  updateDateHeader();
-  renderAll();
-  checkDeadlineNotifications();
-  startTicker();
-
-  // Check notification status
-  if (Notification.permission === 'granted') {
-    document.getElementById('notif-text').textContent = 'Notificaciones activas';
-    document.getElementById('notif-btn').classList.add('text-brand-400');
-  }
-});
+document.getElementById('page-date').textContent = new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+if (Notification.permission==='granted') { document.getElementById('notif-text').textContent='Notificaciones activas'; document.getElementById('notif-btn').classList.add('active'); }
+renderAll();
+checkNotifications();
+setInterval(()=>{ checkNotifications(); updateBadges(); renderDashboard(); }, 30000);
 </script>
 </body>
 </html>
