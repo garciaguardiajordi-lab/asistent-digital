@@ -3,556 +3,589 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Executive Copilot · Papelería</title>
+<title>AI Executive Copilot</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+/* ── Reset & Base ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:#050b1a;}
-h1,h2,h3,h4,h5{font-family:'Syne',sans-serif;}
-.mono{font-family:'JetBrains Mono',monospace;}
-
-/* ── Glass ── */
-.glass{background:rgba(255,255,255,0.04);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);}
-.glass-strong{background:rgba(10,20,50,0.75);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.12);}
-.glass-card{background:rgba(255,255,255,0.03);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.07);transition:border-color .2s,background .2s;}
-.glass-card:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.14);}
+:root{
+  --bg:#0a0a0a;
+  --bg1:#111114;
+  --bg2:#17171c;
+  --bg3:#1e1e26;
+  --bg4:#25252f;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.1);
+  --text1:#f0f0f5;
+  --text2:#a0a0b0;
+  --text3:#606070;
+  --neo-mag:#e879f9;
+  --neo-grn:#4ade80;
+  --neo-cya:#22d3ee;
+  --neo-org:#fb923c;
+  --neo-gry:#94a3b8;
+  --neo-sky:#38bdf8;
+  --neo-vio:#a78bfa;
+  --r:24px;
+  --r-sm:16px;
+  --r-xs:12px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text1);min-height:100vh;overflow-x:hidden;}
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:#1e3a5f;border-radius:9px;}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:9px;}
+::-webkit-scrollbar-thumb:hover{background:var(--bg3);}
 
-/* ── Dept colors ── */
-.dept-producto    {--dc:#f0abfc;--dcb:rgba(240,171,252,.18);--dcbr:rgba(240,171,252,.35);}
-.dept-comercial-f {--dc:#4ade80;--dcb:rgba(74,222,128,.15);--dcbr:rgba(74,222,128,.35);}
-.dept-comercial-o {--dc:#22d3ee;--dcb:rgba(34,211,238,.15);--dcbr:rgba(34,211,238,.35);}
-.dept-logistica   {--dc:#fb923c;--dcb:rgba(251,146,60,.15); --dcbr:rgba(251,146,60,.35);}
-.dept-gestion     {--dc:#94a3b8;--dcb:rgba(148,163,184,.12);--dcbr:rgba(148,163,184,.3);}
-.d-tag{background:var(--dcb);color:var(--dc);border:1px solid var(--dcbr);}
-.d-bar{background:var(--dc);}
-.d-border-l{border-left:3px solid var(--dc);}
-.d-pct{color:var(--dc);}
+/* ── Glass cards ── */
+.card{
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  transition:border-color .2s,background .2s;
+}
+.card:hover{border-color:var(--border2);}
+.card-glass{
+  background:rgba(17,17,20,0.7);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+}
+.card-inner{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  transition:background .15s,border-color .15s;
+}
+.card-inner:hover{background:var(--bg3);border-color:var(--border2);}
 
-/* ── Animations ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes popIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
-@keyframes bellRing{0%,100%{transform:rotate(0)}15%{transform:rotate(18deg)}30%{transform:rotate(-16deg)}45%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}75%{transform:rotate(4deg)}}
-@keyframes neonPulse{0%,100%{box-shadow:0 0 6px #f97316,0 0 12px #f97316}50%{box-shadow:0 0 14px #f97316,0 0 28px #f97316}}
-@keyframes urgPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
-@keyframes semGreen{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes toastSlide{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
-.fade-up{animation:fadeUp .32s ease-out;}
-.pop-in{animation:popIn .38s cubic-bezier(.34,1.56,.64,1);}
-.bell-ring{animation:bellRing .8s ease-in-out;}
-.neon-orange{animation:neonPulse 2s infinite;}
-.urg-pulse{animation:urgPulse 2s infinite;}
-.sem-blink{animation:semGreen 1.2s infinite;}
-.shake{animation:shake .4s ease-in-out;}
-.toast-slide{animation:toastSlide .35s cubic-bezier(.34,1.56,.64,1);}
+/* ── Dept glow borders ── */
+.dept-producto   {--dc:var(--neo-mag);}
+.dept-comercialf {--dc:var(--neo-grn);}
+.dept-comercialo {--dc:var(--neo-cya);}
+.dept-logistica  {--dc:var(--neo-org);}
+.dept-gestion    {--dc:var(--neo-gry);}
+.dept-tag{
+  background:color-mix(in srgb,var(--dc) 12%,transparent);
+  color:var(--dc);
+  border:1px solid color-mix(in srgb,var(--dc) 30%,transparent);
+  font-size:.65rem;
+  font-weight:600;
+  padding:.2rem .55rem;
+  border-radius:99px;
+  letter-spacing:.04em;
+}
+.dept-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--dc);
+  box-shadow:0 0 6px var(--dc);
+  flex-shrink:0;
+}
+.dept-line-l{border-left:2px solid var(--dc);}
+.dept-prog{background:var(--dc);}
+.dept-glow{box-shadow:0 0 20px color-mix(in srgb,var(--dc) 20%,transparent);}
 
-/* ── Progress ── */
-.prog{transition:width .8s cubic-bezier(.4,0,.2,1);}
+/* ── Pill tags ── */
+.pill{
+  font-size:.65rem;font-weight:600;padding:.2rem .55rem;border-radius:99px;letter-spacing:.04em;
+}
+.pill-sky{background:rgba(56,189,248,.12);color:var(--neo-sky);border:1px solid rgba(56,189,248,.25);}
+.pill-mag{background:rgba(232,121,249,.12);color:var(--neo-mag);border:1px solid rgba(232,121,249,.25);}
+.pill-grn{background:rgba(74,222,128,.1);color:var(--neo-grn);border:1px solid rgba(74,222,128,.25);}
+.pill-org{background:rgba(251,146,60,.1);color:var(--neo-org);border:1px solid rgba(251,146,60,.25);}
+.pill-red{background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.25);}
+.pill-yel{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.25);}
+.pill-vio{background:rgba(167,139,250,.1);color:var(--neo-vio);border:1px solid rgba(167,139,250,.25);}
+.pill-gry{background:rgba(148,163,184,.1);color:var(--neo-gry);border:1px solid rgba(148,163,184,.25);}
+.pill-cya{background:rgba(34,211,238,.1);color:var(--neo-cya);border:1px solid rgba(34,211,238,.25);}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:600;padding:.5rem 1rem;border-radius:var(--r-xs);border:none;cursor:pointer;transition:all .15s;letter-spacing:.01em;}
+.btn-primary{background:var(--neo-sky);color:#000;}
+.btn-primary:hover{background:#7dd3fc;transform:translateY(-1px);}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border2);}
+.btn-ghost:hover{background:var(--bg4);color:var(--text1);}
+.btn-danger{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.25);}
+.btn-danger:hover{background:rgba(239,68,68,.25);}
+.btn-icon{padding:.45rem;border-radius:var(--r-xs);border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.btn-icon:hover{background:var(--bg3);color:var(--text1);border-color:var(--border2);}
+.btn-icon svg{width:15px;height:15px;}
+
+/* ── Form ── */
+.fld{
+  width:100%;
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:var(--r-xs);
+  padding:.55rem .9rem;
+  font-size:.825rem;
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--text1);
+  outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.fld:focus{border-color:rgba(56,189,248,.5);box-shadow:0 0 0 3px rgba(56,189,248,.1);}
+.fld::placeholder{color:var(--text3);}
+.fld option{background:var(--bg2);}
+textarea.fld{resize:none;}
+.lbl{display:block;font-size:.7rem;font-weight:600;color:var(--text3);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.06em;}
+
+/* ── Toggle ── */
+.tog{position:relative;display:inline-flex;align-items:center;cursor:pointer;}
+.tog input{position:absolute;opacity:0;width:0;height:0;}
+.tog-track{width:40px;height:22px;background:var(--bg4);border-radius:99px;border:1px solid var(--border2);transition:.2s;}
+.tog-thumb{position:absolute;left:3px;width:16px;height:16px;background:var(--text3);border-radius:50%;transition:.2s;}
+.tog input:checked~.tog-track{background:rgba(56,189,248,.25);border-color:rgba(56,189,248,.5);}
+.tog input:checked~.tog-thumb{transform:translateX(18px);background:var(--neo-sky);box-shadow:0 0 8px var(--neo-sky);}
+
+/* ── Kanban ── */
+.task-card{cursor:grab;transition:transform .12s,opacity .12s;user-select:none;}
+.task-card:hover{transform:translateY(-2px);}
+.task-card:active,.task-card.dragging{opacity:.25;cursor:grabbing;transform:scale(.97);}
+.kanban-col{transition:background .15s,outline .15s;min-height:120px;}
+.kanban-col.drag-over{background:rgba(56,189,248,.03);outline:1.5px dashed rgba(56,189,248,.35);border-radius:var(--r-sm);}
+
+/* ── Progress bar ── */
+.prog-track{background:var(--bg4);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;transition:width .7s cubic-bezier(.4,0,.2,1);}
 
 /* ── Notes expand ── */
-.notes-body{max-height:0;overflow:hidden;transition:max-height .35s ease,opacity .2s;opacity:0;}
-.notes-body.open{max-height:800px;opacity:1;}
+.notes-body{max-height:0;overflow:hidden;transition:max-height .3s ease,opacity .2s;opacity:0;}
+.notes-body.open{max-height:600px;opacity:1;}
 
-/* ── Task card ── */
-.task-card{cursor:grab;user-select:none;transition:transform .15s,box-shadow .15s,opacity .15s;}
-.task-card:hover{transform:translateY(-2px);}
-.task-card.dragging{opacity:.22;cursor:grabbing;transform:scale(.96);}
-.kanban-col{transition:background .2s,outline .2s;min-height:160px;}
-.kanban-col.drag-over{outline:2px dashed #22d3ee;background:rgba(34,211,238,.04);border-radius:14px;}
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+@keyframes bellRing{0%,100%{transform:rotate(0)}20%{transform:rotate(16deg)}40%{transform:rotate(-14deg)}60%{transform:rotate(10deg)}80%{transform:rotate(-5deg)}}
+@keyframes glowPulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes urgRing{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes toastIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+@keyframes dotBlink{0%,100%{opacity:1}50%{opacity:.2}}
+.fade-up{animation:fadeUp .3s ease-out;}
+.scale-in{animation:scaleIn .35s cubic-bezier(.34,1.56,.64,1);}
+.bell-anim{animation:bellRing .7s ease-in-out;}
+.glow-pulse{animation:glowPulse 1.8s ease-in-out infinite;}
+.urg-ring{animation:urgRing 1.8s infinite;}
+.shake{animation:shake .35s ease-in-out;}
+.toast-in{animation:toastIn .3s cubic-bezier(.34,1.56,.64,1);}
+.dot-blink{animation:dotBlink 1.2s infinite;}
 
-/* ── Field ── */
-.fld{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:.75rem;padding:.6rem 1rem;font-size:.875rem;color:#e2e8f0;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s,box-shadow .15s;}
-.fld:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.18);}
-.fld::placeholder{color:#475569;}
-.fld option{background:#0f172a;}
-label.lbl{display:block;font-size:.68rem;font-weight:600;color:#94a3b8;margin-bottom:.3rem;letter-spacing:.04em;}
-
-/* ── Tab active ── */
-.tab.active{background:rgba(56,189,248,.15);color:#38bdf8;border-color:rgba(56,189,248,.4);}
+/* ── Modal backdrop ── */
+.modal-bg{background:rgba(0,0,0,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
 
 /* ── Semáforo ── */
-.sem{width:12px;height:12px;border-radius:50%;}
-.sem-red{background:#ef4444;box-shadow:0 0 8px #ef4444;}
-.sem-yellow{background:#fbbf24;box-shadow:0 0 8px #fbbf24;}
-.sem-green{background:#4ade80;box-shadow:0 0 8px #4ade80;}
+.sem{width:9px;height:9px;border-radius:50%;}
+.sem-g{background:#4ade80;box-shadow:0 0 6px #4ade80;}
+.sem-y{background:#fbbf24;box-shadow:0 0 6px #fbbf24;}
+.sem-r{background:#f87171;box-shadow:0 0 6px #f87171;}
 
-/* ── Bg gradient ── */
-.bg-mesh{background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(14,165,233,.09) 0,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 90%,rgba(139,92,246,.07) 0,transparent 60%),#050b1a;}
+/* ── Color picker ── */
+.cpk{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .15s;}
+.cpk.sel{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.15);}
+.cpk:hover{transform:scale(1.1);}
+
+/* ── Responsive bento ── */
+@media(max-width:768px){
+  .bento-main{grid-template-columns:1fr!important;}
+  .bento-3{grid-template-columns:1fr!important;}
+  .hide-mobile{display:none!important;}
+}
 </style>
 </head>
-<body class="bg-mesh text-slate-300 min-h-screen antialiased">
+<body>
 
-<!-- ════════════════════════════════════════
+<!-- ═══════════════════════════
      TOASTS
-════════════════════════════════════════ -->
-<div id="toasts" class="fixed top-4 right-4 z-[500] flex flex-col gap-2 pointer-events-none max-w-xs w-full"></div>
+═══════════════════════════ -->
+<div id="toasts" class="fixed top-5 right-5 z-[600] flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
 
-<!-- ════════════════════════════════════════
-     POP-UP MATUTINO / RADAR
-════════════════════════════════════════ -->
-<div id="popup-radar" class="fixed inset-0 z-[400] bg-black/70 backdrop-blur-md hidden items-center justify-center p-4">
-  <div class="glass-strong rounded-3xl w-full max-w-2xl shadow-2xl pop-in max-h-[92vh] overflow-y-auto">
-    <!-- Header -->
-    <div class="relative overflow-hidden rounded-t-3xl px-7 pt-7 pb-5 bg-gradient-to-br from-sky-900/40 via-violet-900/30 to-transparent">
+<!-- ═══════════════════════════
+     POPUP RADAR
+═══════════════════════════ -->
+<div id="popup-radar" class="fixed inset-0 z-[500] modal-bg hidden items-center justify-center p-4">
+  <div class="card-glass w-full max-w-xl scale-in overflow-hidden" style="max-height:92vh;overflow-y:auto;">
+    <!-- Gradient top -->
+    <div style="background:linear-gradient(135deg,rgba(56,189,248,.12) 0%,rgba(167,139,250,.08) 50%,transparent 100%);padding:2rem 2rem 1.25rem;">
       <div class="flex items-start justify-between gap-4">
         <div>
-          <p id="radar-greeting" class="text-2xl font-bold text-white leading-tight"></p>
-          <p id="radar-motto" class="text-sm text-slate-300 mt-1 italic"></p>
+          <p id="r-greet" class="text-xl font-bold" style="color:var(--text1)"></p>
+          <p id="r-motto" class="text-sm mt-1" style="color:var(--text2);font-style:italic;"></p>
         </div>
-        <button onclick="cerrarRadar()" class="shrink-0 w-9 h-9 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white transition-all">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <button onclick="cerrarRadar()" class="btn-icon shrink-0" style="margin-top:2px;">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <p id="radar-fecha" class="text-xs text-slate-500 mt-1 mono"></p>
+      <p id="r-fecha" class="text-xs mt-1" style="color:var(--text3);font-variant-numeric:tabular-nums;"></p>
     </div>
 
-    <!-- KPIs row -->
-    <div class="grid grid-cols-3 gap-3 px-7 py-4 border-b border-white/5">
-      <div class="glass rounded-2xl p-3 text-center">
-        <p id="r-urg" class="font-bold text-xl text-red-400">0</p>
-        <p class="text-xs text-slate-500">Urgentes</p>
+    <!-- Counters -->
+    <div class="grid grid-cols-3 gap-3 px-6 pb-4">
+      <div class="card-inner p-3 text-center">
+        <p id="r-cnt-urg" class="text-2xl font-bold" style="color:#f87171;">0</p>
+        <p class="text-xs mt-0.5" style="color:var(--text3);">Urgentes</p>
       </div>
-      <div class="glass rounded-2xl p-3 text-center">
-        <p id="r-48h" class="font-bold text-xl text-yellow-400">0</p>
-        <p class="text-xs text-slate-500">Vencen 48h</p>
+      <div class="card-inner p-3 text-center">
+        <p id="r-cnt-48" class="text-2xl font-bold" style="color:#fbbf24;">0</p>
+        <p class="text-xs mt-0.5" style="color:var(--text3);">En 48h</p>
       </div>
-      <div class="glass rounded-2xl p-3 text-center">
-        <p id="r-done" class="font-bold text-xl text-emerald-400">0</p>
-        <p class="text-xs text-slate-500">Completadas</p>
+      <div class="card-inner p-3 text-center">
+        <p id="r-cnt-done" class="text-2xl font-bold" style="color:#4ade80;">0</p>
+        <p class="text-xs mt-0.5" style="color:var(--text3);">Hechas</p>
       </div>
     </div>
 
-    <!-- Body sections -->
-    <div id="radar-body" class="px-7 py-4 space-y-4 max-h-80 overflow-y-auto"></div>
+    <!-- Body -->
+    <div id="r-body" class="px-6 pb-4 space-y-3"></div>
 
     <!-- Footer -->
-    <div class="px-7 py-4 border-t border-white/5 flex gap-3">
-      <button onclick="copiarInformeRadar()" class="flex-1 flex items-center justify-center gap-2 bg-emerald-500/90 hover:bg-emerald-500 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition-all">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copiar Informe Email
+    <div class="px-6 pb-6 flex gap-3 pt-2" style="border-top:1px solid var(--border);">
+      <button onclick="copiarRadarEmail()" class="btn btn-ghost flex-1 justify-center" style="margin-top:1rem;">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar Email
       </button>
-      <button onclick="cerrarRadar()" class="glass hover:bg-white/10 text-slate-300 font-bold text-sm px-6 py-2.5 rounded-xl transition-all">
+      <button onclick="cerrarRadar()" class="btn btn-primary flex-1 justify-center" style="margin-top:1rem;">
         Empezar →
       </button>
     </div>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
+<!-- ═══════════════════════════
      MODAL TAREA
-════════════════════════════════════════ -->
-<div id="modal-tarea" class="fixed inset-0 z-[300] bg-black/70 backdrop-blur-md hidden items-center justify-center p-4">
-  <div class="glass-strong rounded-2xl w-full max-w-2xl shadow-2xl pop-in max-h-[94vh] overflow-y-auto">
-    <div class="sticky top-0 glass-strong z-10 flex items-center justify-between px-6 py-4 border-b border-white/5">
-      <h3 id="mt-heading" class="font-bold text-white text-lg">Nueva Tarea</h3>
-      <button onclick="cerrarModal('modal-tarea')" class="w-8 h-8 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white transition-all">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+═══════════════════════════ -->
+<div id="modal-tarea" class="fixed inset-0 z-[400] modal-bg hidden items-center justify-center p-4">
+  <div class="card w-full max-w-xl scale-in" style="max-height:94vh;overflow-y:auto;">
+    <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-4" style="background:var(--bg1);border-bottom:1px solid var(--border);">
+      <p id="mt-h" class="font-bold text-base" style="color:var(--text1);">Nueva Tarea</p>
+      <button onclick="cerrarModal('modal-tarea')" class="btn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-
     <div class="px-6 py-5 space-y-4">
       <input type="hidden" id="mt-id">
-      <!-- Urgente -->
-      <div class="flex items-center justify-between glass rounded-xl px-4 py-3 border border-red-500/20">
-        <div>
-          <p class="text-sm font-bold text-red-400">🚨 URGENTE</p>
-          <p class="text-xs text-slate-500 mt-0.5">Sube al inicio · Retrasa otras +2 días</p>
+      <!-- Urgente + Alerta -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="card-inner px-4 py-3 flex items-center justify-between">
+          <div><p class="text-sm font-semibold" style="color:#f87171;">🚨 URGENTE</p><p class="text-xs mt-0.5" style="color:var(--text3);">+2d al resto</p></div>
+          <label class="tog"><input type="checkbox" id="mt-urg"><div class="tog-track"></div><div class="tog-thumb"></div></label>
         </div>
-        <label class="relative inline-flex cursor-pointer items-center">
-          <input type="checkbox" id="mt-urgente" class="sr-only peer">
-          <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-red-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
-        </label>
-      </div>
-
-      <!-- Alerta 24h -->
-      <div class="flex items-center justify-between glass rounded-xl px-4 py-3 border border-orange-500/20">
-        <div>
-          <p class="text-sm font-bold text-orange-400">🔔 Alerta 24h</p>
-          <p class="text-xs text-slate-500 mt-0.5">Aparecerá en el Radar mañana</p>
+        <div class="card-inner px-4 py-3 flex items-center justify-between">
+          <div><p class="text-sm font-semibold" style="color:var(--neo-org);">🔔 Alerta 24h</p><p class="text-xs mt-0.5" style="color:var(--text3);">Radar mañana</p></div>
+          <label class="tog"><input type="checkbox" id="mt-a24"><div class="tog-track"></div><div class="tog-thumb"></div></label>
         </div>
-        <label class="relative inline-flex cursor-pointer items-center">
-          <input type="checkbox" id="mt-alerta24" class="sr-only peer">
-          <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-orange-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
-        </label>
       </div>
-
-      <div>
-        <label class="lbl">Título *</label>
-        <input id="mt-titulo" type="text" placeholder="¿Qué hay que hacer?" class="fld" oninput="autodetectarDept()">
+      <div><label class="lbl">Título *</label><input id="mt-titulo" type="text" placeholder="¿Qué hay que hacer?" class="fld" oninput="autoDetect()"></div>
+      <div><label class="lbl">Descripción / Notas de reunión</label><textarea id="mt-desc" rows="3" placeholder="Contexto, acuerdos, detalles..." class="fld"></textarea></div>
+      <!-- Sugerencia procedimiento -->
+      <div id="mt-sugerencia" class="hidden card-inner px-4 py-3" style="border-color:rgba(167,139,250,.3);">
+        <p class="text-xs font-semibold mb-1" style="color:var(--neo-vio);">💡 Procedimiento encontrado:</p>
+        <p id="mt-sug-texto" class="text-xs" style="color:var(--text2);"></p>
       </div>
-      <div>
-        <label class="lbl">Descripción / Notas de reunión</label>
-        <textarea id="mt-desc" rows="3" placeholder="Contexto, puntos de reunión, detalles..." class="fld resize-none"></textarea>
-      </div>
-
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="lbl">Departamento</label>
           <select id="mt-dept" class="fld" onchange="actualizarCats()">
             <option value="producto">🟣 Producto</option>
-            <option value="comercial-f">🟢 Comercial Físico</option>
-            <option value="comercial-o">🩵 Comercial Online</option>
+            <option value="comercialf">🟢 Comercial Físico</option>
+            <option value="comercialo">🩵 Comercial Online</option>
             <option value="logistica">🟠 Logística/Compras</option>
             <option value="gestion">⚪ Gestión</option>
           </select>
+          <div id="mt-hint" class="hidden mt-1 text-xs" style="color:var(--neo-sky);">✨ Auto-detectado</div>
         </div>
-        <div>
-          <label class="lbl">Categoría</label>
-          <select id="mt-cat" class="fld"></select>
-        </div>
+        <div><label class="lbl">Categoría</label><select id="mt-cat" class="fld"></select></div>
       </div>
-
       <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="lbl">Proyecto</label>
-          <select id="mt-proy" class="fld"><option value="">Sin proyecto</option></select>
-        </div>
-        <div>
-          <label class="lbl">Prioridad</label>
-          <select id="mt-prio" class="fld">
-            <option value="baja">🟢 Baja</option>
-            <option value="media" selected>🟡 Media</option>
-            <option value="alta">🔴 Alta</option>
-          </select>
+        <div><label class="lbl">Proyecto</label><select id="mt-proy" class="fld"><option value="">Sin proyecto</option></select></div>
+        <div><label class="lbl">Prioridad</label>
+          <select id="mt-prio" class="fld"><option value="baja">🟢 Baja</option><option value="media" selected>🟡 Media</option><option value="alta">🔴 Alta</option></select>
         </div>
       </div>
-
       <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="lbl">Estado</label>
-          <select id="mt-estado" class="fld">
-            <option value="pendiente">Pendiente</option>
-            <option value="proceso">En Proceso</option>
-            <option value="finalizado">Finalizado</option>
-          </select>
+        <div><label class="lbl">Estado</label>
+          <select id="mt-estado" class="fld"><option value="pendiente">Pendiente</option><option value="proceso">En Proceso</option><option value="finalizado">Finalizado</option></select>
         </div>
-        <div>
-          <label class="lbl">Deadline</label>
-          <input id="mt-deadline" type="datetime-local" class="fld">
-        </div>
+        <div><label class="lbl">Deadline</label><input id="mt-dl" type="datetime-local" class="fld"></div>
       </div>
-
-      <!-- Recurrencia -->
-      <div class="glass rounded-xl px-4 py-3 border border-white/5">
+      <!-- Cíclica -->
+      <div class="card-inner px-4 py-3">
         <div class="flex items-center justify-between mb-2">
-          <p class="text-sm font-bold text-sky-400">🔁 Reunión Cíclica</p>
-          <label class="relative inline-flex cursor-pointer items-center">
-            <input type="checkbox" id="mt-ciclica" class="sr-only peer" onchange="toggleCiclica()">
-            <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-sky-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
-          </label>
+          <p class="text-sm font-semibold" style="color:var(--neo-sky);">🔁 Reunión Cíclica</p>
+          <label class="tog"><input type="checkbox" id="mt-cic" onchange="toggleCic()"><div class="tog-track"></div><div class="tog-thumb"></div></label>
         </div>
-        <div id="ciclica-opts" class="hidden grid grid-cols-2 gap-3">
-          <div>
-            <label class="lbl">Repetir cada (días)</label>
-            <input id="mt-frec" type="number" min="1" max="365" placeholder="21" class="fld">
-          </div>
-          <div>
-            <label class="lbl">Asistentes</label>
-            <input id="mt-asistentes" type="text" placeholder="Ana, Luis, Sara..." class="fld">
-          </div>
+        <div id="mt-cic-opts" class="hidden grid grid-cols-2 gap-3">
+          <div><label class="lbl">Cada (días)</label><input id="mt-frec" type="number" min="1" max="365" placeholder="21" class="fld"></div>
+          <div><label class="lbl">Asistentes</label><input id="mt-asist" type="text" placeholder="Ana, Luis..." class="fld"></div>
         </div>
       </div>
-
-      <!-- Cómo se hizo (notas de cierre) -->
+      <!-- Checklist -->
       <div>
-        <label class="lbl">📋 Procedimiento / Cómo se hizo</label>
-        <textarea id="mt-como" rows="2" placeholder="Guarda el procedimiento para futuras tareas similares..." class="fld resize-none"></textarea>
+        <label class="lbl">Checklist</label>
+        <div id="mt-checklist" class="space-y-2 mb-2"></div>
+        <div class="flex gap-2">
+          <input id="mt-check-inp" type="text" placeholder="+ Añadir ítem..." class="fld flex-1" onkeydown="if(event.key==='Enter'){addCheckItem();event.preventDefault();}">
+          <button type="button" onclick="addCheckItem()" class="btn btn-ghost" style="padding:.5rem .8rem;">+</button>
+        </div>
       </div>
-
-      <!-- Siguiente paso -->
-      <div>
-        <label class="lbl">➡️ Siguiente Paso / Acuerdo</label>
-        <textarea id="mt-siguiente" rows="2" placeholder="Próxima acción acordada..." class="fld resize-none"></textarea>
-      </div>
-
-      <div id="hint-auto" class="hidden glass rounded-xl px-3 py-2 text-xs text-sky-400 border border-sky-500/20">
-        ✨ Departamento detectado automáticamente
-      </div>
+      <!-- Procedimiento cierre -->
+      <div><label class="lbl">📋 Procedimiento / Cómo se hizo</label><textarea id="mt-como" rows="2" placeholder="Para futuras tareas similares..." class="fld"></textarea></div>
+      <div><label class="lbl">➡️ Siguiente Paso</label><textarea id="mt-sig" rows="2" placeholder="Próxima acción acordada..." class="fld"></textarea></div>
     </div>
-
-    <div class="px-6 py-4 border-t border-white/5 flex gap-3 justify-end">
-      <button onclick="cerrarModal('modal-tarea')" class="text-sm text-slate-400 hover:text-white px-4 py-2 transition-colors">Cancelar</button>
-      <button onclick="guardarTarea()" id="mt-btn" class="bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-sky-500/20">Crear Tarea</button>
+    <div class="px-6 py-4 flex gap-3 justify-end" style="border-top:1px solid var(--border);">
+      <button onclick="cerrarModal('modal-tarea')" class="btn btn-ghost">Cancelar</button>
+      <button onclick="guardarTarea()" id="mt-btn" class="btn btn-primary">Crear Tarea</button>
     </div>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
+<!-- ═══════════════════════════
      MODAL PROYECTO
-════════════════════════════════════════ -->
-<div id="modal-proy" class="fixed inset-0 z-[300] bg-black/70 backdrop-blur-md hidden items-center justify-center p-4">
-  <div class="glass-strong rounded-2xl w-full max-w-md shadow-2xl pop-in">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
-      <h3 id="mp-heading" class="font-bold text-white text-lg">Nuevo Proyecto</h3>
-      <button onclick="cerrarModal('modal-proy')" class="w-8 h-8 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white transition-all">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+═══════════════════════════ -->
+<div id="modal-proy" class="fixed inset-0 z-[400] modal-bg hidden items-center justify-center p-4">
+  <div class="card w-full max-w-md scale-in">
+    <div class="flex items-center justify-between px-6 py-4" style="border-bottom:1px solid var(--border);">
+      <p id="mp-h" class="font-bold text-base" style="color:var(--text1);">Nuevo Proyecto</p>
+      <button onclick="cerrarModal('modal-proy')" class="btn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="px-6 py-5 space-y-4">
       <input type="hidden" id="mp-id">
       <div><label class="lbl">Nombre *</label><input id="mp-nombre" type="text" placeholder="Nombre del proyecto..." class="fld"></div>
-      <div>
-        <label class="lbl">Departamento</label>
+      <div><label class="lbl">Departamento</label>
         <select id="mp-dept" class="fld">
-          <option value="producto">🟣 Producto</option>
-          <option value="comercial-f">🟢 Comercial Físico</option>
-          <option value="comercial-o">🩵 Comercial Online</option>
-          <option value="logistica">🟠 Logística/Compras</option>
-          <option value="gestion">⚪ Gestión</option>
+          <option value="producto">🟣 Producto</option><option value="comercialf">🟢 Comercial Físico</option>
+          <option value="comercialo">🩵 Comercial Online</option><option value="logistica">🟠 Logística</option><option value="gestion">⚪ Gestión</option>
         </select>
       </div>
-      <div><label class="lbl">Palabras clave (autoasignación)</label>
-        <input id="mp-keys" type="text" placeholder="erp, web, catálogo..." class="fld">
-        <p class="text-xs text-slate-600 mt-1">Al escribir el título de una tarea, se asignará automáticamente.</p>
-      </div>
+      <div><label class="lbl">Palabras clave (autoasignación)</label><input id="mp-keys" type="text" placeholder="erp, catálogo, web..." class="fld"><p class="text-xs mt-1" style="color:var(--text3);">Separadas por coma.</p></div>
       <div>
         <label class="lbl">Color</label>
-        <div id="cpicker" class="flex gap-2 flex-wrap mt-1">
-          <button type="button" onclick="selColor('#0ea5e9')" data-c="#0ea5e9" class="cpk w-8 h-8 rounded-full bg-sky-500 ring-2 ring-white ring-offset-2 ring-offset-[#0f172a] transition-all"></button>
-          <button type="button" onclick="selColor('#8b5cf6')" data-c="#8b5cf6" class="cpk w-8 h-8 rounded-full bg-violet-500 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
-          <button type="button" onclick="selColor('#f0abfc')" data-c="#f0abfc" class="cpk w-8 h-8 rounded-full bg-fuchsia-300 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
-          <button type="button" onclick="selColor('#4ade80')" data-c="#4ade80" class="cpk w-8 h-8 rounded-full bg-green-400 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
-          <button type="button" onclick="selColor('#22d3ee')" data-c="#22d3ee" class="cpk w-8 h-8 rounded-full bg-cyan-400 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
-          <button type="button" onclick="selColor('#fb923c')" data-c="#fb923c" class="cpk w-8 h-8 rounded-full bg-orange-400 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
-          <button type="button" onclick="selColor('#f43f5e')" data-c="#f43f5e" class="cpk w-8 h-8 rounded-full bg-rose-500 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
-          <button type="button" onclick="selColor('#fbbf24')" data-c="#fbbf24" class="cpk w-8 h-8 rounded-full bg-amber-400 ring-2 ring-transparent ring-offset-2 ring-offset-[#0f172a] hover:ring-white transition-all"></button>
+        <div id="cpicker" class="flex gap-2 mt-1 flex-wrap">
+          <div class="cpk sel" data-c="#38bdf8" style="background:#38bdf8" onclick="selColor('#38bdf8')"></div>
+          <div class="cpk" data-c="#a78bfa" style="background:#a78bfa" onclick="selColor('#a78bfa')"></div>
+          <div class="cpk" data-c="#e879f9" style="background:#e879f9" onclick="selColor('#e879f9')"></div>
+          <div class="cpk" data-c="#4ade80" style="background:#4ade80" onclick="selColor('#4ade80')"></div>
+          <div class="cpk" data-c="#22d3ee" style="background:#22d3ee" onclick="selColor('#22d3ee')"></div>
+          <div class="cpk" data-c="#fb923c" style="background:#fb923c" onclick="selColor('#fb923c')"></div>
+          <div class="cpk" data-c="#f43f5e" style="background:#f43f5e" onclick="selColor('#f43f5e')"></div>
+          <div class="cpk" data-c="#fbbf24" style="background:#fbbf24" onclick="selColor('#fbbf24')"></div>
         </div>
       </div>
     </div>
-    <div class="px-6 py-4 border-t border-white/5 flex gap-3 justify-end">
-      <button onclick="cerrarModal('modal-proy')" class="text-sm text-slate-400 hover:text-white px-4 py-2 transition-colors">Cancelar</button>
-      <button onclick="guardarProyecto()" id="mp-btn" class="bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm px-6 py-2.5 rounded-xl transition-all">Crear Proyecto</button>
+    <div class="px-6 py-4 flex gap-3 justify-end" style="border-top:1px solid var(--border);">
+      <button onclick="cerrarModal('modal-proy')" class="btn btn-ghost">Cancelar</button>
+      <button onclick="guardarProy()" id="mp-btn" class="btn btn-primary">Crear</button>
     </div>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
-     MODAL ACTA / HISTORIAL
-════════════════════════════════════════ -->
-<div id="modal-acta" class="fixed inset-0 z-[300] bg-black/70 backdrop-blur-md hidden items-center justify-center p-4">
-  <div class="glass-strong rounded-2xl w-full max-w-2xl shadow-2xl pop-in max-h-[94vh] overflow-y-auto">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
-      <h3 class="font-bold text-white text-lg">📋 Acta / Historial de Sesiones</h3>
-      <button onclick="cerrarModal('modal-acta')" class="w-8 h-8 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white transition-all">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+<!-- ═══════════════════════════
+     MODAL ACTA
+═══════════════════════════ -->
+<div id="modal-acta" class="fixed inset-0 z-[400] modal-bg hidden items-center justify-center p-4">
+  <div class="card w-full max-w-lg scale-in" style="max-height:90vh;overflow-y:auto;">
+    <div class="flex items-center justify-between px-6 py-4" style="border-bottom:1px solid var(--border);">
+      <p class="font-bold text-base" style="color:var(--text1);">📋 Acta & Historial</p>
+      <button onclick="cerrarModal('modal-acta')" class="btn-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="px-6 py-5 space-y-4">
-      <p id="acta-tarea-titulo" class="font-bold text-sky-400 text-sm"></p>
-      <!-- Nueva sesión -->
-      <div class="glass rounded-xl p-4 border border-white/5">
-        <p class="text-xs font-bold text-slate-400 mb-3">+ NUEVA SESIÓN</p>
-        <div class="grid grid-cols-2 gap-3 mb-3">
-          <div><label class="lbl">Fecha sesión</label><input id="acta-fecha" type="date" class="fld"></div>
-          <div><label class="lbl">Asistentes</label><input id="acta-asist" type="text" placeholder="Ana, Luis..." class="fld"></div>
+      <p id="acta-titulo" class="text-sm font-semibold" style="color:var(--neo-sky);"></p>
+      <div class="card-inner p-4 space-y-3">
+        <p class="text-xs font-bold" style="color:var(--text3);text-transform:uppercase;letter-spacing:.06em;">+ Nueva Sesión</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="lbl">Fecha</label><input id="a-fecha" type="date" class="fld"></div>
+          <div><label class="lbl">Asistentes</label><input id="a-asist" type="text" placeholder="Ana, Luis..." class="fld"></div>
         </div>
-        <div class="mb-3"><label class="lbl">Acuerdos / Notas</label><textarea id="acta-notas" rows="3" placeholder="Puntos acordados, decisiones tomadas..." class="fld resize-none"></textarea></div>
-        <div class="mb-3"><label class="lbl">Próximo deadline intermedio</label><input id="acta-nextdl" type="datetime-local" class="fld"></div>
+        <div><label class="lbl">Acuerdos</label><textarea id="a-notas" rows="3" placeholder="Puntos acordados..." class="fld"></textarea></div>
+        <div><label class="lbl">Próximo deadline</label><input id="a-nextdl" type="datetime-local" class="fld"></div>
         <div class="flex gap-2">
-          <button onclick="guardarSesion()" class="flex-1 bg-sky-500 hover:bg-sky-400 text-white font-bold text-sm py-2 rounded-xl transition-all">Guardar Sesión</button>
-          <button onclick="generarActaEmail()" class="glass hover:bg-white/10 text-emerald-400 font-bold text-sm px-4 py-2 rounded-xl transition-all border border-emerald-500/30">📤 Copiar Acta</button>
+          <button onclick="guardarSesion()" class="btn btn-primary flex-1 justify-center">Guardar Sesión</button>
+          <button onclick="copiarActa()" class="btn btn-ghost">📤 Acta Email</button>
         </div>
       </div>
-      <!-- Historial -->
-      <div id="acta-historial" class="space-y-3"></div>
+      <div id="acta-hist" class="space-y-3"></div>
     </div>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
+<!-- ═══════════════════════════
      HEADER
-════════════════════════════════════════ -->
-<header class="glass-strong sticky top-0 z-[200] border-b border-white/5">
-  <div class="max-w-screen-xl mx-auto px-4 py-3">
-    <div class="flex flex-wrap items-center gap-3 mb-3">
+═══════════════════════════ -->
+<header style="background:rgba(10,10,10,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;">
+  <div style="max-width:1400px;margin:0 auto;padding:.85rem 1.5rem;">
+    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
       <!-- Logo -->
-      <div class="flex items-center gap-3 mr-auto">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-sky-500 via-violet-600 to-fuchsia-600 flex items-center justify-center shadow-xl">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <div style="display:flex;align-items:center;gap:.75rem;margin-right:auto;">
+        <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#38bdf8,#a78bfa);display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(56,189,248,.3);">
+          <svg width="18" height="18" fill="none" stroke="#000" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
         <div>
-          <h1 class="font-bold text-white text-sm leading-tight">AI Executive Copilot</h1>
-          <p class="text-xs text-slate-500 mono">Papelería · v5.0</p>
+          <p style="font-weight:700;font-size:.875rem;color:var(--text1);line-height:1.2;">AI Executive Copilot</p>
+          <p style="font-size:.65rem;color:var(--text3);letter-spacing:.05em;">PAPELERÍA · v5.1</p>
         </div>
       </div>
 
-      <!-- Bell & Actions -->
-      <div class="flex items-center gap-2">
-        <!-- Campana -->
-        <button onclick="abrirRadar()" id="btn-bell" class="relative p-2.5 rounded-xl glass hover:bg-white/10 transition-all" title="Radar de Riesgos">
-          <svg id="bell-icon" class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          <span id="bell-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full text-[9px] font-bold text-white flex items-center justify-center hidden neon-orange">!</span>
-        </button>
+      <!-- KPIs compact -->
+      <div style="display:flex;gap:.5rem;align-items:center;" class="hide-mobile">
+        <div class="card-inner" style="padding:.4rem .8rem;display:flex;align-items:center;gap:.5rem;">
+          <span style="font-size:.7rem;color:var(--text3);">Avance</span>
+          <div class="prog-track" style="width:80px;height:5px;"><div id="hdr-prog" class="prog-fill" style="height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#4ade80);"></div></div>
+          <span id="hdr-pct" style="font-size:.7rem;font-weight:700;color:var(--neo-sky);font-variant-numeric:tabular-nums;">0%</span>
+        </div>
+        <div class="card-inner" style="padding:.4rem .8rem;">
+          <span style="font-size:.7rem;color:var(--text3);">Urgentes </span>
+          <span id="hdr-urg" style="font-size:.7rem;font-weight:700;color:#f87171;">0</span>
+        </div>
+        <div class="card-inner" style="padding:.4rem .8rem;display:flex;align-items:center;gap:.4rem;">
+          <div id="sem-dot" class="sem sem-g"></div>
+          <span id="sem-lbl" style="font-size:.7rem;font-weight:600;color:#4ade80;">OK</span>
+        </div>
+      </div>
 
-        <button onclick="abrirModalTarea()" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold px-3 py-2 rounded-xl transition-all shadow-lg shadow-sky-500/20">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tarea
+      <!-- Actions -->
+      <div style="display:flex;align-items:center;gap:.5rem;">
+        <!-- Bell -->
+        <button onclick="abrirRadar()" id="btn-bell" class="btn-icon" title="Radar">
+          <svg id="bell-ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:17px;height:17px;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span id="bell-dot" class="hidden" style="position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:#fb923c;box-shadow:0 0 6px #fb923c;"></span>
         </button>
-        <button onclick="abrirModalProy()" class="flex items-center gap-1.5 glass hover:bg-white/10 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition-all">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Proyecto
+        <button onclick="abrirModalTarea()" class="btn btn-primary">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tarea
         </button>
-        <button onclick="exportarDatos()" class="p-2 rounded-xl glass hover:bg-white/10 text-slate-400 hover:text-white transition-all" title="Exportar JSON">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <button onclick="abrirModalProy()" class="btn btn-ghost hide-mobile">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          Proyecto
         </button>
-        <label class="p-2 rounded-xl glass hover:bg-white/10 text-slate-400 hover:text-white transition-all cursor-pointer" title="Importar JSON">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <input type="file" accept=".json" onchange="importarDatos(event)" class="hidden">
+        <button onclick="exportar()" class="btn-icon" title="Exportar">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+        <label class="btn-icon" title="Importar" style="cursor:pointer;">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <input type="file" accept=".json" onchange="importar(event)" style="display:none;">
         </label>
-      </div>
-    </div>
-
-    <!-- KPIs -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-      <div class="glass rounded-xl px-3 py-2">
-        <p class="text-xs text-slate-500 mono mb-1">AVANCE</p>
-        <div class="flex items-center gap-2 mb-0.5">
-          <div class="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
-            <div id="kpi-barra" class="prog h-full rounded-full bg-gradient-to-r from-sky-500 to-emerald-400" style="width:0%"></div>
-          </div>
-          <span id="kpi-pct" class="text-xs mono font-bold text-sky-400 shrink-0">0%</span>
-        </div>
-        <p class="text-xs text-slate-500"><span id="kpi-done" class="text-emerald-400 font-bold">0</span>/<span id="kpi-total">0</span></p>
-      </div>
-      <div class="glass rounded-xl px-3 py-2">
-        <p class="text-xs text-slate-500 mono mb-0.5">HOY</p>
-        <p id="kpi-hoy" class="text-xl font-bold text-white">0</p>
-        <p id="kpi-msg" class="text-xs text-slate-500 truncate">¡A por ello! 💪</p>
-      </div>
-      <div class="glass rounded-xl px-3 py-2">
-        <p class="text-xs text-slate-500 mono mb-0.5">URGENTES</p>
-        <p id="kpi-urg" class="text-xl font-bold text-red-400">0</p>
-        <p class="text-xs text-slate-500">activas</p>
-      </div>
-      <div class="glass rounded-xl px-3 py-2">
-        <p class="text-xs text-slate-500 mono mb-0.5">SEMÁFORO</p>
-        <div class="flex items-center gap-1.5">
-          <div id="sem-dot" class="sem sem-green sem-blink"></div>
-          <p id="sem-lbl" class="text-sm font-bold text-emerald-400">OK</p>
-        </div>
-        <p id="sem-sub" class="text-xs text-slate-500">Al día</p>
       </div>
     </div>
   </div>
 </header>
 
-<!-- ════════════════════════════════════════
-     MAIN
-════════════════════════════════════════ -->
-<div class="max-w-screen-xl mx-auto px-4 py-5">
+<!-- ═══════════════════════════
+     MAIN BENTO
+═══════════════════════════ -->
+<main style="max-width:1400px;margin:0 auto;padding:1.5rem;">
 
   <!-- Tabs -->
-  <div class="flex gap-1 mb-5 glass p-1 rounded-2xl w-fit border border-white/5">
-    <button onclick="cambiarTab('kanban')"   data-tab="kanban"   class="tab active text-white text-sm font-bold px-4 py-2 rounded-xl transition-all border border-transparent">Kanban</button>
-    <button onclick="cambiarTab('proyectos')" data-tab="proyectos" class="tab text-slate-500 text-sm font-bold px-4 py-2 rounded-xl transition-all border border-transparent hover:text-slate-300">Proyectos</button>
-    <button onclick="cambiarTab('ideas')"    data-tab="ideas"    class="tab text-slate-500 text-sm font-bold px-4 py-2 rounded-xl transition-all border border-transparent hover:text-slate-300">Ideas</button>
-    <button onclick="cambiarTab('stats')"    data-tab="stats"    class="tab text-slate-500 text-sm font-bold px-4 py-2 rounded-xl transition-all border border-transparent hover:text-slate-300">Stats</button>
+  <div style="display:flex;gap:.35rem;margin-bottom:1.5rem;background:var(--bg1);padding:.35rem;border-radius:var(--r-sm);width:fit-content;border:1px solid var(--border);">
+    <button onclick="setTab('kanban')"    data-t="kanban"    class="tab-btn active-tab" style="font-size:.8rem;font-weight:600;padding:.5rem 1.1rem;border-radius:var(--r-xs);border:none;cursor:pointer;transition:all .15s;background:rgba(56,189,248,.15);color:var(--neo-sky);">Kanban</button>
+    <button onclick="setTab('proyectos')" data-t="proyectos" class="tab-btn" style="font-size:.8rem;font-weight:600;padding:.5rem 1.1rem;border-radius:var(--r-xs);border:none;cursor:pointer;transition:all .15s;background:transparent;color:var(--text3);">Proyectos</button>
+    <button onclick="setTab('ideas')"     data-t="ideas"     class="tab-btn" style="font-size:.8rem;font-weight:600;padding:.5rem 1.1rem;border-radius:var(--r-xs);border:none;cursor:pointer;transition:all .15s;background:transparent;color:var(--text3);">Ideas</button>
+    <button onclick="setTab('stats')"     data-t="stats"     class="tab-btn" style="font-size:.8rem;font-weight:600;padding:.5rem 1.1rem;border-radius:var(--r-xs);border:none;cursor:pointer;transition:all .15s;background:transparent;color:var(--text3);">Stats</button>
   </div>
 
-  <!-- ── TAB KANBAN ── -->
-  <div id="tab-kanban" class="tab-content">
-    <div class="flex flex-wrap items-center gap-2 mb-4">
-      <span class="text-xs text-slate-600 mono">DEPT:</span>
-      <button onclick="setFiltro('dept','')"           data-fd="" class="fdb text-xs px-3 py-1 rounded-lg glass text-slate-400 font-bold hover:bg-white/10 transition-all">Todos</button>
-      <button onclick="setFiltro('dept','producto')"   data-fd="producto"    class="fdb dept-producto    text-xs px-3 py-1 rounded-lg d-tag font-bold transition-all">🟣 Producto</button>
-      <button onclick="setFiltro('dept','comercial-f')" data-fd="comercial-f" class="fdb dept-comercial-f text-xs px-3 py-1 rounded-lg d-tag font-bold transition-all">🟢 C.Físico</button>
-      <button onclick="setFiltro('dept','comercial-o')" data-fd="comercial-o" class="fdb dept-comercial-o text-xs px-3 py-1 rounded-lg d-tag font-bold transition-all">🩵 C.Online</button>
-      <button onclick="setFiltro('dept','logistica')"  data-fd="logistica"   class="fdb dept-logistica   text-xs px-3 py-1 rounded-lg d-tag font-bold transition-all">🟠 Logística</button>
-      <button onclick="setFiltro('dept','gestion')"    data-fd="gestion"     class="fdb dept-gestion     text-xs px-3 py-1 rounded-lg d-tag font-bold transition-all">⚪ Gestión</button>
-      <div id="fdb-proy" class="flex gap-2 flex-wrap ml-2"></div>
+  <!-- ── KANBAN ── -->
+  <div id="tab-kanban" class="tab-panel">
+    <!-- Dept filter -->
+    <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center;">
+      <span style="font-size:.65rem;color:var(--text3);font-weight:600;letter-spacing:.06em;text-transform:uppercase;">DEPT:</span>
+      <button onclick="setFD('')"           class="fdb pill pill-gry sel-fdb">Todos</button>
+      <button onclick="setFD('producto')"   class="fdb pill pill-mag">🟣 Producto</button>
+      <button onclick="setFD('comercialf')" class="fdb pill pill-grn">🟢 C.Físico</button>
+      <button onclick="setFD('comercialo')" class="fdb pill pill-cya">🩵 C.Online</button>
+      <button onclick="setFD('logistica')"  class="fdb pill pill-org">🟠 Logística</button>
+      <button onclick="setFD('gestion')"    class="fdb pill pill-gry">⚪ Gestión</button>
+      <div id="fd-proy" style="display:flex;gap:.4rem;flex-wrap:wrap;"></div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="glass-card rounded-2xl overflow-hidden">
-        <div class="px-4 py-3.5 border-b border-white/5 flex items-center gap-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-slate-500"></div>
-          <h3 class="font-bold text-sm text-slate-300">Pendiente</h3>
-          <span id="cnt-p" class="ml-auto text-xs mono glass text-slate-400 px-2 py-0.5 rounded-full">0</span>
+    <!-- Columns -->
+    <div class="bento-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+      <div class="card">
+        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--text3);"></div>
+          <p style="font-size:.8rem;font-weight:700;color:var(--text2);">Pendiente</p>
+          <span id="cnt-p" style="margin-left:auto;font-size:.65rem;font-weight:700;background:var(--bg3);color:var(--text3);padding:.1rem .55rem;border-radius:99px;">0</span>
         </div>
-        <div id="col-pendiente" class="kanban-col p-3 space-y-3"
-          ondragover="onDragOver(event,'pendiente')" ondrop="onDrop(event,'pendiente')" ondragleave="onDragLeave(event)"></div>
+        <div id="col-pendiente" class="kanban-col" style="padding:.75rem;display:flex;flex-direction:column;gap:.6rem;"
+          ondragover="onDO(event,'pendiente')" ondrop="onDr(event,'pendiente')" ondragleave="onDL(event)"></div>
       </div>
-      <div class="glass-card rounded-2xl overflow-hidden">
-        <div class="px-4 py-3.5 border-b border-white/5 flex items-center gap-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse"></div>
-          <h3 class="font-bold text-sm text-sky-300">En Proceso</h3>
-          <span id="cnt-pr" class="ml-auto text-xs mono bg-sky-500/20 text-sky-400 px-2 py-0.5 rounded-full">0</span>
+      <div class="card">
+        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem;">
+          <div class="dot-blink" style="width:8px;height:8px;border-radius:50%;background:var(--neo-sky);box-shadow:0 0 6px var(--neo-sky);"></div>
+          <p style="font-size:.8rem;font-weight:700;color:var(--neo-sky);">En Proceso</p>
+          <span id="cnt-pr" style="margin-left:auto;font-size:.65rem;font-weight:700;background:rgba(56,189,248,.1);color:var(--neo-sky);padding:.1rem .55rem;border-radius:99px;">0</span>
         </div>
-        <div id="col-proceso" class="kanban-col p-3 space-y-3"
-          ondragover="onDragOver(event,'proceso')" ondrop="onDrop(event,'proceso')" ondragleave="onDragLeave(event)"></div>
+        <div id="col-proceso" class="kanban-col" style="padding:.75rem;display:flex;flex-direction:column;gap:.6rem;"
+          ondragover="onDO(event,'proceso')" ondrop="onDr(event,'proceso')" ondragleave="onDL(event)"></div>
       </div>
-      <div class="glass-card rounded-2xl overflow-hidden">
-        <div class="px-4 py-3.5 border-b border-white/5 flex items-center gap-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
-          <h3 class="font-bold text-sm text-emerald-300">Finalizado</h3>
-          <span id="cnt-f" class="ml-auto text-xs mono bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full">0</span>
+      <div class="card">
+        <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;"></div>
+          <p style="font-size:.8rem;font-weight:700;color:#4ade80;">Finalizado</p>
+          <span id="cnt-f" style="margin-left:auto;font-size:.65rem;font-weight:700;background:rgba(74,222,128,.1);color:#4ade80;padding:.1rem .55rem;border-radius:99px;">0</span>
         </div>
-        <div id="col-finalizado" class="kanban-col p-3 space-y-3"
-          ondragover="onDragOver(event,'finalizado')" ondrop="onDrop(event,'finalizado')" ondragleave="onDragLeave(event)"></div>
+        <div id="col-finalizado" class="kanban-col" style="padding:.75rem;display:flex;flex-direction:column;gap:.6rem;"
+          ondragover="onDO(event,'finalizado')" ondrop="onDr(event,'finalizado')" ondragleave="onDL(event)"></div>
       </div>
     </div>
   </div>
 
-  <!-- ── TAB PROYECTOS ── -->
-  <div id="tab-proyectos" class="tab-content hidden">
-    <div class="flex items-center justify-between mb-5">
+  <!-- ── PROYECTOS ── -->
+  <div id="tab-proyectos" class="tab-panel hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
       <div>
-        <h2 class="font-bold text-white text-xl">Proyectos Vivos</h2>
-        <p class="text-xs text-slate-500 mt-0.5">Progreso y trazabilidad total</p>
+        <p style="font-size:1.1rem;font-weight:700;color:var(--text1);">Proyectos Vivos</p>
+        <p style="font-size:.75rem;color:var(--text3);margin-top:.2rem;">Progreso y trazabilidad en tiempo real</p>
       </div>
-      <button onclick="abrirModalProy()" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all">+ Nuevo</button>
+      <button onclick="abrirModalProy()" class="btn btn-primary">+ Nuevo Proyecto</button>
     </div>
-    <div id="lista-proyectos" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+    <div id="lista-proyectos" class="bento-3" style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;"></div>
   </div>
 
-  <!-- ── TAB IDEAS ── -->
-  <div id="tab-ideas" class="tab-content hidden">
-    <div class="max-w-2xl">
-      <div class="glass-card rounded-2xl p-5 mb-5">
-        <h3 class="font-bold text-white text-sm mb-4">💡 Nueva Idea / Nota de Reunión</h3>
-        <input id="idea-titulo" type="text" placeholder="Título..." class="fld mb-3">
-        <textarea id="idea-cuerpo" rows="3" placeholder="Describe la idea, puntos de reunión..." class="fld resize-none mb-3"></textarea>
-        <div class="flex gap-2">
-          <select id="idea-tipo" class="fld flex-1">
-            <option value="idea">💡 Idea</option>
-            <option value="reunion">📋 Reunión</option>
-            <option value="nota">📝 Nota</option>
-            <option value="futura">✅ Tarea futura</option>
+  <!-- ── IDEAS ── -->
+  <div id="tab-ideas" class="tab-panel hidden">
+    <div style="max-width:680px;">
+      <div class="card" style="padding:1.5rem;margin-bottom:1rem;">
+        <p style="font-size:.875rem;font-weight:700;color:var(--text1);margin-bottom:1rem;">💡 Nueva Idea / Nota de Reunión</p>
+        <input id="id-tit" type="text" placeholder="Título de la idea..." class="fld" style="margin-bottom:.75rem;">
+        <textarea id="id-body" rows="3" placeholder="Descripción, puntos clave..." class="fld" style="margin-bottom:.75rem;"></textarea>
+        <div style="display:flex;gap:.5rem;">
+          <select id="id-tipo" class="fld" style="flex:1;">
+            <option value="idea">💡 Idea</option><option value="reunion">📋 Reunión</option>
+            <option value="nota">📝 Nota</option><option value="futura">✅ Tarea futura</option>
           </select>
-          <button onclick="guardarIdea()" class="bg-sky-500 hover:bg-sky-400 text-white font-bold px-5 py-2 rounded-xl text-sm transition-all">Guardar</button>
+          <button onclick="guardarIdea()" class="btn btn-primary">Guardar</button>
         </div>
       </div>
-      <div id="lista-ideas" class="space-y-3"></div>
+      <div id="lista-ideas" style="display:flex;flex-direction:column;gap:.75rem;"></div>
     </div>
   </div>
 
-  <!-- ── TAB STATS ── -->
-  <div id="tab-stats" class="tab-content hidden">
-    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-      <div class="glass-card rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">TOTAL</p><p id="st-total" class="font-bold text-2xl text-white">0</p></div>
-      <div class="glass-card rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">COMPLETADAS</p><p id="st-done" class="font-bold text-2xl text-emerald-400">0</p></div>
-      <div class="glass-card rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">A TIEMPO</p><p id="st-ot" class="font-bold text-2xl text-sky-400">0</p></div>
-      <div class="glass-card rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">EXCELENTE</p><p id="st-ex" class="font-bold text-2xl text-yellow-400">0</p></div>
-      <div class="glass-card rounded-2xl p-4"><p class="text-xs text-slate-500 mono mb-1">URGENTES</p><p id="st-urg" class="font-bold text-2xl text-red-400">0</p></div>
+  <!-- ── STATS ── -->
+  <div id="tab-stats" class="tab-panel hidden">
+    <!-- KPI row -->
+    <div class="bento-3" style="display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-bottom:1.25rem;">
+      <div class="card" style="padding:1.25rem;"><p style="font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;">TOTAL</p><p id="st-tot" style="font-size:1.75rem;font-weight:800;color:var(--text1);">0</p></div>
+      <div class="card" style="padding:1.25rem;"><p style="font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;">COMPLETADAS</p><p id="st-don" style="font-size:1.75rem;font-weight:800;color:#4ade80;">0</p></div>
+      <div class="card" style="padding:1.25rem;"><p style="font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;">A TIEMPO</p><p id="st-ot" style="font-size:1.75rem;font-weight:800;color:var(--neo-sky);">0</p></div>
+      <div class="card" style="padding:1.25rem;"><p style="font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;">EXCELENTE</p><p id="st-ex" style="font-size:1.75rem;font-weight:800;color:#fbbf24;">0</p></div>
+      <div class="card" style="padding:1.25rem;"><p style="font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;">URGENTES</p><p id="st-urg2" style="font-size:1.75rem;font-weight:800;color:#f87171;">0</p></div>
     </div>
-    <div class="glass-card rounded-2xl p-5 mb-5">
-      <h3 class="font-bold text-white text-sm mb-3">Salud de Entregas</h3>
-      <div class="flex items-center gap-4">
-        <div class="flex-1 h-3 bg-white/5 rounded-full overflow-hidden">
-          <div id="st-salud-b" class="prog h-full rounded-full bg-emerald-500" style="width:0%"></div>
-        </div>
-        <span id="st-salud-pct" class="text-sm mono font-bold text-emerald-400 w-12 shrink-0">0%</span>
-        <span id="st-salud-badge" class="text-xs font-bold px-2.5 py-1 rounded-lg glass text-slate-400 shrink-0">–</span>
+    <!-- Salud -->
+    <div class="card" style="padding:1.5rem;margin-bottom:1.25rem;">
+      <p style="font-size:.8rem;font-weight:700;color:var(--text1);margin-bottom:.75rem;">Salud de Entregas</p>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <div class="prog-track" style="flex:1;height:8px;"><div id="st-sal-b" class="prog-fill" style="height:100%;width:0%;background:#4ade80;"></div></div>
+        <span id="st-sal-p" style="font-size:.8rem;font-weight:700;color:#4ade80;min-width:36px;text-align:right;">0%</span>
+        <span id="st-sal-badge" style="font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:99px;background:var(--bg3);color:var(--text3);">–</span>
       </div>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6" id="stats-dept"></div>
+    <!-- Dept stats -->
+    <div id="stats-dept" class="bento-3" style="display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-bottom:1.25rem;"></div>
+    <!-- Project stats -->
     <div id="stats-proys"></div>
   </div>
 
-</div>
+</main>
 
 <!-- ════════════════════════════════════════
      JAVASCRIPT
@@ -560,245 +593,231 @@ label.lbl{display:block;font-size:.68rem;font-weight:600;color:#94a3b8;margin-bo
 <script>
 'use strict';
 
-// ──────────────────────────────────────────
-//  CONSTANTES
-// ──────────────────────────────────────────
-const LS = { T:'aec_tareas', P:'aec_proyectos', I:'aec_ideas', N:'aec_notif' };
-const HOY = new Date().toDateString();
-const DOS_DIAS = 2*24*60*60*1000;
-const FRASES = [
-  'Menos ruido, más enfoque.',
-  'Una decisión a la vez.',
-  'Ejecuta. Mide. Mejora.',
-  'El detalle hace al maestro.',
-  'Hoy define el mañana.',
+// ─── CONSTANTS ───
+const LS={T:'aec_t',P:'aec_p',I:'aec_i'};
+const HOY=new Date().toDateString();
+const DOS_DIAS=2*24*60*60*1000;
+
+const FRASES=[
   'Claridad antes que velocidad.',
-  'Progreso, no perfección.',
+  'Una decisión a la vez.',
+  'Ejecuta. Mide. Aprende.',
+  'Detalle define calidad.',
+  'Hoy define el mañana.',
+  'Menos ruido, más impacto.',
   'Anticipa, no improvises.',
+  'Progreso, no perfección.',
 ];
-const CATS = {
-  'producto':    ['Catálogo','Packaging','I+D','Proveedores','Costes','Lanzamiento'],
-  'comercial-f': ['Tienda','Escaparate','Promotores','Evento','Stock','Fidelización'],
-  'comercial-o': ['Web','SEO','Campañas','Redes','Email','Analytics'],
-  'logistica':   ['Pedido','Proveedor','Almacén','Envíos','Inventario','Devoluciones'],
-  'gestion':     ['Facturación','Legal','Nóminas','Reunión','Reporting','Presupuesto'],
-};
-const DEPT_KW = {
-  'producto':    ['catálogo','producto','packaging','lanzamiento','diseño','erp'],
-  'comercial-f': ['tienda','escaparate','promotor','evento','comercial','físico'],
-  'comercial-o': ['web','seo','online','campaña','redes','email','digital'],
-  'logistica':   ['pedido','proveedor','almacén','envío','inventario','logística','compra'],
-  'gestion':     ['factura','legal','nómina','reunión','presupuesto','gestión','erp'],
-};
-const DEPT_META = {
-  'producto':    { label:'Producto',      emoji:'🟣', cls:'dept-producto'    },
-  'comercial-f': { label:'C. Físico',     emoji:'🟢', cls:'dept-comercial-f' },
-  'comercial-o': { label:'C. Online',     emoji:'🩵', cls:'dept-comercial-o' },
-  'logistica':   { label:'Logística',     emoji:'🟠', cls:'dept-logistica'   },
-  'gestion':     { label:'Gestión',       emoji:'⚪', cls:'dept-gestion'     },
+
+const CATS={
+  producto:   ['Catálogo','Packaging','Lanzamiento','I+D','Costes','Proveedores'],
+  comercialf: ['Tienda','Escaparate','Evento','Stock','Promotor','Fidelización'],
+  comercialo: ['Web','SEO','Campañas','Redes','Email','Analytics'],
+  logistica:  ['Pedido','Proveedor','Almacén','Envíos','Inventario','Devoluciones'],
+  gestion:    ['Reunión','Facturación','Legal','Nóminas','Reporting','Presupuesto'],
 };
 
-// ──────────────────────────────────────────
-//  ESTADO
-// ──────────────────────────────────────────
-let tareas     = [];
-let proyectos  = [];
-let ideas      = [];
-let notifs     = [];
-let colorSel   = '#0ea5e9';
-let filtDept   = '';
-let filtProy   = '';
-let dragId     = null;
-let actaTareaId = null;
+const KW_DEPT={
+  producto:   ['catálogo','producto','packaging','lanzamiento','diseño','coste','precio','descuento'],
+  comercialf: ['tienda','escaparate','promotor','evento','comercial','físico','punto de venta'],
+  comercialo: ['web','seo','online','campaña','redes','email','digital','e-commerce'],
+  logistica:  ['pedido','proveedor','almacén','envío','inventario','logística','compra','stock'],
+  gestion:    ['factura','legal','nómina','reunión','presupuesto','gestión','erp','contrato'],
+};
 
-// ──────────────────────────────────────────
-//  LOCAL STORAGE
-// ──────────────────────────────────────────
-function guardar() {
-  try {
-    localStorage.setItem(LS.T, JSON.stringify(tareas));
-    localStorage.setItem(LS.P, JSON.stringify(proyectos));
-    localStorage.setItem(LS.I, JSON.stringify(ideas));
-    localStorage.setItem(LS.N, JSON.stringify(notifs));
-  } catch(e){ console.error('LS save error', e); }
+const DEPT_META={
+  producto:   {label:'Producto',   emoji:'🟣',cls:'dept-producto'},
+  comercialf: {label:'C.Físico',   emoji:'🟢',cls:'dept-comercialf'},
+  comercialo: {label:'C.Online',   emoji:'🩵',cls:'dept-comercialo'},
+  logistica:  {label:'Logística',  emoji:'🟠',cls:'dept-logistica'},
+  gestion:    {label:'Gestión',    emoji:'⚪',cls:'dept-gestion'},
+};
+
+// ─── STATE ───
+let tareas=[],proyectos=[],ideas=[];
+let colorSel='#38bdf8';
+let filtDept='',filtProy='',dragId=null,actaTId=null;
+let checkItems=[];
+
+// ─── STORAGE ───
+function save(){
+  try{localStorage.setItem(LS.T,JSON.stringify(tareas));localStorage.setItem(LS.P,JSON.stringify(proyectos));localStorage.setItem(LS.I,JSON.stringify(ideas));}
+  catch(e){console.error(e);}
 }
-function cargar() {
-  try {
-    tareas    = JSON.parse(localStorage.getItem(LS.T) || '[]');
-    proyectos = JSON.parse(localStorage.getItem(LS.P) || '[]');
-    ideas     = JSON.parse(localStorage.getItem(LS.I) || '[]');
-    notifs    = JSON.parse(localStorage.getItem(LS.N) || '[]');
-  } catch(e){ tareas=[]; proyectos=[]; ideas=[]; notifs=[]; }
+function load(){
+  try{tareas=JSON.parse(localStorage.getItem(LS.T)||'[]');proyectos=JSON.parse(localStorage.getItem(LS.P)||'[]');ideas=JSON.parse(localStorage.getItem(LS.I)||'[]');}
+  catch(e){tareas=[];proyectos=[];ideas=[];}
 }
 
-// ──────────────────────────────────────────
-//  EXPORT / IMPORT
-// ──────────────────────────────────────────
-function exportarDatos() {
-  const d = { tareas, proyectos, ideas, v:'5.0', ts: new Date().toISOString() };
-  const b = new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
-  const u = URL.createObjectURL(b);
-  const a = document.createElement('a');
-  a.href=u; a.download=`copilot_${new Date().toISOString().slice(0,10)}.json`; a.click();
-  URL.revokeObjectURL(u);
-  toast('📤 Datos exportados','success');
+// ─── EXPORT / IMPORT ───
+function exportar(){
+  const d={tareas,proyectos,ideas,v:'5.1',ts:new Date().toISOString()};
+  const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(b),a=document.createElement('a');
+  a.href=u;a.download=`copilot_${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(u);
+  toast('📤 Exportado','grn');
 }
-function importarDatos(evt) {
-  const f = evt.target.files[0]; if(!f) return;
-  const r = new FileReader();
-  r.onload = e => {
-    try {
-      const d = JSON.parse(e.target.result);
-      if(!Array.isArray(d.tareas)) throw new Error();
-      if(!confirm('¿Importar? Reemplazará los datos actuales.')) return;
-      tareas=d.tareas||[]; proyectos=d.proyectos||[]; ideas=d.ideas||[];
-      guardar(); renderTodo();
-      toast('📥 Datos importados','success');
-    } catch { toast('Archivo inválido','error'); }
+function importar(evt){
+  const f=evt.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      if(!Array.isArray(d.tareas))throw new Error();
+      if(!confirm('¿Importar? Reemplazará los datos actuales.'))return;
+      tareas=d.tareas||[];proyectos=d.proyectos||[];ideas=d.ideas||[];
+      save();renderAll();toast('📥 Importado','grn');
+    }catch{toast('Archivo inválido','red');}
   };
-  r.readAsText(f); evt.target.value='';
+  r.readAsText(f);evt.target.value='';
 }
 
-// ──────────────────────────────────────────
-//  ACTUALIZAR DEADLINES (+2 días)
-// ──────────────────────────────────────────
-function actualizarDeadlines(excluirId) {
-  let n=0;
-  tareas.forEach(t => {
-    if(t.id===excluirId||t.estado!=='pendiente'||t.urgente||!t.deadline) return;
-    const d = new Date(t.deadline);
-    if(isNaN(d.getTime())) return;
-    t.deadline = new Date(d.getTime()+DOS_DIAS).toISOString().slice(0,16);
-    n++;
-  });
-  return n;
-}
+// ─── HELPERS ───
+function uid(){return 'i'+Date.now()+Math.random().toString(36).slice(2,7);}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function shake(id){const el=document.getElementById(id);if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');el.addEventListener('animationend',()=>el.classList.remove('shake'),{once:true});el.focus();}
 
-// ──────────────────────────────────────────
-//  ID & HELPERS
-// ──────────────────────────────────────────
-function uid() { return 'i'+Date.now()+Math.random().toString(36).slice(2,7); }
-function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function shake(id){ const el=document.getElementById(id); if(!el)return; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); el.addEventListener('animationend',()=>el.classList.remove('shake'),{once:true}); el.focus(); }
-function tiempoRestante(dl){
-  if(!dl) return '';
-  const d = new Date(dl).getTime()-Date.now();
-  if(d<0) return '⚠ Vencida';
-  const dd=Math.floor(d/86400000), hh=Math.floor((d%86400000)/3600000), mm=Math.floor((d%3600000)/60000);
-  if(dd>0) return `${dd}d ${hh}h`;
-  if(hh>0) return `${hh}h ${mm}m`;
-  return `${mm}m`;
+function tRest(dl){
+  if(!dl)return'';
+  const d=new Date(dl).getTime()-Date.now();
+  if(d<0)return'⚠ Vencida';
+  const dd=Math.floor(d/86400000),hh=Math.floor((d%86400000)/3600000),mm=Math.floor((d%3600000)/60000);
+  if(dd>0)return`${dd}d ${hh}h`;if(hh>0)return`${hh}h ${mm}m`;return`${mm}m`;
 }
-function fmtFecha(dt){ if(!dt)return'–'; return new Date(dt).toLocaleString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
-function fmtFechaCorta(ts){ return new Date(ts).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}); }
+function fmtDt(dt){if(!dt)return'–';return new Date(dt).toLocaleString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function fmtD(ts){return new Date(ts).toLocaleDateString('es-ES',{day:'2-digit',month:'short'});}
 
-// ──────────────────────────────────────────
-//  TOAST
-// ──────────────────────────────────────────
-function toast(msg, tipo='info'){
-  const c={success:'bg-emerald-500/20 border-emerald-500/40 text-emerald-300',error:'bg-red-500/20 border-red-500/40 text-red-300',warning:'bg-yellow-500/20 border-yellow-500/40 text-yellow-300',info:'bg-sky-500/20 border-sky-500/40 text-sky-300'};
+// ─── TOAST ───
+function toast(msg,tipo='sky'){
+  const map={grn:'background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);',red:'background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.25);',yel:'background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25);',sky:'background:rgba(56,189,248,.12);color:#38bdf8;border:1px solid rgba(56,189,248,.25);'};
   const t=document.createElement('div');
-  t.className=`pointer-events-auto toast-slide ${c[tipo]||c.info} border backdrop-blur-sm rounded-xl px-4 py-3 text-sm font-semibold shadow-2xl`;
+  t.className='toast-in';
+  t.style.cssText=`pointer-events:auto;${map[tipo]||map.sky}backdrop-filter:blur(12px);border-radius:12px;padding:.65rem 1rem;font-size:.8rem;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,.5);`;
   t.textContent=msg;
   document.getElementById('toasts').appendChild(t);
-  setTimeout(()=>{ t.style.transition='all .3s'; t.style.opacity='0'; t.style.transform='translateX(110%)'; setTimeout(()=>t.remove(),320); },5000);
+  setTimeout(()=>{t.style.transition='all .3s';t.style.opacity='0';t.style.transform='translateX(110%)';setTimeout(()=>t.remove(),320);},5000);
 }
 
-// ──────────────────────────────────────────
-//  MODALS
-// ──────────────────────────────────────────
-function abrirModal(id){ const el=document.getElementById(id); el.classList.remove('hidden'); el.classList.add('flex'); }
-function cerrarModal(id){ const el=document.getElementById(id); el.classList.add('hidden'); el.classList.remove('flex'); if(id==='modal-tarea')resetTareaForm(); if(id==='modal-proy')resetProyForm(); }
+// ─── MODALS ───
+function abrirModal(id){const el=document.getElementById(id);el.classList.remove('hidden');el.style.display='flex';}
+function cerrarModal(id){const el=document.getElementById(id);el.classList.add('hidden');el.style.display='none';if(id==='modal-tarea')resetTForm();if(id==='modal-proy')resetPForm();}
 
-function abrirModalTarea(){
-  llenarSelectProy();
-  actualizarCats();
-  abrirModal('modal-tarea');
-}
-function abrirModalProy(){ abrirModal('modal-proy'); }
+function abrirModalTarea(){fillSelProy();actualizarCats();abrirModal('modal-tarea');}
+function abrirModalProy(){abrirModal('modal-proy');}
 
-function resetTareaForm(){
-  ['mt-id','mt-titulo','mt-desc','mt-deadline','mt-como','mt-siguiente','mt-asistentes','mt-frec'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-  document.getElementById('mt-urgente').checked=false;
-  document.getElementById('mt-alerta24').checked=false;
-  document.getElementById('mt-ciclica').checked=false;
+function resetTForm(){
+  ['mt-id','mt-titulo','mt-desc','mt-dl','mt-como','mt-sig','mt-asist','mt-frec'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('mt-urg').checked=false;
+  document.getElementById('mt-a24').checked=false;
+  document.getElementById('mt-cic').checked=false;
   document.getElementById('mt-estado').value='pendiente';
   document.getElementById('mt-prio').value='media';
   document.getElementById('mt-dept').value='producto';
-  document.getElementById('mt-heading').textContent='Nueva Tarea';
+  document.getElementById('mt-h').textContent='Nueva Tarea';
   document.getElementById('mt-btn').textContent='Crear Tarea';
-  document.getElementById('hint-auto').classList.add('hidden');
-  document.getElementById('ciclica-opts').classList.add('hidden');
+  document.getElementById('mt-hint').classList.add('hidden');
+  document.getElementById('mt-cic-opts').classList.add('hidden');
+  document.getElementById('mt-sugerencia').classList.add('hidden');
+  document.getElementById('mt-checklist').innerHTML='';
+  document.getElementById('mt-check-inp').value='';
+  checkItems=[];
   actualizarCats();
 }
-function resetProyForm(){
-  ['mp-id','mp-nombre','mp-keys'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+function resetPForm(){
+  ['mp-id','mp-nombre','mp-keys'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('mp-dept').value='producto';
-  document.getElementById('mp-heading').textContent='Nuevo Proyecto';
-  document.getElementById('mp-btn').textContent='Crear Proyecto';
-  selColor('#0ea5e9');
+  document.getElementById('mp-h').textContent='Nuevo Proyecto';
+  document.getElementById('mp-btn').textContent='Crear';
+  selColor('#38bdf8');
 }
 
-function toggleCiclica(){
-  const on=document.getElementById('mt-ciclica').checked;
-  document.getElementById('ciclica-opts').classList.toggle('hidden',!on);
+function toggleCic(){
+  const on=document.getElementById('mt-cic').checked;
+  document.getElementById('mt-cic-opts').classList.toggle('hidden',!on);
 }
 
 function actualizarCats(){
   const dept=document.getElementById('mt-dept').value||'producto';
   const cats=CATS[dept]||[];
-  const sel=document.getElementById('mt-cat');
-  const prev=sel.value;
+  const sel=document.getElementById('mt-cat'),prev=sel.value;
   sel.innerHTML=cats.map(c=>`<option value="${c}">${c}</option>`).join('');
-  if(cats.includes(prev)) sel.value=prev;
+  if(cats.includes(prev))sel.value=prev;
 }
 
-function autodetectarDept(){
+function autoDetect(){
   const txt=document.getElementById('mt-titulo').value.toLowerCase();
   const eid=document.getElementById('mt-id').value;
-  for(const [dept,kws] of Object.entries(DEPT_KW)){
+  for(const[dept,kws]of Object.entries(KW_DEPT)){
     if(kws.some(k=>txt.includes(k))){
-      document.getElementById('mt-dept').value=dept;
-      actualizarCats();
-      if(!eid) document.getElementById('hint-auto').classList.remove('hidden');
+      document.getElementById('mt-dept').value=dept;actualizarCats();
+      if(!eid)document.getElementById('mt-hint').classList.remove('hidden');
       break;
     }
   }
-  // Autodetect proyecto
   if(!eid){
     for(const p of proyectos){
-      if(!p.keywords) continue;
+      if(!p.keywords)continue;
       const kws=p.keywords.split(',').map(k=>k.trim().toLowerCase()).filter(Boolean);
-      if(kws.some(k=>k&&txt.includes(k))){ document.getElementById('mt-proy').value=p.id; return; }
+      if(kws.some(k=>k&&txt.includes(k))){document.getElementById('mt-proy').value=p.id;break;}
+    }
+    // Buscar procedimiento similar
+    const sim=tareas.find(t=>t.como&&t.titulo.toLowerCase().split(' ').some(w=>w.length>3&&txt.includes(w)));
+    if(sim){
+      document.getElementById('mt-sug-texto').textContent=sim.como;
+      document.getElementById('mt-sugerencia').classList.remove('hidden');
     }
   }
 }
 
-function llenarSelectProy(){
-  const sel=document.getElementById('mt-proy');
-  const v=sel.value;
+function fillSelProy(){
+  const sel=document.getElementById('mt-proy'),v=sel.value;
   sel.innerHTML='<option value="">Sin proyecto</option>'+proyectos.map(p=>`<option value="${p.id}">${esc(p.nombre)}</option>`).join('');
-  if(v) sel.value=v;
+  if(v)sel.value=v;
 }
 
 function selColor(c){
   colorSel=c;
-  document.querySelectorAll('.cpk').forEach(b=>{ b.classList.toggle('ring-white',b.dataset.c===c); b.classList.toggle('ring-transparent',b.dataset.c!==c); });
+  document.querySelectorAll('.cpk').forEach(el=>{el.classList.toggle('sel',el.dataset.c===c);});
 }
 
-// ──────────────────────────────────────────
-//  TAREAS CRUD
-// ──────────────────────────────────────────
+// ─── CHECKLIST ───
+function addCheckItem(){
+  const inp=document.getElementById('mt-check-inp'),txt=inp.value.trim();if(!txt)return;
+  checkItems.push({id:uid(),texto:txt,done:false});
+  renderChecklistForm();inp.value='';
+}
+function toggleCheckForm(id){const ci=checkItems.find(c=>c.id===id);if(ci)ci.done=!ci.done;renderChecklistForm();}
+function removeCheck(id){checkItems=checkItems.filter(c=>c.id!==id);renderChecklistForm();}
+function renderChecklistForm(){
+  document.getElementById('mt-checklist').innerHTML=checkItems.map(c=>`
+  <div style="display:flex;align-items:center;gap:.5rem;padding:.35rem .6rem;background:var(--bg3);border-radius:8px;">
+    <input type="checkbox" ${c.done?'checked':''} onchange="toggleCheckForm('${c.id}')" style="width:14px;height:14px;accent-color:var(--neo-sky);">
+    <span style="flex:1;font-size:.8rem;color:${c.done?'var(--text3)':'var(--text1)'};text-decoration:${c.done?'line-through':'none'};">${esc(c.texto)}</span>
+    <button onclick="removeCheck('${c.id}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:.75rem;">✕</button>
+  </div>`).join('');
+}
+
+// ─── ACTUALIZAR DEADLINES (+2d) ───
+function aplicarUrgencia(excId){
+  let n=0;
+  tareas.forEach(t=>{
+    if(t.id===excId||t.estado!=='pendiente'||t.urgente||!t.deadline)return;
+    const d=new Date(t.deadline);if(isNaN(d.getTime()))return;
+    t.deadline=new Date(d.getTime()+DOS_DIAS).toISOString().slice(0,16);n++;
+  });
+  return n;
+}
+
+// ─── TAREAS CRUD ───
 function guardarTarea(){
   const titulo=document.getElementById('mt-titulo').value.trim();
-  if(!titulo){ shake('mt-titulo'); toast('El título es obligatorio','warning'); return; }
-
+  if(!titulo){shake('mt-titulo');toast('El título es obligatorio','red');return;}
   const eid=document.getElementById('mt-id').value;
   const ahora=Date.now();
-  const urgente=document.getElementById('mt-urgente').checked;
-  const alerta24=document.getElementById('mt-alerta24').checked;
-  const ciclica=document.getElementById('mt-ciclica').checked;
-  const nuevoEstado=document.getElementById('mt-estado').value;
+  const urgente=document.getElementById('mt-urg').checked;
+  const alerta24=document.getElementById('mt-a24').checked;
+  const ciclica=document.getElementById('mt-cic').checked;
+  const nuevoEst=document.getElementById('mt-estado').value;
 
   const datos={
     titulo,
@@ -807,702 +826,633 @@ function guardarTarea(){
     cat:document.getElementById('mt-cat').value,
     proy:document.getElementById('mt-proy').value,
     prio:document.getElementById('mt-prio').value,
-    estado:nuevoEstado,
-    deadline:document.getElementById('mt-deadline').value,
-    urgente,alerta24,
-    ciclica,
+    estado:nuevoEst,
+    deadline:document.getElementById('mt-dl').value,
+    urgente,alerta24,ciclica,
     frecDias:parseInt(document.getElementById('mt-frec').value)||0,
-    asistentes:document.getElementById('mt-asistentes').value.trim(),
+    asistentes:document.getElementById('mt-asist').value.trim(),
     como:document.getElementById('mt-como').value.trim(),
-    siguiente:document.getElementById('mt-siguiente').value.trim(),
+    siguiente:document.getElementById('mt-sig').value.trim(),
+    checklist:[...checkItems],
     actualizadoEn:ahora,
   };
 
   if(eid){
     const idx=tareas.findIndex(t=>t.id===eid);
-    if(idx===-1){ toast('Tarea no encontrada','error'); return; }
-    const vieja=tareas[idx];
-    if(nuevoEstado==='finalizado'&&vieja.estado!=='finalizado'){
-      datos.completadoEn=ahora; datos.creadoEn=vieja.creadoEn;
-      datos.aTiempo=vieja.deadline?ahora<=new Date(vieja.deadline).getTime():true;
+    if(idx===-1){toast('No encontrada','red');return;}
+    const v=tareas[idx];
+    if(nuevoEst==='finalizado'&&v.estado!=='finalizado'){
+      datos.completadoEn=ahora;datos.creadoEn=v.creadoEn;
+      datos.aTiempo=v.deadline?ahora<=new Date(v.deadline).getTime():true;
       datos.excelente=datos.aTiempo;
-      if(datos.excelente) toast('🌟 ¡Rendimiento Excelente!','success');
-      // Si es cíclica, programar siguiente sesión
-      if(vieja.ciclica&&vieja.frecDias>0){
-        const nextDate=new Date(ahora+vieja.frecDias*24*60*60*1000);
-        const nextT={
-          ...vieja,
-          id:uid(),
-          titulo:vieja.titulo+' (Siguiente)',
-          estado:'pendiente',
-          deadline:nextDate.toISOString().slice(0,16),
-          completadoEn:null,excelente:false,aTiempo:undefined,
-          creadoEn:ahora,actualizadoEn:ahora,
-          historial:[],
-        };
-        tareas.push(nextT);
-        toast(`🔁 Próxima sesión programada para ${fmtFecha(nextT.deadline)}`,'info');
+      if(datos.excelente)toast('🌟 ¡Rendimiento Excelente!','grn');
+      if(v.ciclica&&v.frecDias>0){
+        const nxt={...v,id:uid(),titulo:v.titulo+' (Sig.)',estado:'pendiente',deadline:new Date(ahora+v.frecDias*86400000).toISOString().slice(0,16),completadoEn:null,excelente:false,aTiempo:undefined,creadoEn:ahora,actualizadoEn:ahora,historial:[]};
+        tareas.push(nxt);toast('🔁 Próxima sesión creada','sky');
       }
     }
-    if(nuevoEstado!=='finalizado'&&vieja.estado==='finalizado'){
-      datos.completadoEn=null; datos.excelente=false; datos.aTiempo=undefined;
-      toast('↩️ Reabierta — estadísticas limpias','info');
-    }
-    tareas[idx]={...vieja,...datos};
-    toast('✏️ Tarea actualizada','info');
+    if(nuevoEst!=='finalizado'&&v.estado==='finalizado'){datos.completadoEn=null;datos.excelente=false;datos.aTiempo=undefined;toast('↩️ Reabierta — stats limpias','yel');}
+    tareas[idx]={...v,...datos};toast('✏️ Actualizada','sky');
   } else {
     const t={id:uid(),creadoEn:ahora,...datos,completadoEn:null,excelente:false,aTiempo:undefined,historial:[]};
-    if(nuevoEstado==='finalizado'){ t.completadoEn=ahora; t.aTiempo=t.deadline?ahora<=new Date(t.deadline).getTime():true; t.excelente=t.aTiempo; }
-    if(urgente&&nuevoEstado==='pendiente'){
+    if(nuevoEst==='finalizado'&&t.deadline){t.completadoEn=ahora;t.aTiempo=ahora<=new Date(t.deadline).getTime();t.excelente=t.aTiempo;}
+    if(urgente&&nuevoEst==='pendiente'){
       const fp=tareas.findIndex(x=>x.estado==='pendiente');
       fp===-1?tareas.push(t):tareas.splice(fp,0,t);
-      const n=actualizarDeadlines(t.id);
-      toast(`🚨 URGENTE al inicio. ${n>0?n+' deadlines retrasados +2d':''}`, 'warning');
-    } else { tareas.push(t); }
-    toast('✅ Tarea creada','success');
+      const n=aplicarUrgencia(t.id);
+      toast(`🚨 URGENTE añadida${n>0?`. ${n} deadlines retrasados +2d`:''}`,'red');
+    } else {tareas.push(t);}
+    toast('✅ Tarea creada','grn');
   }
-
-  guardar(); cerrarModal('modal-tarea'); renderTodo();
+  save();cerrarModal('modal-tarea');renderAll();
 }
 
 function editarTarea(id){
-  const t=tareas.find(x=>x.id===id); if(!t) return;
-  llenarSelectProy();
+  const t=tareas.find(x=>x.id===id);if(!t)return;
+  fillSelProy();
   document.getElementById('mt-id').value=id;
   document.getElementById('mt-titulo').value=t.titulo;
   document.getElementById('mt-desc').value=t.desc||'';
-  document.getElementById('mt-urgente').checked=t.urgente||false;
-  document.getElementById('mt-alerta24').checked=t.alerta24||false;
-  document.getElementById('mt-dept').value=t.dept||'producto'; actualizarCats();
+  document.getElementById('mt-urg').checked=t.urgente||false;
+  document.getElementById('mt-a24').checked=t.alerta24||false;
+  document.getElementById('mt-dept').value=t.dept||'producto';actualizarCats();
   document.getElementById('mt-cat').value=t.cat||'';
   document.getElementById('mt-proy').value=t.proy||'';
   document.getElementById('mt-prio').value=t.prio||'media';
   document.getElementById('mt-estado').value=t.estado;
-  document.getElementById('mt-deadline').value=t.deadline||'';
-  document.getElementById('mt-ciclica').checked=t.ciclica||false;
+  document.getElementById('mt-dl').value=t.deadline||'';
+  document.getElementById('mt-cic').checked=t.ciclica||false;
+  document.getElementById('mt-cic-opts').classList.toggle('hidden',!t.ciclica);
   document.getElementById('mt-frec').value=t.frecDias||'';
-  document.getElementById('mt-asistentes').value=t.asistentes||'';
+  document.getElementById('mt-asist').value=t.asistentes||'';
   document.getElementById('mt-como').value=t.como||'';
-  document.getElementById('mt-siguiente').value=t.siguiente||'';
-  document.getElementById('ciclica-opts').classList.toggle('hidden',!t.ciclica);
-  document.getElementById('mt-heading').textContent='Editar Tarea';
+  document.getElementById('mt-sig').value=t.siguiente||'';
+  checkItems=t.checklist?[...t.checklist]:[];renderChecklistForm();
+  document.getElementById('mt-h').textContent='Editar Tarea';
   document.getElementById('mt-btn').textContent='Guardar Cambios';
-  document.getElementById('hint-auto').classList.add('hidden');
+  document.getElementById('mt-hint').classList.add('hidden');
+  document.getElementById('mt-sugerencia').classList.add('hidden');
   abrirModal('modal-tarea');
 }
 
 function eliminarTarea(id){
-  if(!confirm('¿Eliminar esta tarea?')) return;
-  tareas=tareas.filter(t=>t.id!==id);
-  guardar(); renderTodo(); toast('🗑️ Eliminada','info');
+  if(!confirm('¿Eliminar esta tarea?'))return;
+  tareas=tareas.filter(t=>t.id!==id);save();renderAll();toast('🗑️ Eliminada','yel');
 }
 
 function moverTarea(id,dir){
   const COLS=['pendiente','proceso','finalizado'];
-  const t=tareas.find(x=>x.id===id); if(!t) return;
-  const ni=COLS.indexOf(t.estado)+dir;
-  if(ni<0||ni>=3) return;
-  const prev=t.estado; const ahora=Date.now();
-  t.estado=COLS[ni]; t.actualizadoEn=ahora;
+  const t=tareas.find(x=>x.id===id);if(!t)return;
+  const ni=COLS.indexOf(t.estado)+dir;if(ni<0||ni>=3)return;
+  const prev=t.estado;const ahora=Date.now();
+  t.estado=COLS[ni];t.actualizadoEn=ahora;
   if(COLS[ni]==='finalizado'&&prev!=='finalizado'){
-    t.completadoEn=ahora;
-    t.aTiempo=t.deadline?ahora<=new Date(t.deadline).getTime():true;
-    t.excelente=t.aTiempo;
-    if(t.excelente) toast('🌟 ¡Rendimiento Excelente!','success');
+    t.completadoEn=ahora;t.aTiempo=t.deadline?ahora<=new Date(t.deadline).getTime():true;t.excelente=t.aTiempo;
+    if(t.excelente)toast('🌟 ¡Excelente!','grn');
     if(t.ciclica&&t.frecDias>0){
-      const nxt={...t,id:uid(),titulo:t.titulo+' (Siguiente)',estado:'pendiente',deadline:new Date(ahora+t.frecDias*86400000).toISOString().slice(0,16),completadoEn:null,excelente:false,aTiempo:undefined,creadoEn:ahora,actualizadoEn:ahora,historial:[]};
-      tareas.push(nxt);
-      toast('🔁 Próxima sesión creada','info');
+      const nxt={...t,id:uid(),titulo:t.titulo+' (Sig.)',estado:'pendiente',deadline:new Date(ahora+t.frecDias*86400000).toISOString().slice(0,16),completadoEn:null,excelente:false,aTiempo:undefined,creadoEn:ahora,actualizadoEn:ahora,historial:[]};
+      tareas.push(nxt);toast('🔁 Próxima sesión creada','sky');
     }
   }
-  if(COLS[ni]!=='finalizado'&&prev==='finalizado'){
-    t.completadoEn=null; t.excelente=false; t.aTiempo=undefined;
-    toast('↩️ Reabierta — stats limpias','info');
-  }
-  guardar(); renderTodo();
+  if(COLS[ni]!=='finalizado'&&prev==='finalizado'){t.completadoEn=null;t.excelente=false;t.aTiempo=undefined;toast('↩️ Stats limpias','yel');}
+  save();renderAll();
 }
 
-// ──────────────────────────────────────────
-//  PROYECTOS CRUD
-// ──────────────────────────────────────────
-function guardarProyecto(){
+// ─── PROYECTOS CRUD ───
+function guardarProy(){
   const nombre=document.getElementById('mp-nombre').value.trim();
-  if(!nombre){ shake('mp-nombre'); toast('Nombre obligatorio','warning'); return; }
+  if(!nombre){shake('mp-nombre');toast('Nombre obligatorio','red');return;}
   const eid=document.getElementById('mp-id').value;
   const d={nombre,dept:document.getElementById('mp-dept').value,keywords:document.getElementById('mp-keys').value.trim(),color:colorSel};
-  if(eid){ const i=proyectos.findIndex(p=>p.id===eid); if(i!==-1) proyectos[i]={...proyectos[i],...d}; toast('✏️ Proyecto actualizado','info'); }
-  else { proyectos.push({id:uid(),creadoEn:Date.now(),...d}); toast('📁 Proyecto creado','success'); }
-  guardar(); cerrarModal('modal-proy'); renderTodo();
+  if(eid){const i=proyectos.findIndex(p=>p.id===eid);if(i!==-1)proyectos[i]={...proyectos[i],...d};toast('✏️ Actualizado','sky');}
+  else{proyectos.push({id:uid(),creadoEn:Date.now(),...d});toast('📁 Proyecto creado','grn');}
+  save();cerrarModal('modal-proy');renderAll();
 }
-function editarProyecto(id){
-  const p=proyectos.find(x=>x.id===id); if(!p) return;
+function editarProy(id){
+  const p=proyectos.find(x=>x.id===id);if(!p)return;
   document.getElementById('mp-id').value=id;
   document.getElementById('mp-nombre').value=p.nombre;
   document.getElementById('mp-dept').value=p.dept||'producto';
   document.getElementById('mp-keys').value=p.keywords||'';
-  selColor(p.color||'#0ea5e9');
-  document.getElementById('mp-heading').textContent='Editar Proyecto';
-  document.getElementById('mp-btn').textContent='Guardar Cambios';
+  selColor(p.color||'#38bdf8');
+  document.getElementById('mp-h').textContent='Editar Proyecto';
+  document.getElementById('mp-btn').textContent='Guardar';
   abrirModal('modal-proy');
 }
-function eliminarProyecto(id){
-  if(!confirm('¿Eliminar proyecto? Las tareas perderán asignación.')) return;
+function eliminarProy(id){
+  if(!confirm('¿Eliminar proyecto?'))return;
   proyectos=proyectos.filter(p=>p.id!==id);
-  tareas.forEach(t=>{ if(t.proy===id) t.proy=''; });
-  guardar(); renderTodo(); toast('🗑️ Proyecto eliminado','info');
+  tareas.forEach(t=>{if(t.proy===id)t.proy='';});
+  save();renderAll();toast('🗑️ Proyecto eliminado','yel');
 }
 
-// ──────────────────────────────────────────
-//  IDEAS CRUD
-// ──────────────────────────────────────────
+// ─── IDEAS CRUD ───
 function guardarIdea(){
-  const titulo=document.getElementById('idea-titulo').value.trim();
-  const cuerpo=document.getElementById('idea-cuerpo').value.trim();
-  if(!titulo&&!cuerpo){ shake('idea-titulo'); return; }
-  ideas.unshift({id:uid(),titulo:titulo||'Sin título',cuerpo,tipo:document.getElementById('idea-tipo').value,creadoEn:Date.now()});
-  guardar();
-  document.getElementById('idea-titulo').value='';
-  document.getElementById('idea-cuerpo').value='';
-  renderIdeas(); toast('💡 Idea guardada','success');
+  const titulo=document.getElementById('id-tit').value.trim(),cuerpo=document.getElementById('id-body').value.trim();
+  if(!titulo&&!cuerpo){shake('id-tit');return;}
+  ideas.unshift({id:uid(),titulo:titulo||'Sin título',cuerpo,tipo:document.getElementById('id-tipo').value,creadoEn:Date.now()});
+  save();document.getElementById('id-tit').value='';document.getElementById('id-body').value='';renderIdeas();toast('💡 Guardada','grn');
 }
-function eliminarIdea(id){ ideas=ideas.filter(i=>i.id!==id); guardar(); renderIdeas(); }
+function eliminarIdea(id){ideas=ideas.filter(i=>i.id!==id);save();renderIdeas();}
 function ideaATarea(id){
-  const i=ideas.find(x=>x.id===id); if(!i) return;
-  llenarSelectProy(); actualizarCats();
+  const i=ideas.find(x=>x.id===id);if(!i)return;
+  fillSelProy();actualizarCats();
   document.getElementById('mt-titulo').value=i.titulo;
   document.getElementById('mt-desc').value=i.cuerpo||'';
-  document.getElementById('mt-heading').textContent='Convertir Idea en Tarea';
+  document.getElementById('mt-h').textContent='Convertir en Tarea';
   document.getElementById('mt-btn').textContent='Crear Tarea';
   abrirModal('modal-tarea');
 }
 
-// ──────────────────────────────────────────
-//  ACTAS / HISTORIAL
-// ──────────────────────────────────────────
+// ─── ACTAS ───
 function abrirActa(id){
-  actaTareaId=id;
-  const t=tareas.find(x=>x.id===id); if(!t) return;
-  document.getElementById('acta-tarea-titulo').textContent=t.titulo;
-  document.getElementById('acta-fecha').value=new Date().toISOString().slice(0,10);
-  document.getElementById('acta-asist').value=t.asistentes||'';
-  document.getElementById('acta-notas').value='';
-  document.getElementById('acta-nextdl').value=t.deadline||'';
-  renderHistorial(t);
-  abrirModal('modal-acta');
+  actaTId=id;
+  const t=tareas.find(x=>x.id===id);if(!t)return;
+  document.getElementById('acta-titulo').textContent=t.titulo;
+  document.getElementById('a-fecha').value=new Date().toISOString().slice(0,10);
+  document.getElementById('a-asist').value=t.asistentes||'';
+  document.getElementById('a-notas').value='';
+  document.getElementById('a-nextdl').value=t.deadline||'';
+  renderHistorial(t);abrirModal('modal-acta');
 }
-
 function guardarSesion(){
-  const t=tareas.find(x=>x.id===actaTareaId); if(!t) return;
-  if(!Array.isArray(t.historial)) t.historial=[];
-  const sesion={
-    fecha:document.getElementById('acta-fecha').value,
-    asistentes:document.getElementById('acta-asist').value.trim(),
-    notas:document.getElementById('acta-notas').value.trim(),
-    nextDl:document.getElementById('acta-nextdl').value,
-    ts:Date.now(),
-  };
-  t.historial.push(sesion);
-  if(sesion.nextDl) t.deadline=sesion.nextDl;
-  document.getElementById('acta-notas').value='';
-  guardar(); renderHistorial(t); renderTodo();
-  toast('📋 Sesión guardada','success');
+  const t=tareas.find(x=>x.id===actaTId);if(!t)return;
+  if(!Array.isArray(t.historial))t.historial=[];
+  const s={fecha:document.getElementById('a-fecha').value,asistentes:document.getElementById('a-asist').value.trim(),notas:document.getElementById('a-notas').value.trim(),nextDl:document.getElementById('a-nextdl').value,ts:Date.now()};
+  t.historial.push(s);
+  if(s.nextDl)t.deadline=s.nextDl;
+  document.getElementById('a-notas').value='';
+  save();renderHistorial(t);renderAll();toast('📋 Sesión guardada','grn');
 }
-
 function renderHistorial(t){
-  const el=document.getElementById('acta-historial');
-  if(!t.historial||!t.historial.length){ el.innerHTML='<p class="text-xs text-slate-600 py-2">Sin sesiones previas.</p>'; return; }
-  el.innerHTML=[...t.historial].reverse().map((s,i)=>`
-  <div class="glass-card rounded-xl p-4 border border-white/5">
-    <div class="flex items-center justify-between mb-2">
-      <p class="text-xs font-bold text-sky-400 mono">${s.fecha}</p>
-      ${s.asistentes?`<p class="text-xs text-slate-500">👥 ${esc(s.asistentes)}</p>`:''}
+  const el=document.getElementById('acta-hist');
+  if(!t.historial||!t.historial.length){el.innerHTML='<p style="font-size:.75rem;color:var(--text3);">Sin sesiones previas.</p>';return;}
+  el.innerHTML=[...t.historial].reverse().map(s=>`
+  <div class="card-inner" style="padding:1rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">
+      <span style="font-size:.7rem;font-weight:700;color:var(--neo-sky);font-variant-numeric:tabular-nums;">${s.fecha}</span>
+      ${s.asistentes?`<span style="font-size:.7rem;color:var(--text3);">👥 ${esc(s.asistentes)}</span>`:''}
     </div>
-    ${s.notas?`<p class="text-xs text-slate-300 leading-relaxed whitespace-pre-wrap mb-2">${esc(s.notas)}</p>`:''}
-    ${s.nextDl?`<p class="text-xs text-yellow-400 mono">⏭ Siguiente DL: ${fmtFecha(s.nextDl)}</p>`:''}
+    ${s.notas?`<p style="font-size:.75rem;color:var(--text2);white-space:pre-wrap;line-height:1.5;">${esc(s.notas)}</p>`:''}
+    ${s.nextDl?`<p style="font-size:.7rem;color:#fbbf24;margin-top:.4rem;">⏭ Sig. DL: ${fmtDt(s.nextDl)}</p>`:''}
   </div>`).join('');
 }
-
-function generarActaEmail(){
-  const t=tareas.find(x=>x.id===actaTareaId); if(!t) return;
-  const ultsesion=t.historial&&t.historial.length?t.historial[t.historial.length-1]:null;
+function copiarActa(){
+  const t=tareas.find(x=>x.id===actaTId);if(!t)return;
+  const s=t.historial&&t.historial.length?t.historial[t.historial.length-1]:null;
   const h=new Date().getHours();
-  const sal=h<12?'Buenos días':h<20?'Buenas tardes':'Buenas noches';
-  let txt=`${sal.toUpperCase()},\n\nACTA DE REUNIÓN — ${t.titulo}\n${'═'.repeat(50)}\n`;
-  if(ultsesion){
-    txt+=`\nFECHA: ${ultsesion.fecha}\n`;
-    if(ultsesion.asistentes) txt+=`ASISTENTES: ${ultsesion.asistentes}\n`;
-    txt+=`\nACUERDOS Y NOTAS:\n${ultsesion.notas||'–'}\n`;
-    if(ultsesion.nextDl) txt+=`\nPRÓXIMA REVISIÓN: ${fmtFecha(ultsesion.nextDl)}\n`;
-  }
-  if(t.siguiente) txt+=`\nSIGUIENTE PASO: ${t.siguiente}\n`;
-  txt+=`\n${'═'.repeat(50)}\nGenerado por AI Executive Copilot\n`;
-  navigator.clipboard.writeText(txt).then(()=>toast('📤 Acta copiada al portapapeles','success')).catch(()=>toast('Error al copiar','error'));
+  let txt=`${h<12?'Buenos días':h<20?'Buenas tardes':'Buenas noches'},\n\nACTA — ${t.titulo}\n${'─'.repeat(40)}\n`;
+  if(s){txt+=`Fecha: ${s.fecha}\n${s.asistentes?'Asistentes: '+s.asistentes+'\n':''}\nACUERDOS:\n${s.notas||'–'}\n`;if(s.nextDl)txt+=`\nPróximo deadline: ${fmtDt(s.nextDl)}\n`;}
+  if(t.siguiente)txt+=`\nSiguiente paso: ${t.siguiente}\n`;
+  txt+=`\n${'─'.repeat(40)}\nAI Executive Copilot · Papelería\n`;
+  navigator.clipboard.writeText(txt).then(()=>toast('📤 Acta copiada','grn')).catch(()=>toast('Error','red'));
 }
 
-// ──────────────────────────────────────────
-//  DRAG & DROP
-// ──────────────────────────────────────────
-function onDragStart(e,id){
-  dragId=id;
-  setTimeout(()=>{ const el=document.getElementById('dc'+id); if(el) el.classList.add('dragging'); },0);
-  e.dataTransfer.effectAllowed='move';
-}
-function onDragEnd(){
-  if(dragId){ const el=document.getElementById('dc'+dragId); if(el) el.classList.remove('dragging'); }
-  document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));
-  dragId=null;
-}
-function onDragOver(e,col){ e.preventDefault(); document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over')); const el=document.getElementById('col-'+col); if(el) el.classList.add('drag-over'); }
-function onDragLeave(e){ if(e.currentTarget) e.currentTarget.classList.remove('drag-over'); }
-function onDrop(e,nuevoEstado){
-  e.preventDefault();
-  document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));
-  if(!dragId) return;
-  const t=tareas.find(x=>x.id===dragId); if(!t||t.estado===nuevoEstado){ dragId=null; return; }
-  const prev=t.estado; const ahora=Date.now();
-  t.estado=nuevoEstado; t.actualizadoEn=ahora;
-  if(nuevoEstado==='finalizado'&&prev!=='finalizado'){
-    t.completadoEn=ahora; t.aTiempo=t.deadline?ahora<=new Date(t.deadline).getTime():true; t.excelente=t.aTiempo;
-    if(t.excelente) toast('🌟 ¡Rendimiento Excelente!','success');
-    if(t.ciclica&&t.frecDias>0){
-      const nxt={...t,id:uid(),titulo:t.titulo+' (Siguiente)',estado:'pendiente',deadline:new Date(ahora+t.frecDias*86400000).toISOString().slice(0,16),completadoEn:null,excelente:false,aTiempo:undefined,creadoEn:ahora,actualizadoEn:ahora,historial:[]};
-      tareas.push(nxt); toast('🔁 Próxima sesión creada','info');
-    }
+// ─── DRAG & DROP ───
+function onDragStart(e,id){dragId=id;setTimeout(()=>{const el=document.getElementById('dc'+id);if(el)el.classList.add('dragging');},0);e.dataTransfer.effectAllowed='move';}
+function onDragEnd(){if(dragId){const el=document.getElementById('dc'+dragId);if(el)el.classList.remove('dragging');}document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));dragId=null;}
+function onDO(e,col){e.preventDefault();document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));const el=document.getElementById('col-'+col);if(el)el.classList.add('drag-over');}
+function onDL(e){if(e.currentTarget)e.currentTarget.classList.remove('drag-over');}
+function onDr(e,ne){
+  e.preventDefault();document.querySelectorAll('.kanban-col').forEach(c=>c.classList.remove('drag-over'));
+  if(!dragId)return;
+  const t=tareas.find(x=>x.id===dragId);if(!t||t.estado===ne){dragId=null;return;}
+  const prev=t.estado;const ahora=Date.now();t.estado=ne;t.actualizadoEn=ahora;
+  if(ne==='finalizado'&&prev!=='finalizado'){
+    t.completadoEn=ahora;t.aTiempo=t.deadline?ahora<=new Date(t.deadline).getTime():true;t.excelente=t.aTiempo;
+    if(t.excelente)toast('🌟 ¡Excelente!','grn');
+    if(t.ciclica&&t.frecDias>0){const nxt={...t,id:uid(),titulo:t.titulo+' (Sig.)',estado:'pendiente',deadline:new Date(ahora+t.frecDias*86400000).toISOString().slice(0,16),completadoEn:null,excelente:false,aTiempo:undefined,creadoEn:ahora,actualizadoEn:ahora,historial:[]};tareas.push(nxt);toast('🔁 Próxima sesión','sky');}
   }
-  if(nuevoEstado!=='finalizado'&&prev==='finalizado'){
-    t.completadoEn=null; t.excelente=false; t.aTiempo=undefined;
-    toast('↩️ Reabierta — stats limpias','info');
-  }
-  dragId=null; guardar(); renderTodo();
+  if(ne!=='finalizado'&&prev==='finalizado'){t.completadoEn=null;t.excelente=false;t.aTiempo=undefined;toast('↩️ Stats limpias','yel');}
+  dragId=null;save();renderAll();
 }
 
-// ──────────────────────────────────────────
-//  RENDER KANBAN
-// ──────────────────────────────────────────
+// ─── FILTERS ───
+function setFD(d){filtDept=d;document.querySelectorAll('.fdb').forEach(b=>{b.style.opacity=b.dataset&&b.getAttribute('onclick')&&b.getAttribute('onclick').includes(`'${d}'`)?'1':'0.5';});renderKanban();}
 function renderFiltrosProy(){
-  const el=document.getElementById('fdb-proy'); if(!el) return;
-  el.innerHTML=proyectos.map(p=>`<button onclick="setFiltro('proy','${p.id}')" data-fp="${p.id}" class="fpb text-xs px-3 py-1 rounded-lg border font-bold transition-all" style="border-color:${p.color};color:${p.color};background:${p.color}18">${esc(p.nombre)}</button>`).join('');
-  actualizarBotonesFiltro();
+  const el=document.getElementById('fd-proy');if(!el)return;
+  el.innerHTML=proyectos.map(p=>`<button onclick="setPF('${p.id}')" class="pill" style="cursor:pointer;background:${p.color}18;color:${p.color};border:1px solid ${p.color}35;font-size:.65rem;font-weight:600;padding:.2rem .55rem;border-radius:99px;letter-spacing:.04em;">${esc(p.nombre)}</button>`).join('');
 }
-function setFiltro(tipo,val){ if(tipo==='dept') filtDept=val; else filtProy=val; actualizarBotonesFiltro(); renderKanban(); }
-function actualizarBotonesFiltro(){
-  document.querySelectorAll('.fdb').forEach(b=>{ b.style.opacity=b.dataset.fd===filtDept?'1':'0.5'; b.style.fontWeight=b.dataset.fd===filtDept?'800':'600'; });
-  document.querySelectorAll('.fpb').forEach(b=>{ b.style.opacity=b.dataset.fp===filtProy?'1':'0.5'; b.style.fontWeight=b.dataset.fp===filtProy?'800':'600'; });
-}
+function setPF(id){filtProy=filtProy===id?'':id;renderKanban();}
 
+// ─── RENDER KANBAN ───
 function renderKanban(){
   let vis=[...tareas];
-  if(filtDept) vis=vis.filter(t=>t.dept===filtDept);
-  if(filtProy) vis=vis.filter(t=>t.proy===filtProy);
-  const grupos={pendiente:[],proceso:[],finalizado:[]};
-  vis.forEach(t=>{ if(grupos[t.estado]) grupos[t.estado].push(t); });
-  grupos.pendiente.sort((a,b)=>(b.urgente?1:0)-(a.urgente?1:0));
-  document.getElementById('cnt-p').textContent=grupos.pendiente.length;
-  document.getElementById('cnt-pr').textContent=grupos.proceso.length;
-  document.getElementById('cnt-f').textContent=grupos.finalizado.length;
-  ['pendiente','proceso','finalizado'].forEach(estado=>{
-    const col=document.getElementById('col-'+estado);
-    if(!col) return;
-    const arr=grupos[estado];
-    if(!arr.length){ col.innerHTML=`<div class="border-2 border-dashed border-white/5 rounded-xl p-6 text-center text-xs text-slate-700">Sin tareas</div>`; return; }
-    col.innerHTML=arr.map(t=>buildCard(t,estado)).join('');
+  if(filtDept)vis=vis.filter(t=>t.dept===filtDept);
+  if(filtProy)vis=vis.filter(t=>t.proy===filtProy);
+  const g={pendiente:[],proceso:[],finalizado:[]};
+  vis.forEach(t=>{if(g[t.estado])g[t.estado].push(t);});
+  g.pendiente.sort((a,b)=>(b.urgente?1:0)-(a.urgente?1:0));
+  document.getElementById('cnt-p').textContent=g.pendiente.length;
+  document.getElementById('cnt-pr').textContent=g.proceso.length;
+  document.getElementById('cnt-f').textContent=g.finalizado.length;
+  ['pendiente','proceso','finalizado'].forEach(est=>{
+    const col=document.getElementById('col-'+est);if(!col)return;
+    const arr=g[est];
+    if(!arr.length){col.innerHTML=`<div style="border:1px dashed var(--border2);border-radius:${getComputedStyle(document.documentElement).getPropertyValue('--r-xs')};padding:2rem;text-align:center;"><p style="font-size:.75rem;color:var(--text3);">Sin tareas</p></div>`;return;}
+    col.innerHTML=arr.map(t=>buildCard(t,est)).join('');
   });
 }
 
-function buildCard(t,estado){
-  const ahora=Date.now();
-  const dl=t.deadline?new Date(t.deadline).getTime():null;
-  const diff=dl?dl-ahora:null;
-  const venc=diff!==null&&diff<0&&estado!=='finalizado';
-  const crit=diff!==null&&diff>=0&&diff<3600000&&estado!=='finalizado';
-  const warn=diff!==null&&diff>=3600000&&diff<86400000&&estado!=='finalizado';
+function buildCard(t,est){
+  const ahora=Date.now(),dl=t.deadline?new Date(t.deadline).getTime():null,diff=dl?dl-ahora:null;
+  const venc=diff!==null&&diff<0&&est!=='finalizado';
+  const crit=diff!==null&&diff>=0&&diff<3600000&&est!=='finalizado';
+  const warn=diff!==null&&diff>=3600000&&diff<86400000&&est!=='finalizado';
   const dm=DEPT_META[t.dept]||DEPT_META.gestion;
   const proy=t.proy?proyectos.find(p=>p.id===t.proy):null;
-  const COLS=['pendiente','proceso','finalizado'];
-  const ci=COLS.indexOf(estado);
-  const prioC={baja:'bg-emerald-500/15 text-emerald-400',media:'bg-yellow-500/15 text-yellow-400',alta:'bg-red-500/15 text-red-400'};
-  const dlC=venc?'text-red-400':crit?'text-orange-400':warn?'text-yellow-400':'text-slate-500';
-  const border=t.urgente&&estado!=='finalizado'?'border-red-500/50':venc?'border-red-400/20':crit?'border-orange-400/20':warn?'border-yellow-500/15':'border-white/5';
-  const anillo=t.urgente&&estado!=='finalizado'?'urg-pulse':'';
-  const tieneAlerta=t.alerta24&&estado!=='finalizado';
+  const COLS=['pendiente','proceso','finalizado'],ci=COLS.indexOf(est);
+  const prioMap={baja:'#4ade80',media:'#fbbf24',alta:'#f87171'};
+  const dlColor=venc?'#f87171':crit?'#fb923c':warn?'#fbbf24':'var(--text3)';
+  const cardBg=t.urgente&&est!=='finalizado'?'rgba(248,113,113,.04)':'var(--bg1)';
+  const cardBorder=t.urgente&&est!=='finalizado'?'rgba(248,113,113,.3)':venc?'rgba(248,113,113,.2)':crit?'rgba(251,146,60,.2)':warn?'rgba(251,191,36,.15)':'var(--border)';
+  
+  // checklist progress
+  const cl=t.checklist||[],clDone=cl.filter(c=>c.done).length,clPct=cl.length?Math.round((clDone/cl.length)*100):0;
 
-  return `<div id="dc${t.id}" class="task-card glass-card border ${border} rounded-xl ${anillo} fade-up ${dm.cls}"
+  return `<div id="dc${t.id}" class="task-card ${t.urgente&&est!=='finalizado'?'urg-ring':''} fade-up"
+    style="background:${cardBg};border:1px solid ${cardBorder};border-radius:16px;padding:0;"
     draggable="true" ondragstart="onDragStart(event,'${t.id}')" ondragend="onDragEnd()">
-    ${proy?`<div class="h-0.5 rounded-t-xl" style="background:${proy.color}"></div>`:''}
-    <div class="p-3.5">
-      <div class="flex items-start gap-2 mb-2.5">
-        ${t.urgente?'<span class="shrink-0 text-xs bg-red-500 text-white font-bold px-1.5 py-0.5 rounded-md mt-0.5">🚨</span>':''}
-        ${tieneAlerta?'<span class="shrink-0 text-xs bg-orange-500/20 text-orange-400 font-bold px-1.5 py-0.5 rounded-md mt-0.5 border border-orange-500/30">🔔</span>':''}
-        <p class="text-sm font-semibold text-slate-200 flex-1 leading-snug cursor-pointer hover:text-white transition-colors" onclick="editarTarea('${t.id}')">${esc(t.titulo)}</p>
-        <span class="shrink-0 text-xs px-1.5 py-0.5 rounded-md font-bold ${prioC[t.prio]||prioC.media}">${{baja:'↓',media:'=',alta:'↑'}[t.prio]||'='}</span>
+    ${proy?`<div style="height:2px;border-radius:16px 16px 0 0;background:${proy.color};"></div>`:''}
+    <div style="padding:1rem;">
+      <!-- Header -->
+      <div style="display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.65rem;">
+        ${t.urgente?`<span class="pill pill-red glow-pulse" style="flex-shrink:0;margin-top:1px;">🚨</span>`:''}
+        <p style="font-size:.825rem;font-weight:600;color:var(--text1);flex:1;line-height:1.4;cursor:pointer;" onclick="editarTarea('${t.id}')">${esc(t.titulo)}</p>
+        <div style="width:7px;height:7px;border-radius:50%;background:${prioMap[t.prio]||prioMap.media};box-shadow:0 0 5px ${prioMap[t.prio]||prioMap.media};flex-shrink:0;margin-top:4px;"></div>
       </div>
-      <div class="flex flex-wrap gap-1.5 mb-2.5">
-        <span class="text-xs d-tag px-2 py-0.5 rounded-md font-bold">${dm.emoji} ${dm.label}</span>
-        ${t.cat?`<span class="text-xs glass text-slate-400 px-2 py-0.5 rounded-md">${esc(t.cat)}</span>`:''}
-        ${proy?`<span class="text-xs font-bold px-2 py-0.5 rounded-md" style="background:${proy.color}22;color:${proy.color}">${esc(proy.nombre)}</span>`:''}
-        ${t.excelente?'<span class="text-xs bg-yellow-500/15 text-yellow-400 px-2 py-0.5 rounded-md">🌟 Excelente</span>':''}
-        ${estado==='finalizado'&&t.aTiempo===false?'<span class="text-xs bg-red-500/15 text-red-400 px-2 py-0.5 rounded-md">⏰ Tarde</span>':''}
-        ${t.ciclica?'<span class="text-xs bg-sky-500/15 text-sky-400 px-2 py-0.5 rounded-md">🔁</span>':''}
+      <!-- Badges -->
+      <div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.65rem;">
+        <span class="${dm.cls} dept-tag">${dm.emoji} ${dm.label}</span>
+        ${t.cat?`<span style="font-size:.65rem;font-weight:500;color:var(--text3);padding:.15rem .45rem;background:var(--bg3);border-radius:99px;">${esc(t.cat)}</span>`:''}
+        ${proy?`<span style="font-size:.65rem;font-weight:600;padding:.15rem .45rem;border-radius:99px;background:${proy.color}18;color:${proy.color};">${esc(proy.nombre)}</span>`:''}
+        ${t.excelente?'<span class="pill pill-yel">🌟 Exc.</span>':''}
+        ${est==='finalizado'&&t.aTiempo===false?'<span class="pill pill-red">⏰ Tarde</span>':''}
+        ${t.ciclica?'<span class="pill pill-sky">🔁</span>':''}
+        ${t.alerta24&&est!=='finalizado'?'<span class="pill pill-org">🔔</span>':''}
       </div>
-      ${dl?`<div class="flex items-center gap-1.5 text-xs mono ${dlC} mb-2.5">
-        <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span>${estado!=='finalizado'?tiempoRestante(t.deadline):'✓ '+fmtFecha(t.deadline)}</span>
+      <!-- Deadline -->
+      ${dl?`<div style="display:flex;align-items:center;gap:.35rem;margin-bottom:.65rem;">
+        <svg width="12" height="12" fill="none" stroke="${dlColor}" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span style="font-size:.7rem;font-weight:500;color:${dlColor};font-variant-numeric:tabular-nums;">${est!=='finalizado'?tRest(t.deadline):'✓ '+fmtDt(t.deadline)}</span>
       </div>`:''}
-      ${t.desc?`<div>
-        <button onclick="toggleNotas('${t.id}')" class="flex items-center gap-1 text-xs text-slate-600 hover:text-slate-400 transition-colors mb-1.5">
-          <svg id="arr${t.id}" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>Ver notas
+      <!-- Checklist progress -->
+      ${cl.length?`<div style="margin-bottom:.65rem;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:.3rem;">
+          <span style="font-size:.65rem;color:var(--text3);">${clDone}/${cl.length} ítems</span>
+          <span style="font-size:.65rem;font-weight:600;color:var(--neo-sky);">${clPct}%</span>
+        </div>
+        <div class="prog-track" style="height:4px;"><div class="prog-fill" style="width:${clPct}%;background:var(--neo-sky);height:100%;"></div></div>
+      </div>`:''}
+      <!-- Description expandable -->
+      ${t.desc||t.como||t.siguiente?`<div style="margin-bottom:.65rem;">
+        <button onclick="toggleN('${t.id}')" style="font-size:.7rem;color:var(--text3);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:.3rem;padding:0;">
+          <svg id="arr${t.id}" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>
+          Ver notas
         </button>
-        <div id="nb${t.id}" class="notes-body">
-          <div class="text-xs text-slate-500 glass rounded-lg p-2.5 leading-relaxed whitespace-pre-wrap">${esc(t.desc)}</div>
-          ${t.como?`<div class="mt-2 text-xs text-violet-400 glass rounded-lg p-2.5"><span class="font-bold">📋 Procedimiento:</span> ${esc(t.como)}</div>`:''}
-          ${t.siguiente?`<div class="mt-2 text-xs text-emerald-400 glass rounded-lg p-2.5"><span class="font-bold">➡️ Siguiente paso:</span> ${esc(t.siguiente)}</div>`:''}
+        <div id="nb${t.id}" class="notes-body" style="margin-top:.4rem;">
+          ${t.desc?`<div style="font-size:.75rem;color:var(--text2);background:var(--bg3);border-radius:10px;padding:.65rem;line-height:1.5;white-space:pre-wrap;">${esc(t.desc)}</div>`:''}
+          ${t.como?`<div style="font-size:.7rem;color:var(--neo-vio);background:rgba(167,139,250,.06);border-radius:10px;padding:.5rem;margin-top:.4rem;border:1px solid rgba(167,139,250,.15);">📋 ${esc(t.como)}</div>`:''}
+          ${t.siguiente?`<div style="font-size:.7rem;color:#4ade80;background:rgba(74,222,128,.06);border-radius:10px;padding:.5rem;margin-top:.4rem;border:1px solid rgba(74,222,128,.15);">➡️ ${esc(t.siguiente)}</div>`:''}
         </div>
       </div>`:''}
-      <div class="flex items-center gap-1 pt-2.5 border-t border-white/5 mt-1">
-        <button onclick="moverTarea('${t.id}',-1)" class="p-1 rounded-lg text-slate-600 hover:text-slate-300 hover:bg-white/10 transition-all ${ci===0?'opacity-20 pointer-events-none':''}" title="Mover atrás"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <button onclick="moverTarea('${t.id}',1)" class="p-1 rounded-lg text-slate-600 hover:text-slate-300 hover:bg-white/10 transition-all ${ci===2?'opacity-20 pointer-events-none':''}" title="Mover adelante"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
-        <div class="flex-1"></div>
-        <button onclick="abrirActa('${t.id}')" class="p-1 rounded-lg text-slate-600 hover:text-sky-400 hover:bg-white/10 transition-all" title="Acta/Historial"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></button>
-        <button onclick="editarTarea('${t.id}')" class="p-1 rounded-lg text-slate-600 hover:text-sky-400 hover:bg-white/10 transition-all" title="Editar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-        <button onclick="eliminarTarea('${t.id}')" class="p-1 rounded-lg text-slate-600 hover:text-red-400 hover:bg-white/10 transition-all" title="Eliminar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+      <!-- Actions -->
+      <div style="display:flex;align-items:center;gap:.25rem;padding-top:.6rem;border-top:1px solid var(--border);">
+        <button onclick="moverTarea('${t.id}',-1)" class="btn-icon" title="←" style="${ci===0?'opacity:.2;pointer-events:none;':''};padding:.35rem;">
+          <svg style="width:12px;height:12px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button onclick="moverTarea('${t.id}',1)" class="btn-icon" title="→" style="${ci===2?'opacity:.2;pointer-events:none;':''};padding:.35rem;">
+          <svg style="width:12px;height:12px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <div style="flex:1;"></div>
+        <button onclick="abrirActa('${t.id}')" class="btn-icon" title="Acta" style="padding:.35rem;">
+          <svg style="width:12px;height:12px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+        </button>
+        <button onclick="editarTarea('${t.id}')" class="btn-icon" title="Editar" style="padding:.35rem;">
+          <svg style="width:12px;height:12px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button onclick="eliminarTarea('${t.id}')" class="btn-icon" title="Eliminar" style="padding:.35rem;">
+          <svg style="width:12px;height:12px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
       </div>
     </div>
   </div>`;
 }
 
-function toggleNotas(id){
-  const n=document.getElementById('nb'+id); const a=document.getElementById('arr'+id);
-  if(!n) return;
-  const open=n.classList.toggle('open');
-  if(a) a.style.transform=open?'rotate(180deg)':'';
+function toggleN(id){
+  const nb=document.getElementById('nb'+id),arr=document.getElementById('arr'+id);
+  if(!nb)return;
+  const open=nb.classList.toggle('open');
+  if(arr)arr.style.transform=open?'rotate(180deg)':'';
 }
 
-// ──────────────────────────────────────────
-//  RENDER PROYECTOS
-// ──────────────────────────────────────────
+// ─── RENDER PROYECTOS ───
 function renderProyectos(){
-  const el=document.getElementById('lista-proyectos'); if(!el) return;
+  const el=document.getElementById('lista-proyectos');if(!el)return;
   if(!proyectos.length){
-    el.innerHTML=`<div class="col-span-2 border-2 border-dashed border-white/5 rounded-2xl p-14 text-center"><p class="text-slate-500 mb-3">Sin proyectos.</p><button onclick="abrirModalProy()" class="bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all">+ Crear Proyecto</button></div>`;
+    el.innerHTML=`<div style="grid-column:1/-1;border:1px dashed var(--border2);border-radius:var(--r);padding:4rem;text-align:center;"><p style="font-size:.875rem;color:var(--text3);margin-bottom:.75rem;">No hay proyectos.</p><button onclick="abrirModalProy()" class="btn btn-primary">+ Crear Proyecto</button></div>`;
     return;
   }
   el.innerHTML=proyectos.map(p=>{
     const pt=tareas.filter(t=>t.proy===p.id);
-    const pend=pt.filter(t=>t.estado==='pendiente').length;
-    const proc=pt.filter(t=>t.estado==='proceso').length;
-    const done=pt.filter(t=>t.estado==='finalizado').length;
-    const total=pt.length;
-    const pct=total?Math.round((done/total)*100):0;
-    const ot=pt.filter(t=>t.aTiempo===true).length;
-    const lt=pt.filter(t=>t.aTiempo===false&&t.estado==='finalizado').length;
+    const pend=pt.filter(t=>t.estado==='pendiente').length,proc=pt.filter(t=>t.estado==='proceso').length,done=pt.filter(t=>t.estado==='finalizado').length;
+    const total=pt.length,pct=total?Math.round((done/total)*100):0;
+    const ot=pt.filter(t=>t.aTiempo===true).length,lt=pt.filter(t=>t.aTiempo===false&&t.estado==='finalizado').length;
     const hp=(ot+lt)>0?Math.round((ot/(ot+lt))*100):0;
     const urg=pt.filter(t=>t.urgente&&t.estado!=='finalizado').length;
     const dm=DEPT_META[p.dept]||DEPT_META.gestion;
-    const badge=pct===100?'<span class="text-xs bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full font-bold">✓ Listo</span>':pct>50?'<span class="text-xs bg-sky-500/15 text-sky-400 px-2 py-0.5 rounded-full font-bold">En progreso</span>':'<span class="text-xs glass text-slate-400 px-2 py-0.5 rounded-full font-bold">Iniciado</span>';
-    return `<div class="glass-card rounded-2xl p-5 fade-up">
-      <div class="flex items-start justify-between mb-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:${p.color}20"><div class="w-4 h-4 rounded-full" style="background:${p.color}"></div></div>
-          <div><h4 class="font-bold text-white text-sm">${esc(p.nombre)}</h4><span class="text-xs ${dm.cls} d-tag px-2 py-0.5 rounded-md font-bold">${dm.emoji} ${dm.label}</span></div>
+    return `<div class="card fade-up" style="padding:1.5rem;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:1.25rem;">
+        <div style="display:flex;align-items:center;gap:.75rem;">
+          <div style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:${p.color}18;flex-shrink:0;">
+            <div style="width:14px;height:14px;border-radius:50%;background:${p.color};box-shadow:0 0 10px ${p.color}88;"></div>
+          </div>
+          <div>
+            <p style="font-size:.875rem;font-weight:700;color:var(--text1);">${esc(p.nombre)}</p>
+            <span class="${dm.cls} dept-tag" style="margin-top:.2rem;display:inline-block;">${dm.emoji} ${dm.label}</span>
+          </div>
         </div>
-        <div class="flex items-center gap-2">${badge}${urg>0?`<span class="text-xs bg-red-500/15 text-red-400 px-2 py-0.5 rounded-full font-bold">🚨${urg}</span>`:''}
-          <button onclick="editarProyecto('${p.id}')" class="p-1.5 rounded-lg text-slate-600 hover:text-sky-400 hover:bg-white/10 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-          <button onclick="eliminarProyecto('${p.id}')" class="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-white/10 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        <div style="display:flex;align-items:center;gap:.35rem;">
+          ${pct===100?'<span class="pill pill-grn">✓ Listo</span>':pct>50?'<span class="pill pill-sky">En curso</span>':'<span class="pill pill-gry">Iniciado</span>'}
+          ${urg>0?`<span class="pill pill-red glow-pulse">🚨${urg}</span>`:''}
+          <button onclick="editarProy('${p.id}')" class="btn-icon" style="padding:.3rem;"><svg style="width:12px;height:12px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button onclick="eliminarProy('${p.id}')" class="btn-icon" style="padding:.3rem;"><svg style="width:12px;height:12px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
         </div>
       </div>
-      <div class="mb-4">
-        <div class="flex justify-between mb-1.5"><span class="text-xs text-slate-500 mono">PROGRESO</span><span class="text-sm font-bold mono" style="color:${p.color}">${pct}%</span></div>
-        <div class="h-3 bg-white/5 rounded-full overflow-hidden"><div class="prog h-full rounded-full" style="width:${pct}%;background:${p.color}"></div></div>
-        <div class="flex justify-between mt-1 text-xs text-slate-600"><span>${done}/${total} tareas</span>${pct===100?'<span class="text-emerald-400 font-bold">🎉 ¡Completado!</span>':''}</div>
+      <!-- Progress -->
+      <div style="margin-bottom:1rem;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:.5rem;">
+          <span style="font-size:.7rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Progreso</span>
+          <span style="font-size:.8rem;font-weight:700;color:${p.color};">${pct}%</span>
+        </div>
+        <div class="prog-track" style="height:6px;"><div class="prog-fill" style="width:${pct}%;background:${p.color};height:100%;${pct===100?'box-shadow:0 0 8px '+p.color+'66;':''}"></div></div>
+        <p style="font-size:.7rem;color:var(--text3);margin-top:.35rem;">${done}/${total} tareas${pct===100?' · 🎉 ¡Completado!':''}</p>
       </div>
-      <div class="grid grid-cols-3 gap-2 mb-3">
-        <div class="glass rounded-lg p-2 text-center"><p class="text-xs text-slate-500">Pend.</p><p class="font-bold text-slate-300">${pend}</p></div>
-        <div class="glass rounded-lg p-2 text-center"><p class="text-xs text-slate-500">Proceso</p><p class="font-bold text-sky-400">${proc}</p></div>
-        <div class="glass rounded-lg p-2 text-center"><p class="text-xs text-slate-500">Fin.</p><p class="font-bold text-emerald-400">${done}</p></div>
+      <!-- Mini stats -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:${(ot+lt)>0?'1rem':'0'};">
+        <div class="card-inner" style="padding:.6rem;text-align:center;"><p style="font-size:.65rem;color:var(--text3);">Pend.</p><p style="font-size:1rem;font-weight:700;color:var(--text1);">${pend}</p></div>
+        <div class="card-inner" style="padding:.6rem;text-align:center;"><p style="font-size:.65rem;color:var(--text3);">Proceso</p><p style="font-size:1rem;font-weight:700;color:var(--neo-sky);">${proc}</p></div>
+        <div class="card-inner" style="padding:.6rem;text-align:center;"><p style="font-size:.65rem;color:var(--text3);">Fin.</p><p style="font-size:1rem;font-weight:700;color:#4ade80;">${done}</p></div>
       </div>
-      ${(ot+lt)>0?`<div class="border-t border-white/5 pt-3">
-        <div class="flex justify-between mb-1"><span class="text-xs mono text-slate-500">SALUD ENTREGAS</span><span class="text-xs mono font-bold ${hp>=80?'text-emerald-400':hp>=50?'text-yellow-400':'text-red-400'}">${hp}%</span></div>
-        <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="prog h-full rounded-full ${hp>=80?'bg-emerald-500':hp>=50?'bg-yellow-500':'bg-red-500'}" style="width:${hp}%"></div></div>
-        <div class="flex gap-3 mt-1.5 text-xs"><span class="text-emerald-400">✓${ot}</span><span class="text-red-400">✗${lt}</span></div>
-      </div>`:`<div class="border-t border-white/5 pt-3 text-xs text-slate-700">Sin entregas con deadline</div>`}
-      ${p.keywords?`<div class="mt-2 text-xs text-slate-700">🔑 ${esc(p.keywords)}</div>`:''}
+      ${(ot+lt)>0?`<div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:.4rem;">
+          <span style="font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;font-weight:600;">Salud entregas</span>
+          <span style="font-size:.7rem;font-weight:700;color:${hp>=80?'#4ade80':hp>=50?'#fbbf24':'#f87171'};">${hp}%</span>
+        </div>
+        <div class="prog-track" style="height:4px;"><div class="prog-fill" style="width:${hp}%;background:${hp>=80?'#4ade80':hp>=50?'#fbbf24':'#f87171'};height:100%;"></div></div>
+        <div style="display:flex;gap:.75rem;margin-top:.5rem;">
+          <span style="font-size:.7rem;color:#4ade80;">✓ ${ot}</span>
+          <span style="font-size:.7rem;color:#f87171;">✗ ${lt}</span>
+        </div>
+      </div>`:`<p style="font-size:.7rem;color:var(--text3);">Sin entregas con deadline</p>`}
+      ${p.keywords?`<p style="font-size:.65rem;color:var(--text3);margin-top:.75rem;">🔑 ${esc(p.keywords)}</p>`:''}
     </div>`;
   }).join('');
 }
 
-// ──────────────────────────────────────────
-//  RENDER IDEAS
-// ──────────────────────────────────────────
+// ─── RENDER IDEAS ───
 function renderIdeas(){
-  const el=document.getElementById('lista-ideas'); if(!el) return;
-  const tc={idea:'#0ea5e9',reunion:'#8b5cf6',nota:'#10b981',futura:'#f59e0b'};
-  const te={idea:'💡',reunion:'📋',nota:'📝',futura:'✅'};
-  if(!ideas.length){ el.innerHTML='<div class="border-2 border-dashed border-white/5 rounded-2xl p-10 text-center text-slate-700">Sin ideas aún.</div>'; return; }
+  const el=document.getElementById('lista-ideas');if(!el)return;
+  const tmap={idea:'💡',reunion:'📋',nota:'📝',futura:'✅'};
+  const cmap={idea:getComputedStyle(document.documentElement).getPropertyValue('--neo-sky'),reunion:'#a78bfa',nota:'#4ade80',futura:'#fbbf24'};
+  if(!ideas.length){el.innerHTML='<div style="border:1px dashed var(--border2);border-radius:var(--r-sm);padding:3rem;text-align:center;"><p style="font-size:.8rem;color:var(--text3);">Sin ideas aún.</p></div>';return;}
   el.innerHTML=ideas.map(i=>`
-  <div class="glass-card border-l-4 rounded-xl p-4 group fade-up" style="border-left-color:${tc[i.tipo]||'#0ea5e9'}">
-    <div class="flex items-start justify-between gap-2">
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 mb-1.5"><span class="text-xs glass text-slate-400 px-2 py-0.5 rounded-md">${te[i.tipo]||'💡'} ${i.tipo}</span><span class="text-xs text-slate-600 mono">${fmtFechaCorta(i.creadoEn)}</span></div>
-        <p class="text-sm font-semibold text-slate-200 mb-1">${esc(i.titulo)}</p>
-        ${i.cuerpo?`<p class="text-xs text-slate-500 leading-relaxed">${esc(i.cuerpo)}</p>`:''}
+  <div class="card-inner fade-up" style="padding:1rem;border-left:3px solid ${cmap[i.tipo]||cmap.idea};">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;">
+          <span style="font-size:.65rem;font-weight:600;padding:.15rem .45rem;border-radius:99px;background:${cmap[i.tipo]||cmap.idea}18;color:${cmap[i.tipo]||cmap.idea};">${tmap[i.tipo]||'💡'} ${i.tipo}</span>
+          <span style="font-size:.65rem;color:var(--text3);">${fmtD(i.creadoEn)}</span>
+        </div>
+        <p style="font-size:.825rem;font-weight:600;color:var(--text1);margin-bottom:.25rem;">${esc(i.titulo)}</p>
+        ${i.cuerpo?`<p style="font-size:.75rem;color:var(--text2);line-height:1.5;">${esc(i.cuerpo)}</p>`:''}
       </div>
-      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-        <button onclick="ideaATarea('${i.id}')" title="→ Tarea" class="p-1.5 rounded-lg glass hover:bg-sky-500/20 text-slate-500 hover:text-sky-400 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button>
-        <button onclick="eliminarIdea('${i.id}')" title="Eliminar" class="p-1.5 rounded-lg glass hover:bg-red-500/20 text-slate-500 hover:text-red-400 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+      <div style="display:flex;gap:.25rem;flex-shrink:0;">
+        <button onclick="ideaATarea('${i.id}')" class="btn-icon" style="padding:.35rem;" title="→ Tarea">
+          <svg style="width:12px;height:12px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </button>
+        <button onclick="eliminarIdea('${i.id}')" class="btn-icon" style="padding:.35rem;" title="Eliminar">
+          <svg style="width:12px;height:12px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
       </div>
     </div>
   </div>`).join('');
 }
 
-// ──────────────────────────────────────────
-//  RENDER STATS
-// ──────────────────────────────────────────
+// ─── RENDER STATS ───
 function renderStats(){
   const total=tareas.length,done=tareas.filter(t=>t.estado==='finalizado').length;
   const ot=tareas.filter(t=>t.aTiempo===true).length,lt=tareas.filter(t=>t.aTiempo===false&&t.estado==='finalizado').length;
   const excel=tareas.filter(t=>t.excelente).length,urg=tareas.filter(t=>t.urgente&&t.estado!=='finalizado').length;
   const hp=(ot+lt)>0?Math.round((ot/(ot+lt))*100):0;
   const g=id=>document.getElementById(id);
-  g('st-total').textContent=total; g('st-done').textContent=done; g('st-ot').textContent=ot; g('st-ex').textContent=excel; g('st-urg').textContent=urg;
-  g('st-salud-b').style.width=hp+'%'; g('st-salud-pct').textContent=hp+'%';
-  const sb=g('st-salud-badge');
-  if(hp>=90){sb.textContent='🌟 Excelente';sb.className='text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 shrink-0';}
-  else if(hp>=70){sb.textContent='👍 Bueno';sb.className='text-xs font-bold px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-400 shrink-0';}
-  else if(hp>=50){sb.textContent='⚠️ Regular';sb.className='text-xs font-bold px-2.5 py-1 rounded-lg bg-yellow-500/15 text-yellow-400 shrink-0';}
-  else if(hp>0){sb.textContent='❌ Mejorar';sb.className='text-xs font-bold px-2.5 py-1 rounded-lg bg-red-500/15 text-red-400 shrink-0';}
-  else{sb.textContent='– Sin datos';sb.className='text-xs font-bold px-2.5 py-1 rounded-lg glass text-slate-400 shrink-0';}
+  g('st-tot').textContent=total;g('st-don').textContent=done;g('st-ot').textContent=ot;g('st-ex').textContent=excel;g('st-urg2').textContent=urg;
+  g('st-sal-b').style.width=hp+'%';g('st-sal-b').style.background=hp>=80?'#4ade80':hp>=50?'#fbbf24':'#f87171';
+  g('st-sal-p').textContent=hp+'%';g('st-sal-p').style.color=hp>=80?'#4ade80':hp>=50?'#fbbf24':'#f87171';
+  const sb=g('st-sal-badge');
+  if(hp>=90){sb.textContent='🌟 Excelente';sb.style.background='rgba(74,222,128,.1)';sb.style.color='#4ade80';}
+  else if(hp>=70){sb.textContent='👍 Bueno';sb.style.background='rgba(56,189,248,.1)';sb.style.color='#38bdf8';}
+  else if(hp>=50){sb.textContent='⚠ Regular';sb.style.background='rgba(251,191,36,.1)';sb.style.color='#fbbf24';}
+  else if(hp>0){sb.textContent='❌ Mejorar';sb.style.background='rgba(248,113,113,.1)';sb.style.color='#f87171';}
+  else{sb.textContent='– Sin datos';}
 
-  // Dept
-  const sd=document.getElementById('stats-dept'); if(sd){
+  const sd=g('stats-dept');if(sd){
     sd.innerHTML=Object.entries(DEPT_META).map(([k,dm])=>{
       const dt=tareas.filter(t=>t.dept===k),dd=dt.filter(t=>t.estado==='finalizado').length;
       const dpct=dt.length?Math.round((dd/dt.length)*100):0;
-      return `<div class="glass-card rounded-xl p-3 ${dm.cls}">
-        <p class="text-xs font-bold d-tag px-2 py-0.5 rounded-md w-fit mb-2">${dm.emoji} ${dm.label}</p>
-        <div class="flex justify-between mb-1"><span class="text-xs text-slate-500">${dd}/${dt.length}</span><span class="text-xs mono font-bold d-pct">${dpct}%</span></div>
-        <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="prog h-full d-bar rounded-full" style="width:${dpct}%"></div></div>
+      const dc=k==='producto'?'var(--neo-mag)':k==='comercialf'?'var(--neo-grn)':k==='comercialo'?'var(--neo-cya)':k==='logistica'?'var(--neo-org)':'var(--neo-gry)';
+      return `<div class="card" style="padding:1rem;">
+        <span class="${dm.cls} dept-tag" style="margin-bottom:.5rem;display:inline-block;">${dm.emoji} ${dm.label}</span>
+        <div style="display:flex;justify-content:space-between;margin-bottom:.4rem;"><span style="font-size:.7rem;color:var(--text3);">${dd}/${dt.length}</span><span style="font-size:.7rem;font-weight:700;color:${dc};">${dpct}%</span></div>
+        <div class="prog-track" style="height:4px;"><div class="prog-fill" style="width:${dpct}%;background:${dc};height:100%;"></div></div>
       </div>`;
     }).join('');
   }
 
-  const sp=document.getElementById('stats-proys'); if(!sp) return;
+  const sp=g('stats-proys');if(!sp)return;
   if(!proyectos.length){sp.innerHTML='';return;}
-  sp.innerHTML='<h3 class="font-bold text-white mb-3">Proyectos</h3>'+proyectos.map(p=>{
+  sp.innerHTML='<p style="font-size:.875rem;font-weight:700;color:var(--text1);margin-bottom:.75rem;">Por Proyecto</p>'+proyectos.map(p=>{
     const pt=tareas.filter(t=>t.proy===p.id),pd=pt.filter(t=>t.estado==='finalizado').length;
     const pp=pt.length?Math.round((pd/pt.length)*100):0;
     const pot=pt.filter(t=>t.aTiempo===true).length,plt=pt.filter(t=>t.aTiempo===false&&t.estado==='finalizado').length;
     const pph=(pot+plt)>0?Math.round((pot/(pot+plt))*100):0;
-    return `<div class="glass-card rounded-xl p-4 mb-3">
-      <div class="flex items-center justify-between mb-2"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background:${p.color}"></div><span class="text-sm font-semibold text-slate-200">${esc(p.nombre)}</span></div><span class="text-xs mono font-bold" style="color:${p.color}">${pd}/${pt.length} · ${pp}%</span></div>
-      <div class="h-2.5 bg-white/5 rounded-full overflow-hidden mb-2"><div class="prog h-full rounded-full" style="width:${pp}%;background:${p.color}"></div></div>
-      ${(pot+plt)>0?`<div class="flex gap-3 text-xs"><span class="text-emerald-400">✓${pot}</span><span class="text-red-400">✗${plt}</span><span class="text-slate-500">Salud:${pph}%</span></div>`:''}
+    return `<div class="card-inner" style="padding:1rem;margin-bottom:.6rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;">
+        <div style="display:flex;align-items:center;gap:.5rem;"><div style="width:10px;height:10px;border-radius:50%;background:${p.color};box-shadow:0 0 6px ${p.color}66;"></div><span style="font-size:.8rem;font-weight:600;color:var(--text1);">${esc(p.nombre)}</span></div>
+        <span style="font-size:.75rem;font-weight:700;color:${p.color};">${pd}/${pt.length} · ${pp}%</span>
+      </div>
+      <div class="prog-track" style="height:5px;margin-bottom:.5rem;"><div class="prog-fill" style="width:${pp}%;background:${p.color};height:100%;"></div></div>
+      ${(pot+plt)>0?`<div style="display:flex;gap:.75rem;"><span style="font-size:.7rem;color:#4ade80;">✓ ${pot}</span><span style="font-size:.7rem;color:#f87171;">✗ ${plt}</span><span style="font-size:.7rem;color:var(--text3);">Salud: ${pph}%</span></div>`:''}
     </div>`;
   }).join('');
 }
 
-// ──────────────────────────────────────────
-//  KPIs HEADER + SEMÁFORO
-// ──────────────────────────────────────────
+// ─── KPIs HEADER + SEMÁFORO ───
 function actualizarKPIs(){
   const total=tareas.length,done=tareas.filter(t=>t.estado==='finalizado').length;
   const pct=total?Math.round((done/total)*100):0;
-  const hoy=tareas.filter(t=>t.estado==='finalizado'&&t.completadoEn&&new Date(t.completadoEn).toDateString()===HOY).length;
   const urg=tareas.filter(t=>t.urgente&&t.estado!=='finalizado').length;
-
-  const g=id=>document.getElementById(id);
-  g('kpi-done').textContent=done; g('kpi-total').textContent=total;
-  g('kpi-barra').style.width=pct+'%'; g('kpi-pct').textContent=pct+'%';
-  g('kpi-hoy').textContent=hoy; g('kpi-urg').textContent=urg;
-
-  const msgs=['¡A por ello! 💪','¡Primera! 🚀',`${hoy} tareas 🔥`,`¡Imparable! 🏆`];
-  g('kpi-msg').textContent=hoy===0?msgs[0]:hoy===1?msgs[1]:hoy<5?msgs[2]:msgs[3];
-
-  // Semáforo de viabilidad
   const ahora=Date.now();
-  const vencidas=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()<ahora).length;
-  const en48h=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()-ahora<172800000&&new Date(t.deadline).getTime()>ahora).length;
-  const dot=g('sem-dot'),lbl=g('sem-lbl'),sub=g('sem-sub');
-  if(vencidas>0||urg>2){
-    dot.className='sem sem-red'; lbl.textContent='CRÍTICO'; lbl.className='text-sm font-bold text-red-400'; sub.textContent='Anticipar tareas';
-  } else if(en48h>2||urg>0){
-    dot.className='sem sem-yellow'; lbl.textContent='ATENCIÓN'; lbl.className='text-sm font-bold text-yellow-400'; sub.textContent='Revisar agenda';
-  } else {
-    dot.className='sem sem-green sem-blink'; lbl.textContent='OK'; lbl.className='text-sm font-bold text-emerald-400'; sub.textContent='Al día';
+  const venc=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()<ahora).length;
+  const en48=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()-ahora>0&&new Date(t.deadline).getTime()-ahora<172800000).length;
+  const alertas=tareas.filter(t=>t.alerta24&&t.estado!=='finalizado').length;
+
+  const hp=document.getElementById('hdr-prog');if(hp)hp.style.width=pct+'%';
+  const hpct=document.getElementById('hdr-pct');if(hpct)hpct.textContent=pct+'%';
+  const hu=document.getElementById('hdr-urg');if(hu)hu.textContent=urg;
+
+  // Semáforo
+  const dot=document.getElementById('sem-dot'),lbl=document.getElementById('sem-lbl');
+  if(dot&&lbl){
+    if(venc>0||urg>2){dot.className='sem sem-r';lbl.textContent='CRÍTICO';lbl.style.color='#f87171';}
+    else if(en48>2||urg>0){dot.className='sem sem-y';lbl.textContent='ATENCIÓN';lbl.style.color='#fbbf24';}
+    else{dot.className='sem sem-g';lbl.textContent='OK';lbl.style.color='#4ade80';}
   }
 
   // Bell
-  const alertas24=tareas.filter(t=>t.alerta24&&t.estado!=='finalizado');
-  const bell=g('btn-bell'), badge=g('bell-badge'), icon=g('bell-icon');
-  if(alertas24.length>0){
-    badge.classList.remove('hidden'); badge.textContent=alertas24.length;
-    icon.setAttribute('stroke','#fb923c');
-    if(!bell.classList.contains('bell-anim')){ bell.classList.add('bell-anim'); setTimeout(()=>bell.classList.remove('bell-anim'),1000); }
+  const bdot=document.getElementById('bell-dot'),bico=document.getElementById('bell-ico');
+  if(alertas>0){
+    if(bdot){bdot.classList.remove('hidden');bdot.style.animation='glowPulse 1.5s infinite';}
+    if(bico)bico.setAttribute('stroke','#fb923c');
   } else {
-    badge.classList.add('hidden');
-    icon.setAttribute('stroke','currentColor');
+    if(bdot)bdot.classList.add('hidden');
+    if(bico)bico.setAttribute('stroke','currentColor');
   }
 }
 
-// ──────────────────────────────────────────
-//  RADAR POP-UP
-// ──────────────────────────────────────────
+// ─── RADAR ───
 function abrirRadar(){
   const h=new Date().getHours();
-  const sal=h<12?'¡Buenos días! ☀️':h<20?'¡Buenas tardes! 🌤️':'¡Buenas noches! 🌙';
-  document.getElementById('radar-greeting').textContent=sal;
-  document.getElementById('radar-motto').textContent='"'+FRASES[Math.floor(Math.random()*FRASES.length)]+'"';
-  document.getElementById('radar-fecha').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('r-greet').textContent=h<12?'¡Buenos días! ☀️':h<20?'¡Buenas tardes! 🌤️':'¡Buenas noches! 🌙';
+  document.getElementById('r-motto').textContent='"'+FRASES[Math.floor(Math.random()*FRASES.length)]+'"';
+  document.getElementById('r-fecha').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
   const ahora=Date.now();
   const urg=tareas.filter(t=>t.urgente&&t.estado!=='finalizado');
-  const en48h=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()-ahora>0&&new Date(t.deadline).getTime()-ahora<172800000);
-  const alertas24=tareas.filter(t=>t.alerta24&&t.estado!=='finalizado');
+  const en48=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()-ahora>0&&new Date(t.deadline).getTime()-ahora<172800000);
+  const alertas=tareas.filter(t=>t.alerta24&&t.estado!=='finalizado');
   const done=tareas.filter(t=>t.estado==='finalizado').length;
 
-  document.getElementById('r-urg').textContent=urg.length;
-  document.getElementById('r-48h').textContent=en48h.length;
-  document.getElementById('r-done').textContent=done;
+  document.getElementById('r-cnt-urg').textContent=urg.length;
+  document.getElementById('r-cnt-48').textContent=en48.length;
+  document.getElementById('r-cnt-done').textContent=done;
 
   let html='';
 
-  // Alertas 24h
-  if(alertas24.length){
-    const rows=alertas24.map(t=>{
-      const proy=t.proy?proyectos.find(p=>p.id===t.proy):null;
-      return `<div class="flex items-center gap-2 py-1.5 border-b border-white/5 last:border-0">
-        <span class="w-2 h-2 rounded-full bg-orange-400 shrink-0"></span>
-        <span class="text-xs text-slate-200 flex-1 truncate">${esc(t.titulo)}</span>
-        ${proy?`<span class="text-xs font-bold shrink-0 px-1.5 py-0.5 rounded" style="color:${proy.color};background:${proy.color}22">${esc(proy.nombre)}</span>`:''}
-      </div>`;
-    }).join('');
-    html+=seccionRadar('🔔 Alertas Marcadas (24h)','#fb923c',rows);
-  }
-
-  // Urgentes
-  if(urg.length){
-    const rows=urg.map(t=>`<div class="flex items-center gap-2 py-1.5 border-b border-white/5 last:border-0">
-      <span class="text-red-400 text-xs font-bold shrink-0">🚨</span>
-      <span class="text-xs text-slate-200 flex-1 truncate">${esc(t.titulo)}</span>
-      ${t.deadline?`<span class="text-xs mono text-slate-500 shrink-0">${tiempoRestante(t.deadline)}</span>`:''}
-    </div>`).join('');
-    html+=seccionRadar('🚨 Tareas Urgentes','#f87171',rows);
-  }
-
-  // Radar 48-72h
-  const en72h=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()-ahora>0&&new Date(t.deadline).getTime()-ahora<259200000);
-  if(en72h.length){
-    const rows=en72h.map(t=>{
-      const diff=new Date(t.deadline).getTime()-ahora;
-      const color=diff<86400000?'#f87171':diff<172800000?'#fbbf24':'#34d399';
-      return `<div class="flex items-center gap-2 py-1.5 border-b border-white/5 last:border-0">
-        <div class="w-2 h-2 rounded-full shrink-0" style="background:${color}"></div>
-        <span class="text-xs text-slate-200 flex-1 truncate">${esc(t.titulo)}</span>
-        <span class="text-xs mono font-bold shrink-0" style="color:${color}">${tiempoRestante(t.deadline)}</span>
-      </div>`;
-    }).join('');
-    html+=seccionRadar('⏱ Radar Deadlines (48-72h)','#fbbf24',rows);
-  }
-
-  // Semáforo de viabilidad
-  const vencidas=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()<ahora).length;
-  let semColor='#4ade80', semMsg='✅ Agenda bajo control. Llegarás a tiempo.';
-  if(vencidas>0||urg.length>2){ semColor='#f87171'; semMsg='🚨 Atención crítica. Anticipa o delega tareas.'; }
-  else if(en48h.length>2||urg.length>0){ semColor='#fbbf24'; semMsg='⚠️ Carga elevada. Revisa la agenda.'; }
-  html+=`<div class="glass rounded-2xl p-4 border border-white/5">
-    <div class="flex items-center gap-3">
-      <div class="w-4 h-4 rounded-full sem-blink" style="background:${semColor};box-shadow:0 0 8px ${semColor}"></div>
-      <div><p class="text-sm font-bold text-white">Semáforo de Viabilidad</p><p class="text-xs mt-0.5" style="color:${semColor}">${semMsg}</p></div>
-    </div>
+  const secR=(titulo,color,contenido)=>`<div class="card-inner" style="padding:1rem;border-color:${color}20;">
+    <p style="font-size:.7rem;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.06em;margin-bottom:.65rem;">${titulo}</p>
+    ${contenido}
   </div>`;
 
-  // Proyectos
+  const filaT=t=>{
+    const p=t.proy?proyectos.find(x=>x.id===t.proy):null;
+    return `<div style="display:flex;align-items:center;gap:.5rem;padding:.4rem 0;border-bottom:1px solid var(--border);last-child:border:0;">
+      <span style="font-size:.75rem;">${t.urgente?'🚨':'•'}</span>
+      <span style="font-size:.78rem;color:var(--text1);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.titulo)}</span>
+      ${p?`<span style="font-size:.65rem;font-weight:600;padding:.1rem .4rem;border-radius:99px;background:${p.color}18;color:${p.color};flex-shrink:0;">${esc(p.nombre)}</span>`:''}
+      ${t.deadline?`<span style="font-size:.65rem;color:var(--text3);font-variant-numeric:tabular-nums;flex-shrink:0;">${tRest(t.deadline)}</span>`:''}
+    </div>`;
+  };
+
+  if(alertas.length) html+=secR('🔔 Alertas 24h','#fb923c',alertas.map(filaT).join(''));
+  if(urg.length)     html+=secR('🚨 Urgentes','#f87171',urg.map(filaT).join(''));
+  if(en48.length){
+    const rows=en48.map(t=>{
+      const diff=new Date(t.deadline).getTime()-ahora;
+      const c=diff<86400000?'#f87171':diff<172800000?'#fbbf24':'#4ade80';
+      return `<div style="display:flex;align-items:center;gap:.5rem;padding:.4rem 0;border-bottom:1px solid var(--border);">
+        <div style="width:6px;height:6px;border-radius:50%;background:${c};flex-shrink:0;"></div>
+        <span style="font-size:.78rem;color:var(--text1);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.titulo)}</span>
+        <span style="font-size:.65rem;font-weight:700;color:${c};font-variant-numeric:tabular-nums;flex-shrink:0;">${tRest(t.deadline)}</span>
+      </div>`;
+    }).join('');
+    html+=secR('⏱ Radar Deadlines 72h','#fbbf24',rows);
+  }
+
+  // Semáforo
+  const venc=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).getTime()<ahora).length;
+  let sc='#4ade80',sm='✅ Llegarás a tiempo. Agenda bajo control.';
+  if(venc>0||urg.length>2){sc='#f87171';sm='🚨 Anticipa o delega. Carga crítica.';}
+  else if(en48.length>2||urg.length>0){sc='#fbbf24';sm='⚠️ Carga elevada. Revisa prioridades.';}
+  html+=`<div class="card-inner" style="padding:1rem;display:flex;align-items:center;gap:.75rem;">
+    <div style="width:10px;height:10px;border-radius:50%;background:${sc};box-shadow:0 0 8px ${sc};flex-shrink:0;"></div>
+    <div><p style="font-size:.75rem;font-weight:700;color:var(--text1);">Semáforo Viabilidad</p><p style="font-size:.72rem;color:${sc};margin-top:.15rem;">${sm}</p></div>
+  </div>`;
+
   if(proyectos.length){
     const rows=proyectos.map(p=>{
       const pt=tareas.filter(t=>t.proy===p.id),d=pt.filter(t=>t.estado==='finalizado').length;
       const pct=pt.length?Math.round((d/pt.length)*100):0;
-      return `<div class="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
-        <div class="w-2 h-2 rounded-full shrink-0" style="background:${p.color}"></div>
-        <span class="text-xs text-slate-300 flex-1 truncate">${esc(p.nombre)}</span>
-        <div class="w-16 h-1.5 bg-white/5 rounded-full overflow-hidden shrink-0"><div class="h-full rounded-full" style="width:${pct}%;background:${p.color}"></div></div>
-        <span class="text-xs mono font-bold shrink-0" style="color:${p.color}">${pct}%</span>
+      return `<div style="display:flex;align-items:center;gap:.65rem;padding:.4rem 0;border-bottom:1px solid var(--border);">
+        <div style="width:6px;height:6px;border-radius:50%;background:${p.color};flex-shrink:0;"></div>
+        <span style="font-size:.78rem;color:var(--text1);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(p.nombre)}</span>
+        <div class="prog-track" style="width:60px;height:4px;flex-shrink:0;"><div class="prog-fill" style="width:${pct}%;background:${p.color};height:100%;"></div></div>
+        <span style="font-size:.65rem;font-weight:700;color:${p.color};flex-shrink:0;">${pct}%</span>
       </div>`;
     }).join('');
-    html+=seccionRadar('📊 Proyectos','#38bdf8',rows);
+    html+=secR('📊 Proyectos','#38bdf8',rows);
   }
 
-  document.getElementById('radar-body').innerHTML=html;
+  document.getElementById('r-body').innerHTML=html;
   abrirModal('popup-radar');
 }
 
-function seccionRadar(titulo,color,contenido){
-  return `<div class="glass rounded-2xl p-4 border border-white/5">
-    <h4 class="font-bold text-sm mb-3" style="color:${color}">${titulo}</h4>
-    ${contenido}
-  </div>`;
-}
+function cerrarRadar(){cerrarModal('popup-radar');}
 
-function cerrarRadar(){ cerrarModal('popup-radar'); }
-
-function copiarInformeRadar(){
+function copiarRadarEmail(){
   const h=new Date().getHours();
   const sal=h<12?'Buenos días':h<20?'Buenas tardes':'Buenas noches';
-  const ahora=Date.now();
   const urg=tareas.filter(t=>t.urgente&&t.estado!=='finalizado');
-  const hoy2=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).toDateString()===HOY);
+  const hoyT=tareas.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).toDateString()===HOY);
   let txt=`${sal.toUpperCase()} — ${new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).toUpperCase()}\n${'═'.repeat(52)}\n\n`;
-  if(urg.length){ txt+=`🚨 URGENTES (${urg.length})\n${'-'.repeat(30)}\n`; urg.forEach(t=>{txt+=`  • ${t.titulo}${t.deadline?' ['+fmtFecha(t.deadline)+']':''}\n`;}); txt+='\n'; }
-  if(hoy2.length){ txt+=`📅 PARA HOY (${hoy2.length})\n${'-'.repeat(30)}\n`; hoy2.forEach(t=>{txt+=`  • ${t.titulo}\n`;}); txt+='\n'; }
-  if(proyectos.length){ txt+=`📊 PROYECTOS\n${'-'.repeat(30)}\n`; proyectos.forEach(p=>{const pt=tareas.filter(t=>t.proy===p.id),d=pt.filter(t=>t.estado==='finalizado').length;const pct=pt.length?Math.round((d/pt.length)*100):0;txt+=`  • ${p.nombre}: ${pct}% (${d}/${pt.length})\n`;}); }
+  if(urg.length){txt+=`🚨 URGENTES (${urg.length})\n${'-'.repeat(30)}\n`;urg.forEach(t=>{txt+=`  • ${t.titulo}${t.deadline?' ['+fmtDt(t.deadline)+']':''}\n`;});txt+='\n';}
+  if(hoyT.length){txt+=`📅 HOY (${hoyT.length})\n${'-'.repeat(30)}\n`;hoyT.forEach(t=>{txt+=`  • ${t.titulo}\n`;});txt+='\n';}
+  if(proyectos.length){txt+=`📊 PROYECTOS\n${'-'.repeat(30)}\n`;proyectos.forEach(p=>{const pt=tareas.filter(t=>t.proy===p.id),d=pt.filter(t=>t.estado==='finalizado').length;txt+=`  • ${p.nombre}: ${pt.length?Math.round((d/pt.length)*100):0}% (${d}/${pt.length})\n`;});}
   txt+=`\n${'═'.repeat(52)}\nAI Executive Copilot · Papelería\n`;
-  navigator.clipboard.writeText(txt).then(()=>toast('📋 Informe copiado','success')).catch(()=>toast('Error al copiar','error'));
+  navigator.clipboard.writeText(txt).then(()=>toast('📋 Copiado','grn')).catch(()=>toast('Error','red'));
 }
 
-// ──────────────────────────────────────────
-//  TABS
-// ──────────────────────────────────────────
-function cambiarTab(nombre){
-  document.querySelectorAll('.tab-content').forEach(el=>el.classList.add('hidden'));
-  document.querySelectorAll('.tab').forEach(btn=>{ btn.classList.remove('active','text-white'); btn.classList.add('text-slate-500'); });
-  const tc=document.getElementById('tab-'+nombre); if(tc) tc.classList.remove('hidden');
-  const tb=document.querySelector(`[data-tab="${nombre}"]`); if(tb){ tb.classList.add('active','text-white'); tb.classList.remove('text-slate-500'); }
-  if(nombre==='kanban'){ renderKanban(); renderFiltrosProy(); }
-  if(nombre==='proyectos') renderProyectos();
-  if(nombre==='ideas') renderIdeas();
-  if(nombre==='stats') renderStats();
+// ─── TABS ───
+function setTab(nombre){
+  document.querySelectorAll('.tab-panel').forEach(el=>el.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    const isActive=btn.getAttribute('data-t')===nombre;
+    btn.style.background=isActive?'rgba(56,189,248,.15)':'transparent';
+    btn.style.color=isActive?'var(--neo-sky)':'var(--text3)';
+  });
+  const tp=document.getElementById('tab-'+nombre);if(tp)tp.classList.remove('hidden');
+  if(nombre==='kanban'){renderKanban();renderFiltrosProy();}
+  if(nombre==='proyectos')renderProyectos();
+  if(nombre==='ideas')renderIdeas();
+  if(nombre==='stats')renderStats();
 }
 
-// ──────────────────────────────────────────
-//  RENDER TODO
-// ──────────────────────────────────────────
-function renderTodo(){
+// ─── RENDER ALL ───
+function renderAll(){
   actualizarKPIs();
   renderFiltrosProy();
-  const act=document.querySelector('.tab-content:not(.hidden)');
-  if(!act) return;
-  if(act.id==='tab-kanban'){ renderKanban(); renderFiltrosProy(); }
-  if(act.id==='tab-proyectos') renderProyectos();
-  if(act.id==='tab-ideas') renderIdeas();
-  if(act.id==='tab-stats') renderStats();
+  const active=document.querySelector('.tab-panel:not(.hidden)');
+  if(!active)return;
+  if(active.id==='tab-kanban'){renderKanban();renderFiltrosProy();}
+  if(active.id==='tab-proyectos')renderProyectos();
+  if(active.id==='tab-ideas')renderIdeas();
+  if(active.id==='tab-stats')renderStats();
 }
 
-// ──────────────────────────────────────────
-//  TECLADO
-// ──────────────────────────────────────────
+// ─── KEYBOARD ───
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ ['popup-radar','modal-tarea','modal-proy','modal-acta'].forEach(id=>cerrarModal(id)); }
-  if((e.ctrlKey||e.metaKey)&&e.key==='n'){ e.preventDefault(); abrirModalTarea(); }
-  if((e.ctrlKey||e.metaKey)&&e.key==='p'){ e.preventDefault(); abrirModalProy(); }
+  if(e.key==='Escape'){['popup-radar','modal-tarea','modal-proy','modal-acta'].forEach(id=>cerrarModal(id));}
+  if((e.ctrlKey||e.metaKey)&&e.key==='n'){e.preventDefault();abrirModalTarea();}
+  if((e.ctrlKey||e.metaKey)&&e.key==='p'){e.preventDefault();abrirModalProy();}
 });
 
-// ──────────────────────────────────────────
-//  INIT
-// ──────────────────────────────────────────
+// ─── INIT ───
 (function init(){
-  cargar();
-  renderTodo();
-  // Abrir radar al inicio
-  setTimeout(()=>abrirRadar(), 400);
-  setInterval(()=>{ actualizarKPIs(); renderKanban(); }, 60000);
+  load();
+  renderAll();
+  // Radar auto
+  setTimeout(()=>abrirRadar(),500);
+  setInterval(()=>{actualizarKPIs();renderKanban();},60000);
 })();
 </script>
 </body>
