@@ -9,53 +9,49 @@
 <script>
 tailwind.config = {
   darkMode: 'class',
-  theme: {
-    extend: {
-      fontFamily: { display: ['Syne','sans-serif'], body: ['DM Sans','sans-serif'], mono: ['JetBrains Mono','monospace'] }
-    }
-  }
+  theme: { extend: { fontFamily: { display:['Syne','sans-serif'], body:['DM Sans','sans-serif'], mono:['JetBrains Mono','monospace'] } } }
 }
 </script>
 <style>
-body { font-family: 'DM Sans', sans-serif; }
-h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
-.font-mono { font-family: 'JetBrains Mono', monospace; }
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: #0f172a; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 9px; }
-.task-card { cursor: grab; transition: transform .15s, box-shadow .15s; }
-.task-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.5); }
-.task-card.dragging { opacity: .35; cursor: grabbing; }
-.kanban-col.drag-over { outline: 2px dashed #38bdf8; background: rgba(14,165,233,.04); border-radius: 12px; }
-@keyframes fadeIn { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
-.fade-in { animation: fadeIn .25s ease-out; }
-@keyframes pulse-soft { 0%,100%{opacity:1} 50%{opacity:.55} }
-.urgent-pulse { animation: pulse-soft 1.5s ease-in-out infinite; }
-@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
-.shake { animation: shake .4s ease-in-out; }
-.toast { transition: all .35s cubic-bezier(.34,1.56,.64,1); }
-.toast.hide { opacity:0; transform:translateX(110%); }
-.modal-open { display: flex !important; }
-.progress-bar { transition: width .6s ease; }
-.star { color: #fbbf24; }
+body{font-family:'DM Sans',sans-serif;}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:#0f172a;}
+::-webkit-scrollbar-thumb{background:#334155;border-radius:9px;}
+.task-card{cursor:grab;transition:transform .15s,box-shadow .15s;}
+.task-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.5);}
+.task-card.dragging{opacity:.35;cursor:grabbing;}
+.kanban-col.drag-over{outline:2px dashed #38bdf8;background:rgba(14,165,233,.04);border-radius:12px;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .25s ease-out;}
+@keyframes pulseSoft{0%,100%{opacity:1}50%{opacity:.55}}
+.urgent-pulse{animation:pulseSoft 1.5s ease-in-out infinite;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .4s ease-in-out;}
+.toast{transition:all .35s cubic-bezier(.34,1.56,.64,1);}
+.toast.hide{opacity:0;transform:translateX(110%);}
+.modal-open{display:flex!important;}
+.progress-bar{transition:width .6s ease;}
+.tab-btn{color:#64748b;transition:all .15s;}
+.tab-btn.active-tab{background:#1e293b;color:#fff;}
 </style>
 </head>
 <body class="dark bg-slate-950 text-slate-300 min-h-screen antialiased">
 
-<!-- Toast container -->
 <div id="toasts" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
 
-<!-- ═══════════════ HEADER ═══════════════ -->
+<!-- HEADER -->
 <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800 sticky top-0 z-40">
   <div class="max-w-screen-xl mx-auto px-4 py-3 flex flex-wrap items-center gap-4">
-    <!-- Logo -->
     <div class="flex items-center gap-2.5 mr-auto">
       <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center">
         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       </div>
-      <span class="font-display font-700 text-white text-sm leading-tight">Asistente Pro<br><span class="text-xs font-normal text-slate-500 font-mono">v2.0</span></span>
+      <div>
+        <span class="font-display font-bold text-white text-sm block leading-tight">Asistente Pro</span>
+        <span class="text-xs text-slate-500 font-mono">v2.0</span>
+      </div>
     </div>
-    <!-- Day stats -->
     <div class="flex items-center gap-3 text-xs">
       <span class="text-slate-500">Hoy completadas:</span>
       <span id="hdr-done" class="font-mono text-emerald-400 font-semibold">0</span>
@@ -63,27 +59,21 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
         <div id="hdr-bar" class="progress-bar h-full bg-gradient-to-r from-sky-500 to-emerald-400 rounded-full" style="width:0%"></div>
       </div>
       <span id="hdr-pct" class="font-mono text-slate-400">0%</span>
-      <!-- Puntos motivación -->
       <span class="flex items-center gap-1 ml-2">
-        <svg class="w-3.5 h-3.5 star" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg class="w-3.5 h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         <span id="hdr-pts" class="font-mono text-yellow-400 font-semibold">0</span>
         <span class="text-slate-600">pts</span>
       </span>
     </div>
-    <!-- Actions -->
     <div class="flex gap-2">
       <button onclick="openModal('modal-task')" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Nueva Tarea
       </button>
-      <button onclick="showSection('ideas')" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="10" r="5"/><path d="M8.56 13.89L7 22l5-3 5 3-1.56-8.11"/></svg>
-        Ideas
-      </button>
-      <button onclick="exportData()" title="Exportar datos" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
+      <button onclick="exportData()" title="Exportar JSON" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       </button>
-      <label title="Importar datos" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer">
+      <label title="Importar JSON" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <input type="file" accept=".json" onchange="importData(event)" class="hidden">
       </label>
@@ -94,57 +84,50 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
   </div>
 </header>
 
-<!-- ═══════════════ MAIN LAYOUT ═══════════════ -->
+<!-- MAIN -->
 <div class="max-w-screen-xl mx-auto px-4 py-5">
-
-  <!-- Nav tabs -->
+  <!-- Tabs -->
   <div class="flex gap-1 mb-5 bg-slate-900 p-1 rounded-xl w-fit">
-    <button onclick="showSection('kanban')" data-tab="kanban" class="tab-btn active-tab px-4 py-1.5 rounded-lg text-sm font-medium transition-all">Kanban</button>
-    <button onclick="showSection('projects')" data-tab="projects" class="tab-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all">Proyectos</button>
-    <button onclick="showSection('ideas')" data-tab="ideas" class="tab-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all">Ideas & Notas</button>
-    <button onclick="showSection('stats')" data-tab="stats" class="tab-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all">Estadísticas</button>
+    <button onclick="showSection('kanban')" data-tab="kanban" class="tab-btn active-tab px-4 py-1.5 rounded-lg text-sm font-medium">Kanban</button>
+    <button onclick="showSection('projects')" data-tab="projects" class="tab-btn px-4 py-1.5 rounded-lg text-sm font-medium">Proyectos</button>
+    <button onclick="showSection('ideas')" data-tab="ideas" class="tab-btn px-4 py-1.5 rounded-lg text-sm font-medium">Ideas & Notas</button>
+    <button onclick="showSection('stats')" data-tab="stats" class="tab-btn px-4 py-1.5 rounded-lg text-sm font-medium">Estadísticas</button>
   </div>
 
-  <!-- ── KANBAN ── -->
+  <!-- KANBAN -->
   <div id="sec-kanban" class="section-content">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- Pendiente -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
         <div class="px-4 py-3 border-b border-slate-800 flex items-center gap-2">
           <div class="w-2 h-2 rounded-full bg-slate-500"></div>
-          <h3 class="font-display font-700 text-sm text-slate-300">Pendiente</h3>
+          <h3 class="font-display font-bold text-sm text-slate-300">Pendiente</h3>
           <span id="cnt-pending" class="ml-auto bg-slate-800 text-slate-400 text-xs font-mono px-2 py-0.5 rounded-full">0</span>
         </div>
-        <div id="col-pending" class="kanban-col p-3 space-y-2.5 min-h-40"
-          ondragover="dragOver(event,'pending')" ondrop="drop(event,'pending')" ondragleave="dragLeave(event)"></div>
+        <div id="col-pending" class="kanban-col p-3 space-y-2.5 min-h-40" ondragover="dragOver(event,'pending')" ondrop="drop(event,'pending')" ondragleave="dragLeave(event)"></div>
       </div>
-      <!-- En Proceso -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
         <div class="px-4 py-3 border-b border-slate-800 flex items-center gap-2">
           <div class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></div>
-          <h3 class="font-display font-700 text-sm text-sky-300">En Proceso</h3>
+          <h3 class="font-display font-bold text-sm text-sky-300">En Proceso</h3>
           <span id="cnt-process" class="ml-auto bg-sky-500/20 text-sky-400 text-xs font-mono px-2 py-0.5 rounded-full">0</span>
         </div>
-        <div id="col-process" class="kanban-col p-3 space-y-2.5 min-h-40"
-          ondragover="dragOver(event,'process')" ondrop="drop(event,'process')" ondragleave="dragLeave(event)"></div>
+        <div id="col-process" class="kanban-col p-3 space-y-2.5 min-h-40" ondragover="dragOver(event,'process')" ondrop="drop(event,'process')" ondragleave="dragLeave(event)"></div>
       </div>
-      <!-- Finalizado -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
         <div class="px-4 py-3 border-b border-slate-800 flex items-center gap-2">
           <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-          <h3 class="font-display font-700 text-sm text-emerald-300">Finalizado</h3>
+          <h3 class="font-display font-bold text-sm text-emerald-300">Finalizado</h3>
           <span id="cnt-done" class="ml-auto bg-emerald-500/15 text-emerald-400 text-xs font-mono px-2 py-0.5 rounded-full">0</span>
         </div>
-        <div id="col-done" class="kanban-col p-3 space-y-2.5 min-h-40"
-          ondragover="dragOver(event,'done')" ondrop="drop(event,'done')" ondragleave="dragLeave(event)"></div>
+        <div id="col-done" class="kanban-col p-3 space-y-2.5 min-h-40" ondragover="dragOver(event,'done')" ondrop="drop(event,'done')" ondragleave="dragLeave(event)"></div>
       </div>
     </div>
   </div>
 
-  <!-- ── PROYECTOS ── -->
+  <!-- PROYECTOS -->
   <div id="sec-projects" class="section-content hidden">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="font-display font-700 text-white">Proyectos Activos</h2>
+      <h2 class="font-display font-bold text-white">Proyectos Activos</h2>
       <button onclick="openModal('modal-project')" class="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Nuevo Proyecto
@@ -153,13 +136,13 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
     <div id="projects-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
   </div>
 
-  <!-- ── IDEAS ── -->
+  <!-- IDEAS -->
   <div id="sec-ideas" class="section-content hidden">
     <div class="max-w-2xl">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-4">
-        <h3 class="font-display font-700 text-white text-sm mb-3">Nueva Idea / Nota de Reunión</h3>
+        <h3 class="font-display font-bold text-white text-sm mb-3">Nueva Idea / Nota de Reunión</h3>
         <input id="idea-title" type="text" placeholder="Título..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 mb-3">
-        <textarea id="idea-body" rows="3" placeholder="Describe la idea o anota los puntos de la reunión..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 resize-none mb-3"></textarea>
+        <textarea id="idea-body" rows="3" placeholder="Describe la idea o anota los puntos clave..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 resize-none mb-3"></textarea>
         <div class="flex gap-2">
           <select id="idea-tag" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-sky-500">
             <option value="idea">💡 Idea</option>
@@ -174,39 +157,24 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
     </div>
   </div>
 
-  <!-- ── ESTADÍSTICAS ── -->
+  <!-- ESTADÍSTICAS -->
   <div id="sec-stats" class="section-content hidden">
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-        <p class="text-xs text-slate-500 font-mono mb-1">TOTAL TAREAS</p>
-        <p id="st-total" class="font-display font-800 text-2xl text-white">0</p>
-      </div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-        <p class="text-xs text-slate-500 font-mono mb-1">COMPLETADAS</p>
-        <p id="st-done" class="font-display font-800 text-2xl text-emerald-400">0</p>
-      </div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-        <p class="text-xs text-slate-500 font-mono mb-1">EXCELENTE</p>
-        <p id="st-excel" class="font-display font-800 text-2xl text-yellow-400">0</p>
-      </div>
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-        <p class="text-xs text-slate-500 font-mono mb-1">PUNTOS</p>
-        <p id="st-pts" class="font-display font-800 text-2xl text-sky-400">0</p>
-      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">TOTAL TAREAS</p><p id="st-total" class="font-display font-bold text-2xl text-white">0</p></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">COMPLETADAS</p><p id="st-done" class="font-display font-bold text-2xl text-emerald-400">0</p></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">EXCELENTE</p><p id="st-excel" class="font-display font-bold text-2xl text-yellow-400">0</p></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4"><p class="text-xs text-slate-500 font-mono mb-1">PUNTOS</p><p id="st-pts" class="font-display font-bold text-2xl text-sky-400">0</p></div>
     </div>
-    <div id="stats-projects" class="space-y-4"></div>
+    <div id="stats-projects" class="space-y-3"></div>
   </div>
+</div>
 
-</div><!-- end main -->
-
-<!-- ═══════════════ MODAL: NUEVA TAREA ═══════════════ -->
+<!-- MODAL: NUEVA TAREA -->
 <div id="modal-task" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
   <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl fade-in">
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800">
-      <h3 class="font-display font-700 text-white" id="modal-task-heading">Nueva Tarea</h3>
-      <button onclick="closeModal('modal-task')" class="text-slate-500 hover:text-white transition-colors">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+      <h3 class="font-display font-bold text-white" id="modal-task-heading">Nueva Tarea</h3>
+      <button onclick="closeModal('modal-task')" class="text-slate-500 hover:text-white transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="px-6 py-5 space-y-4">
       <input type="hidden" id="task-edit-id">
@@ -221,9 +189,7 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="text-xs text-slate-400 font-medium mb-1.5 block">Proyecto (auto-detectado)</label>
-          <select id="task-project" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-sky-500">
-            <option value="">Sin proyecto</option>
-          </select>
+          <select id="task-project" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-sky-500"><option value="">Sin proyecto</option></select>
         </div>
         <div>
           <label class="text-xs text-slate-400 font-medium mb-1.5 block">Categoría</label>
@@ -259,7 +225,6 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
         <label class="text-xs text-slate-400 font-medium mb-1.5 block">Fecha y Hora de Entrega</label>
         <input id="task-deadline" type="datetime-local" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-sky-500">
       </div>
-      <!-- Auto-detect hint -->
       <div id="autodetect-hint" class="hidden bg-sky-500/10 border border-sky-500/20 rounded-xl px-4 py-2.5 text-xs text-sky-300">
         <span class="font-medium">Detección automática:</span> <span id="autodetect-text"></span>
       </div>
@@ -271,14 +236,12 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
   </div>
 </div>
 
-<!-- ═══════════════ MODAL: NUEVO PROYECTO ═══════════════ -->
+<!-- MODAL: NUEVO PROYECTO -->
 <div id="modal-project" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
   <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl fade-in">
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800">
-      <h3 class="font-display font-700 text-white">Nuevo Proyecto</h3>
-      <button onclick="closeModal('modal-project')" class="text-slate-500 hover:text-white transition-colors">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+      <h3 class="font-display font-bold text-white">Nuevo Proyecto</h3>
+      <button onclick="closeModal('modal-project')" class="text-slate-500 hover:text-white transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="px-6 py-5 space-y-4">
       <div>
@@ -286,19 +249,19 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
         <input id="proj-name" type="text" placeholder="Ej: Cliente X, Web Corporativa..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500">
       </div>
       <div>
-        <label class="text-xs text-slate-400 font-medium mb-1.5 block">Palabras clave (para autodetección)</label>
+        <label class="text-xs text-slate-400 font-medium mb-1.5 block">Palabras clave (autodetección)</label>
         <input id="proj-keywords" type="text" placeholder="Ej: web, cliente, ventas (separadas por coma)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500">
-        <p class="text-xs text-slate-600 mt-1">Si el título de una tarea contiene estas palabras, se asignará a este proyecto automáticamente.</p>
+        <p class="text-xs text-slate-600 mt-1">Si el título de la tarea contiene estas palabras, se asignará automáticamente.</p>
       </div>
       <div>
         <label class="text-xs text-slate-400 font-medium mb-1.5 block">Color</label>
-        <div class="flex gap-2 flex-wrap" id="color-picker">
-          <button onclick="selectColor('#0ea5e9')" data-color="#0ea5e9" class="color-btn w-7 h-7 rounded-full bg-sky-500 ring-2 ring-transparent hover:ring-white transition-all selected-color"></button>
-          <button onclick="selectColor('#8b5cf6')" data-color="#8b5cf6" class="color-btn w-7 h-7 rounded-full bg-violet-500 ring-2 ring-transparent hover:ring-white transition-all"></button>
-          <button onclick="selectColor('#10b981')" data-color="#10b981" class="color-btn w-7 h-7 rounded-full bg-emerald-500 ring-2 ring-transparent hover:ring-white transition-all"></button>
-          <button onclick="selectColor('#f59e0b')" data-color="#f59e0b" class="color-btn w-7 h-7 rounded-full bg-amber-500 ring-2 ring-transparent hover:ring-white transition-all"></button>
-          <button onclick="selectColor('#ef4444')" data-color="#ef4444" class="color-btn w-7 h-7 rounded-full bg-red-500 ring-2 ring-transparent hover:ring-white transition-all"></button>
-          <button onclick="selectColor('#ec4899')" data-color="#ec4899" class="color-btn w-7 h-7 rounded-full bg-pink-500 ring-2 ring-transparent hover:ring-white transition-all"></button>
+        <div class="flex gap-2" id="color-picker">
+          <button onclick="selectColor('#0ea5e9')" data-color="#0ea5e9" class="color-btn w-7 h-7 rounded-full bg-sky-500 ring-2 ring-white ring-offset-2 ring-offset-slate-900"></button>
+          <button onclick="selectColor('#8b5cf6')" data-color="#8b5cf6" class="color-btn w-7 h-7 rounded-full bg-violet-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button onclick="selectColor('#10b981')" data-color="#10b981" class="color-btn w-7 h-7 rounded-full bg-emerald-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button onclick="selectColor('#f59e0b')" data-color="#f59e0b" class="color-btn w-7 h-7 rounded-full bg-amber-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button onclick="selectColor('#ef4444')" data-color="#ef4444" class="color-btn w-7 h-7 rounded-full bg-red-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
+          <button onclick="selectColor('#ec4899')" data-color="#ec4899" class="color-btn w-7 h-7 rounded-full bg-pink-500 ring-2 ring-transparent ring-offset-2 ring-offset-slate-900 hover:ring-white transition-all"></button>
         </div>
       </div>
     </div>
@@ -310,9 +273,7 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
 </div>
 
 <script>
-// ══════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════
+// ── STATE ──
 let tasks    = JSON.parse(localStorage.getItem('ap_tasks')    || '[]');
 let projects = JSON.parse(localStorage.getItem('ap_projects') || '[]');
 let ideas    = JSON.parse(localStorage.getItem('ap_ideas')    || '[]');
@@ -320,43 +281,31 @@ let points   = parseInt(localStorage.getItem('ap_points')     || '0');
 let notifiedIds = JSON.parse(localStorage.getItem('ap_notified') || '[]');
 let selectedColor = '#0ea5e9';
 let dragId = null;
-
 const today = new Date().toDateString();
 
 function persist() {
-  localStorage.setItem('ap_tasks',     JSON.stringify(tasks));
-  localStorage.setItem('ap_projects',  JSON.stringify(projects));
-  localStorage.setItem('ap_ideas',     JSON.stringify(ideas));
-  localStorage.setItem('ap_points',    String(points));
-  localStorage.setItem('ap_notified',  JSON.stringify(notifiedIds));
+  localStorage.setItem('ap_tasks',    JSON.stringify(tasks));
+  localStorage.setItem('ap_projects', JSON.stringify(projects));
+  localStorage.setItem('ap_ideas',    JSON.stringify(ideas));
+  localStorage.setItem('ap_points',   String(points));
+  localStorage.setItem('ap_notified', JSON.stringify(notifiedIds));
 }
-
 function uid() { return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); }
 
-// ══════════════════════════════════════════
-//  NAVIGATION
-// ══════════════════════════════════════════
+// ── NAVIGATION ──
 function showSection(name) {
   document.querySelectorAll('.section-content').forEach(el => el.classList.add('hidden'));
-  document.querySelectorAll('.tab-btn').forEach(el => {
-    el.classList.remove('active-tab', 'bg-slate-800', 'text-white');
-    el.classList.add('text-slate-500');
-  });
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active-tab'));
   document.getElementById('sec-' + name).classList.remove('hidden');
-  const tabBtn = document.querySelector(`[data-tab="${name}"]`);
-  if (tabBtn) {
-    tabBtn.classList.add('active-tab', 'bg-slate-800', 'text-white');
-    tabBtn.classList.remove('text-slate-500');
-  }
+  const btn = document.querySelector('[data-tab="' + name + '"]');
+  if (btn) btn.classList.add('active-tab');
   if (name === 'kanban')   renderKanban();
   if (name === 'projects') renderProjects();
   if (name === 'ideas')    renderIdeas();
   if (name === 'stats')    renderStats();
 }
 
-// ══════════════════════════════════════════
-//  MODALS
-// ══════════════════════════════════════════
+// ── MODALS ──
 function openModal(id) {
   const el = document.getElementById(id);
   el.classList.remove('hidden');
@@ -364,27 +313,21 @@ function openModal(id) {
   if (id === 'modal-task') populateProjectSelect();
 }
 function closeModal(id) {
-  const el = document.getElementById(id);
-  el.classList.add('hidden');
-  el.classList.remove('modal-open');
+  document.getElementById(id).classList.add('hidden');
+  document.getElementById(id).classList.remove('modal-open');
   if (id === 'modal-task') resetTaskForm();
 }
 function resetTaskForm() {
-  document.getElementById('task-edit-id').value = '';
-  document.getElementById('task-title').value = '';
-  document.getElementById('task-desc').value = '';
-  document.getElementById('task-deadline').value = '';
-  document.getElementById('task-status').value = 'pending';
+  ['task-edit-id','task-title','task-desc','task-deadline'].forEach(i => document.getElementById(i).value = '');
+  document.getElementById('task-status').value   = 'pending';
   document.getElementById('task-priority').value = 'medium';
   document.getElementById('task-category').value = 'otro';
   document.getElementById('modal-task-heading').textContent = 'Nueva Tarea';
-  document.getElementById('task-save-btn').textContent = 'Crear Tarea';
+  document.getElementById('task-save-btn').textContent      = 'Crear Tarea';
   document.getElementById('autodetect-hint').classList.add('hidden');
 }
 
-// ══════════════════════════════════════════
-//  AUTO-DETECT PROJECT
-// ══════════════════════════════════════════
+// ── AUTO-DETECT PROJECT ──
 function autoDetectProject(text) {
   if (!text || !projects.length) return null;
   const lower = text.toLowerCase();
@@ -396,44 +339,33 @@ function autoDetectProject(text) {
   return null;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const titleInput = document.getElementById('task-title');
-  const descInput  = document.getElementById('task-desc');
-  function onTextChange() {
-    const text = (titleInput.value + ' ' + descInput.value).trim();
-    const projId = autoDetectProject(text);
-    if (projId) {
-      const proj = projects.find(p => p.id === projId);
-      document.getElementById('task-project').value = projId;
-      document.getElementById('autodetect-text').textContent = `Proyecto asignado: "${proj.name}"`;
-      document.getElementById('autodetect-hint').classList.remove('hidden');
-    } else {
-      document.getElementById('autodetect-hint').classList.add('hidden');
-    }
+function onTextChange() {
+  const text = (document.getElementById('task-title').value + ' ' + document.getElementById('task-desc').value).trim();
+  const projId = autoDetectProject(text);
+  if (projId) {
+    const proj = projects.find(p => p.id === projId);
+    document.getElementById('task-project').value = projId;
+    document.getElementById('autodetect-text').textContent = 'Proyecto asignado: "' + proj.name + '"';
+    document.getElementById('autodetect-hint').classList.remove('hidden');
+  } else {
+    document.getElementById('autodetect-hint').classList.add('hidden');
   }
-  titleInput.addEventListener('input', onTextChange);
-  descInput.addEventListener('input', onTextChange);
-});
+}
 
 function populateProjectSelect() {
   const sel = document.getElementById('task-project');
   sel.innerHTML = '<option value="">Sin proyecto</option>';
-  projects.forEach(p => {
-    sel.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-  });
+  projects.forEach(p => { sel.innerHTML += '<option value="' + p.id + '">' + esc(p.name) + '</option>'; });
 }
 
-// ══════════════════════════════════════════
-//  TASKS CRUD
-// ══════════════════════════════════════════
+// ── TASKS CRUD ──
 function saveTask() {
   const title = document.getElementById('task-title').value.trim();
   if (!title) { shake('task-title'); return; }
   const editId = document.getElementById('task-edit-id').value;
   const status = document.getElementById('task-status').value;
-  const now = Date.now();
-
-  const taskData = {
+  const now    = Date.now();
+  const data   = {
     title,
     desc:     document.getElementById('task-desc').value.trim(),
     project:  document.getElementById('task-project').value,
@@ -443,40 +375,30 @@ function saveTask() {
     deadline: document.getElementById('task-deadline').value,
     updatedAt: now,
   };
-
   if (editId) {
     const idx = tasks.findIndex(t => t.id === editId);
     if (idx !== -1) {
       const old = tasks[idx];
-      // Award points if completing before deadline
       if (status === 'done' && old.status !== 'done') {
-        taskData.completedAt = now;
-        taskData.createdAt   = old.createdAt;
+        data.completedAt = now;
+        data.createdAt   = old.createdAt;
         if (old.deadline && now < new Date(old.deadline).getTime()) {
-          taskData.excellence = true;
-          points += 10;
-          showToast('🌟 ¡Tarea completada antes del deadline! +10 pts', 'success');
-        } else {
-          points += 3;
-          showToast('✅ Tarea completada. +3 pts', 'success');
-        }
+          data.excellence = true; points += 10;
+          showToast('🌟 ¡Completada antes del deadline! +10 pts', 'success');
+        } else { points += 3; showToast('✅ Tarea completada. +3 pts', 'success'); }
       }
-      tasks[idx] = { ...old, ...taskData };
+      tasks[idx] = { ...old, ...data };
     }
     showToast('✏️ Tarea actualizada', 'info');
   } else {
-    tasks.push({ id: uid(), createdAt: now, ...taskData });
+    tasks.push({ id: uid(), createdAt: now, ...data });
     showToast('✅ Tarea creada', 'success');
   }
-
-  persist();
-  closeModal('modal-task');
-  renderAll();
+  persist(); closeModal('modal-task'); renderAll();
 }
 
 function editTask(id) {
-  const t = tasks.find(t => t.id === id);
-  if (!t) return;
+  const t = tasks.find(t => t.id === id); if (!t) return;
   populateProjectSelect();
   document.getElementById('task-edit-id').value  = id;
   document.getElementById('task-title').value    = t.title;
@@ -493,73 +415,51 @@ function editTask(id) {
 
 function deleteTask(id) {
   tasks = tasks.filter(t => t.id !== id);
-  persist();
-  renderAll();
-  showToast('🗑️ Tarea eliminada', 'info');
+  persist(); renderAll(); showToast('🗑️ Tarea eliminada', 'info');
 }
 
 function moveTask(id, dir) {
   const cols = ['pending','process','done'];
-  const t = tasks.find(t => t.id === id);
-  if (!t) return;
-  const idx = cols.indexOf(t.status);
-  const newIdx = idx + dir;
-  if (newIdx < 0 || newIdx >= cols.length) return;
-  const prevStatus = t.status;
-  t.status = cols[newIdx];
-  t.updatedAt = Date.now();
-  if (t.status === 'done' && prevStatus !== 'done') {
+  const t = tasks.find(t => t.id === id); if (!t) return;
+  const ni = cols.indexOf(t.status) + dir;
+  if (ni < 0 || ni >= cols.length) return;
+  const prev = t.status;
+  t.status = cols[ni]; t.updatedAt = Date.now();
+  if (t.status === 'done' && prev !== 'done') {
     t.completedAt = Date.now();
     if (t.deadline && Date.now() < new Date(t.deadline).getTime()) {
-      t.excellence = true;
-      points += 10;
+      t.excellence = true; points += 10;
       showToast('🌟 ¡Completada antes del deadline! +10 pts', 'success');
-    } else {
-      points += 3;
-    }
+    } else { points += 3; }
   }
-  persist();
-  renderAll();
+  persist(); renderAll();
 }
 
-// ══════════════════════════════════════════
-//  PROJECTS CRUD
-// ══════════════════════════════════════════
+// ── PROJECTS CRUD ──
 function selectColor(color) {
   selectedColor = color;
   document.querySelectorAll('.color-btn').forEach(btn => {
-    btn.classList.toggle('ring-white', btn.dataset.color === color);
-    btn.classList.toggle('ring-transparent', btn.dataset.color !== color);
+    const sel = btn.dataset.color === color;
+    btn.classList.toggle('ring-white', sel);
+    btn.classList.toggle('ring-transparent', !sel);
   });
 }
 
 function saveProject() {
   const name = document.getElementById('proj-name').value.trim();
   if (!name) { shake('proj-name'); return; }
-  projects.push({
-    id: uid(),
-    name,
-    keywords: document.getElementById('proj-keywords').value,
-    color: selectedColor,
-    createdAt: Date.now(),
-  });
-  persist();
-  closeModal('modal-project');
-  renderProjects();
+  projects.push({ id: uid(), name, keywords: document.getElementById('proj-keywords').value, color: selectedColor, createdAt: Date.now() });
+  persist(); closeModal('modal-project'); renderProjects();
   showToast('📁 Proyecto creado', 'success');
 }
 
 function deleteProject(id) {
   projects = projects.filter(p => p.id !== id);
   tasks.forEach(t => { if (t.project === id) t.project = ''; });
-  persist();
-  renderProjects();
-  showToast('🗑️ Proyecto eliminado', 'info');
+  persist(); renderProjects(); showToast('🗑️ Proyecto eliminado', 'info');
 }
 
-// ══════════════════════════════════════════
-//  IDEAS CRUD
-// ══════════════════════════════════════════
+// ── IDEAS CRUD ──
 function addIdea() {
   const title = document.getElementById('idea-title').value.trim();
   const body  = document.getElementById('idea-body').value.trim();
@@ -568,42 +468,31 @@ function addIdea() {
   persist();
   document.getElementById('idea-title').value = '';
   document.getElementById('idea-body').value  = '';
-  renderIdeas();
-  showToast('💡 Idea guardada', 'success');
+  renderIdeas(); showToast('💡 Idea guardada', 'success');
 }
 
 function deleteIdea(id) {
   ideas = ideas.filter(i => i.id !== id);
-  persist();
-  renderIdeas();
+  persist(); renderIdeas();
 }
 
 function convertIdeaToTask(id) {
-  const idea = ideas.find(i => i.id === id);
-  if (!idea) return;
+  const idea = ideas.find(i => i.id === id); if (!idea) return;
   populateProjectSelect();
   document.getElementById('task-title').value = idea.title;
   document.getElementById('task-desc').value  = idea.body || '';
   document.getElementById('modal-task-heading').textContent = 'Convertir Idea en Tarea';
-  document.getElementById('task-save-btn').textContent = 'Crear Tarea';
+  document.getElementById('task-save-btn').textContent      = 'Crear Tarea';
   openModal('modal-task');
 }
 
-// ══════════════════════════════════════════
-//  DRAG & DROP
-// ══════════════════════════════════════════
+// ── DRAG & DROP ──
 function dragStart(e, id) {
   dragId = id;
-  setTimeout(() => {
-    const el = document.getElementById('card-' + id);
-    if (el) el.classList.add('dragging');
-  }, 0);
+  setTimeout(() => { const el = document.getElementById('card-' + id); if (el) el.classList.add('dragging'); }, 0);
 }
 function dragEnd(e) {
-  if (dragId) {
-    const el = document.getElementById('card-' + dragId);
-    if (el) el.classList.remove('dragging');
-  }
+  if (dragId) { const el = document.getElementById('card-' + dragId); if (el) el.classList.remove('dragging'); }
   dragId = null;
 }
 function dragOver(e, col) {
@@ -611,220 +500,141 @@ function dragOver(e, col) {
   document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
   document.getElementById('col-' + col).classList.add('drag-over');
 }
-function dragLeave(e) {
-  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
-}
+function dragLeave(e) { document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over')); }
 function drop(e, col) {
   e.preventDefault();
   document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
   if (!dragId) return;
-  const t = tasks.find(t => t.id === dragId);
-  if (!t || t.status === col) return;
-  const prev = t.status;
-  t.status = col;
-  t.updatedAt = Date.now();
+  const t = tasks.find(t => t.id === dragId); if (!t || t.status === col) return;
+  const prev = t.status; t.status = col; t.updatedAt = Date.now();
   if (col === 'done' && prev !== 'done') {
     t.completedAt = Date.now();
     if (t.deadline && Date.now() < new Date(t.deadline).getTime()) {
-      t.excellence = true;
-      points += 10;
+      t.excellence = true; points += 10;
       showToast('🌟 ¡Completada antes del deadline! +10 pts', 'success');
     } else { points += 3; }
   }
-  persist();
-  renderAll();
+  persist(); renderAll();
 }
 
-// ══════════════════════════════════════════
-//  RENDER KANBAN
-// ══════════════════════════════════════════
+// ── RENDER KANBAN ──
 function renderKanban() {
-  const cols = { pending: [], process: [], done: [] };
+  const cols = { pending:[], process:[], done:[] };
   tasks.forEach(t => { if (cols[t.status]) cols[t.status].push(t); });
-
   Object.entries(cols).forEach(([col, arr]) => {
     document.getElementById('cnt-' + col).textContent = arr.length;
     const el = document.getElementById('col-' + col);
-    if (!arr.length) {
-      el.innerHTML = `<div class="border-2 border-dashed border-slate-800 rounded-xl p-6 text-center text-xs text-slate-700">Sin tareas</div>`;
-      return;
-    }
+    if (!arr.length) { el.innerHTML = '<div class="border-2 border-dashed border-slate-800 rounded-xl p-6 text-center text-xs text-slate-700">Sin tareas</div>'; return; }
     el.innerHTML = arr.map(t => buildTaskCard(t)).join('');
   });
 }
 
 function buildTaskCard(t) {
-  const now  = Date.now();
-  const dl   = t.deadline ? new Date(t.deadline).getTime() : null;
+  const now = Date.now();
+  const dl  = t.deadline ? new Date(t.deadline).getTime() : null;
   const diff = dl ? dl - now : null;
   const isOverdue  = diff !== null && diff < 0 && t.status !== 'done';
   const isCritical = diff !== null && diff < 3600000 && diff >= 0 && t.status !== 'done';
   const isWarning  = diff !== null && diff < 86400000 && diff >= 3600000 && t.status !== 'done';
-
-  const urgClass = isOverdue ? 'border-red-500/50 bg-red-500/5 urgent-pulse'
-                : isCritical ? 'border-red-400/30 bg-red-500/5'
-                : isWarning  ? 'border-yellow-500/25 bg-yellow-500/5'
-                : 'border-slate-700/60';
-
-  const prioColors = { low: 'bg-emerald-500/15 text-emerald-400', medium: 'bg-yellow-500/15 text-yellow-400', high: 'bg-red-500/15 text-red-400' };
-  const prioLabels = { low: '↓ Baja', medium: '= Media', high: '↑ Alta' };
-  const catEmoji   = { desarrollo:'🖥️', diseño:'🎨', marketing:'📣', reunion:'📋', ventas:'💼', otro:'📌' };
-
+  const urgCls = isOverdue ? 'border-red-500/50 bg-red-500/5 urgent-pulse' : isCritical ? 'border-red-400/30 bg-red-500/5' : isWarning ? 'border-yellow-500/25 bg-yellow-500/5' : 'border-slate-700/60';
+  const prioCls = { low:'bg-emerald-500/15 text-emerald-400', medium:'bg-yellow-500/15 text-yellow-400', high:'bg-red-500/15 text-red-400' };
+  const prioLbl = { low:'↓ Baja', medium:'= Media', high:'↑ Alta' };
+  const catEm = { desarrollo:'🖥️', diseño:'🎨', marketing:'📣', reunion:'📋', ventas:'💼', otro:'📌' };
   const proj = t.project ? projects.find(p => p.id === t.project) : null;
   const cols = ['pending','process','done'];
   const ci   = cols.indexOf(t.status);
-
-  return `
-  <div id="card-${t.id}" class="task-card bg-slate-800/60 border ${urgClass} rounded-xl p-3 fade-in"
-       draggable="true" ondragstart="dragStart(event,'${t.id}')" ondragend="dragEnd(event)">
-    <!-- Top row -->
+  const dlColor = isOverdue ? 'text-red-400' : isCritical ? 'text-orange-400' : isWarning ? 'text-yellow-400' : 'text-slate-500';
+  return `<div id="card-${t.id}" class="task-card bg-slate-800/60 border ${urgCls} rounded-xl p-3 fade-in" draggable="true" ondragstart="dragStart(event,'${t.id}')" ondragend="dragEnd(event)">
     <div class="flex items-start justify-between gap-2 mb-2">
       <p class="text-sm font-medium text-slate-200 leading-snug flex-1 cursor-pointer hover:text-white" onclick="editTask('${t.id}')">${esc(t.title)}</p>
-      <span class="text-xs px-1.5 py-0.5 rounded-md font-mono shrink-0 ${prioColors[t.priority] || prioColors.medium}">${prioLabels[t.priority] || prioLabels.medium}</span>
+      <span class="text-xs px-1.5 py-0.5 rounded-md font-mono shrink-0 ${prioCls[t.priority]||prioCls.medium}">${prioLbl[t.priority]||prioLbl.medium}</span>
     </div>
     ${t.desc ? `<p class="text-xs text-slate-500 mb-2 line-clamp-2">${esc(t.desc)}</p>` : ''}
-    <!-- Meta row -->
     <div class="flex flex-wrap items-center gap-1.5 mb-2">
-      <span class="text-xs bg-slate-700/60 text-slate-400 px-2 py-0.5 rounded-md">${catEmoji[t.category]||'📌'} ${t.category}</span>
-      ${proj ? `<span class="text-xs px-2 py-0.5 rounded-md font-medium" style="background:${proj.color}22;color:${proj.color}">${proj.name}</span>` : ''}
+      <span class="text-xs bg-slate-700/60 text-slate-400 px-2 py-0.5 rounded-md">${catEm[t.category]||'📌'} ${t.category}</span>
+      ${proj ? `<span class="text-xs px-2 py-0.5 rounded-md font-medium" style="background:${proj.color}22;color:${proj.color}">${esc(proj.name)}</span>` : ''}
       ${t.excellence ? `<span class="text-xs bg-yellow-500/15 text-yellow-400 px-2 py-0.5 rounded-md">🌟 Excelente</span>` : ''}
     </div>
-    <!-- Deadline -->
-    ${dl ? `<div class="flex items-center gap-1.5 mb-2 text-xs font-mono ${isOverdue ? 'text-red-400' : isCritical ? 'text-orange-400' : isWarning ? 'text-yellow-400' : 'text-slate-500'}">
-      <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
-      <span>${t.status !== 'done' ? timeRemaining(t.deadline) : formatDate(t.deadline)}</span>
-    </div>` : ''}
-    <!-- Actions -->
+    ${dl ? `<div class="flex items-center gap-1.5 mb-2 text-xs font-mono ${dlColor}"><svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg><span>${t.status !== 'done' ? timeRemaining(t.deadline) : formatDate(t.deadline)}</span></div>` : ''}
     <div class="flex items-center gap-1 pt-2 border-t border-slate-700/50">
-      <button onclick="moveTask('${t.id}',-1)" class="p-1 rounded text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${ci===0?'opacity-25 pointer-events-none':''}" title="Mover atrás">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <button onclick="moveTask('${t.id}',1)" class="p-1 rounded text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${ci===2?'opacity-25 pointer-events-none':''}" title="Mover adelante">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
+      <button onclick="moveTask('${t.id}',-1)" class="p-1 rounded text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${ci===0?'opacity-25 pointer-events-none':''}" title="Mover atrás"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button onclick="moveTask('${t.id}',1)" class="p-1 rounded text-slate-600 hover:text-slate-300 hover:bg-slate-700 transition-all ${ci===2?'opacity-25 pointer-events-none':''}" title="Mover adelante"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="flex-1"></div>
-      <button onclick="editTask('${t.id}')" class="p-1 rounded text-slate-600 hover:text-sky-400 hover:bg-slate-700 transition-all" title="Editar">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      </button>
-      <button onclick="deleteTask('${t.id}')" class="p-1 rounded text-slate-600 hover:text-red-400 hover:bg-slate-700 transition-all" title="Eliminar">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-      </button>
+      <button onclick="editTask('${t.id}')" class="p-1 rounded text-slate-600 hover:text-sky-400 hover:bg-slate-700 transition-all" title="Editar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      <button onclick="deleteTask('${t.id}')" class="p-1 rounded text-slate-600 hover:text-red-400 hover:bg-slate-700 transition-all" title="Eliminar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
     </div>
   </div>`;
 }
 
-// ══════════════════════════════════════════
-//  RENDER PROJECTS
-// ══════════════════════════════════════════
+// ── RENDER PROJECTS ──
 function renderProjects() {
   const el = document.getElementById('projects-list');
-  if (!projects.length) {
-    el.innerHTML = `<div class="col-span-3 border-2 border-dashed border-slate-800 rounded-2xl p-10 text-center">
-      <p class="text-slate-600 text-sm">No hay proyectos. Crea uno para organizar tus tareas.</p>
-    </div>`;
-    return;
-  }
+  if (!projects.length) { el.innerHTML = '<div class="col-span-3 border-2 border-dashed border-slate-800 rounded-2xl p-10 text-center"><p class="text-slate-600 text-sm">No hay proyectos. Crea uno para organizar tus tareas.</p></div>'; return; }
   el.innerHTML = projects.map(proj => {
-    const projTasks = tasks.filter(t => t.project === proj.id);
-    const done = projTasks.filter(t => t.status === 'done').length;
-    const pct  = projTasks.length ? Math.round((done / projTasks.length) * 100) : 0;
-    const excellent = projTasks.filter(t => t.excellence).length;
-    return `
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-colors">
+    const pt   = tasks.filter(t => t.project === proj.id);
+    const done = pt.filter(t => t.status === 'done').length;
+    const pct  = pt.length ? Math.round((done / pt.length) * 100) : 0;
+    const excl = pt.filter(t => t.excellence).length;
+    return `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-colors">
       <div class="flex items-start justify-between mb-3">
-        <div class="flex items-center gap-2.5">
-          <div class="w-3 h-3 rounded-full" style="background:${proj.color}"></div>
-          <h4 class="font-display font-700 text-white text-sm">${esc(proj.name)}</h4>
-        </div>
-        <button onclick="deleteProject('${proj.id}')" class="text-slate-700 hover:text-red-400 transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-        </button>
+        <div class="flex items-center gap-2.5"><div class="w-3 h-3 rounded-full" style="background:${proj.color}"></div><h4 class="font-display font-bold text-white text-sm">${esc(proj.name)}</h4></div>
+        <button onclick="deleteProject('${proj.id}')" class="text-slate-700 hover:text-red-400 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
       </div>
-      ${proj.keywords ? `<p class="text-xs text-slate-600 mb-3">🔑 ${proj.keywords}</p>` : ''}
-      <div class="flex justify-between text-xs text-slate-500 mb-1.5">
-        <span>${done}/${projTasks.length} tareas</span>
-        <span class="font-mono">${pct}%</span>
-      </div>
-      <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-3">
-        <div class="progress-bar h-full rounded-full" style="width:${pct}%;background:${proj.color}"></div>
-      </div>
-      ${excellent ? `<div class="text-xs text-yellow-400">🌟 ${excellent} tarea${excellent>1?'s':''} con Rendimiento Excelente</div>` : ''}
+      ${proj.keywords ? `<p class="text-xs text-slate-600 mb-3">🔑 ${esc(proj.keywords)}</p>` : ''}
+      <div class="flex justify-between text-xs text-slate-500 mb-1.5"><span>${done}/${pt.length} tareas</span><span class="font-mono">${pct}%</span></div>
+      <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-3"><div class="progress-bar h-full rounded-full" style="width:${pct}%;background:${proj.color}"></div></div>
+      ${excl ? `<div class="text-xs text-yellow-400">🌟 ${excl} tarea${excl>1?'s':''} con Rendimiento Excelente</div>` : ''}
     </div>`;
   }).join('');
 }
 
-// ══════════════════════════════════════════
-//  RENDER IDEAS
-// ══════════════════════════════════════════
+// ── RENDER IDEAS ──
 function renderIdeas() {
   const el = document.getElementById('ideas-list');
-  const tagEmoji = { idea:'💡', reunion:'📋', nota:'📝', recordatorio:'🔔' };
-  if (!ideas.length) {
-    el.innerHTML = `<div class="border-2 border-dashed border-slate-800 rounded-2xl p-10 text-center"><p class="text-slate-600 text-sm">Sin ideas aún. ¡Empieza a anotar!</p></div>`;
-    return;
-  }
-  el.innerHTML = ideas.map(i => `
-  <div class="bg-slate-900 border border-slate-800 border-l-4 rounded-xl p-4 group hover:border-l-sky-500 transition-all fade-in" style="border-left-color:#0ea5e9">
+  const tagEm = { idea:'💡', reunion:'📋', nota:'📝', recordatorio:'🔔' };
+  if (!ideas.length) { el.innerHTML = '<div class="border-2 border-dashed border-slate-800 rounded-2xl p-10 text-center"><p class="text-slate-600 text-sm">Sin ideas aún. ¡Empieza a anotar!</p></div>'; return; }
+  el.innerHTML = ideas.map(i => `<div class="bg-slate-900 border border-slate-800 border-l-4 rounded-xl p-4 group hover:border-l-sky-500 transition-all fade-in" style="border-left-color:#0ea5e9">
     <div class="flex items-start justify-between gap-2">
       <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 mb-1">
-          <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">${tagEmoji[i.tag]||'💡'} ${i.tag}</span>
-          <span class="text-xs text-slate-600 font-mono">${formatDateShort(i.createdAt)}</span>
-        </div>
+        <div class="flex items-center gap-2 mb-1"><span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">${tagEm[i.tag]||'💡'} ${i.tag}</span><span class="text-xs text-slate-600 font-mono">${formatDateShort(i.createdAt)}</span></div>
         <p class="text-sm font-medium text-slate-200">${esc(i.title)}</p>
         ${i.body ? `<p class="text-xs text-slate-500 mt-1 leading-relaxed">${esc(i.body)}</p>` : ''}
       </div>
       <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-        <button onclick="convertIdeaToTask('${i.id}')" title="Convertir en tarea" class="p-1.5 rounded-lg bg-slate-800 hover:bg-sky-500/20 text-slate-500 hover:text-sky-400 transition-all">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        </button>
-        <button onclick="deleteIdea('${i.id}')" title="Eliminar" class="p-1.5 rounded-lg bg-slate-800 hover:bg-red-500/20 text-slate-500 hover:text-red-400 transition-all">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-        </button>
+        <button onclick="convertIdeaToTask('${i.id}')" title="Convertir en tarea" class="p-1.5 rounded-lg bg-slate-800 hover:bg-sky-500/20 text-slate-500 hover:text-sky-400 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></button>
+        <button onclick="deleteIdea('${i.id}')" title="Eliminar" class="p-1.5 rounded-lg bg-slate-800 hover:bg-red-500/20 text-slate-500 hover:text-red-400 transition-all"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
       </div>
     </div>
   </div>`).join('');
 }
 
-// ══════════════════════════════════════════
-//  RENDER STATS
-// ══════════════════════════════════════════
+// ── RENDER STATS ──
 function renderStats() {
-  const total   = tasks.length;
-  const done    = tasks.filter(t => t.status === 'done').length;
-  const excl    = tasks.filter(t => t.excellence).length;
+  const total = tasks.length;
+  const done  = tasks.filter(t => t.status === 'done').length;
+  const excl  = tasks.filter(t => t.excellence).length;
   document.getElementById('st-total').textContent = total;
   document.getElementById('st-done').textContent  = done;
   document.getElementById('st-excel').textContent = excl;
   document.getElementById('st-pts').textContent   = points;
-
-  // Per-project stats
   const el = document.getElementById('stats-projects');
-  if (!projects.length) { el.innerHTML = ''; return; }
-  el.innerHTML = `<h3 class="font-display font-700 text-white mb-3">Progreso por Proyecto</h3>` +
+  if (!projects.length) { el.innerHTML = '<p class="text-slate-600 text-sm">Crea proyectos para ver su progreso aquí.</p>'; return; }
+  el.innerHTML = '<h3 class="font-display font-bold text-white mb-3">Progreso por Proyecto</h3>' +
     projects.map(proj => {
-      const projTasks = tasks.filter(t => t.project === proj.id);
-      const pdone = projTasks.filter(t => t.status === 'done').length;
-      const pct   = projTasks.length ? Math.round((pdone / projTasks.length) * 100) : 0;
-      return `
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-3">
+      const pt   = tasks.filter(t => t.project === proj.id);
+      const pdone = pt.filter(t => t.status === 'done').length;
+      const pct  = pt.length ? Math.round((pdone / pt.length) * 100) : 0;
+      return `<div class="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-3">
         <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-2">
-            <div class="w-2.5 h-2.5 rounded-full" style="background:${proj.color}"></div>
-            <span class="text-sm font-medium text-slate-200">${esc(proj.name)}</span>
-          </div>
-          <span class="text-xs font-mono text-slate-400">${pdone}/${projTasks.length} · ${pct}%</span>
+          <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full" style="background:${proj.color}"></div><span class="text-sm font-medium text-slate-200">${esc(proj.name)}</span></div>
+          <span class="text-xs font-mono text-slate-400">${pdone}/${pt.length} · ${pct}%</span>
         </div>
-        <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
-          <div class="progress-bar h-full rounded-full" style="width:${pct}%;background:${proj.color}"></div>
-        </div>
+        <div class="h-2 bg-slate-800 rounded-full overflow-hidden"><div class="progress-bar h-full rounded-full" style="width:${pct}%;background:${proj.color}"></div></div>
       </div>`;
     }).join('');
 }
 
-// ══════════════════════════════════════════
-//  HEADER STATS
-// ══════════════════════════════════════════
+// ── HEADER STATS ──
 function updateHeader() {
   const todayDone  = tasks.filter(t => t.status === 'done' && t.completedAt && new Date(t.completedAt).toDateString() === today).length;
   const todayTotal = tasks.filter(t => t.createdAt && new Date(t.createdAt).toDateString() === today).length;
@@ -835,13 +645,9 @@ function updateHeader() {
   document.getElementById('hdr-pts').textContent  = points;
 }
 
-// ══════════════════════════════════════════
-//  RENDER ALL
-// ══════════════════════════════════════════
+// ── RENDER ALL ──
 function renderAll() {
-  renderKanban();
-  updateHeader();
-  // Re-render active section
+  renderKanban(); updateHeader();
   const active = document.querySelector('.section-content:not(.hidden)');
   if (active) {
     if (active.id === 'sec-projects') renderProjects();
@@ -850,9 +656,7 @@ function renderAll() {
   }
 }
 
-// ══════════════════════════════════════════
-//  NOTIFICATIONS
-// ══════════════════════════════════════════
+// ── NOTIFICATIONS ──
 function requestNotifPerm() {
   if (!('Notification' in window)) { showToast('Tu navegador no soporta notificaciones', 'error'); return; }
   Notification.requestPermission().then(p => {
@@ -866,135 +670,85 @@ function checkDeadlineNotifications() {
   tasks.forEach(t => {
     if (!t.deadline || t.status === 'done') return;
     const diff = new Date(t.deadline).getTime() - now;
-    const key1h = t.id + '_1h', keyDue = t.id + '_due';
-    if (diff > 0 && diff < 3600000 && !notifiedIds.includes(key1h)) {
-      notifiedIds.push(key1h);
-      showToast(`⏰ "${t.title}" vence en menos de 1 hora`, 'warning');
-      if (Notification.permission === 'granted') new Notification('⏰ Deadline próximo', { body: `"${t.title}" vence en menos de 1 hora` });
+    const k1h = t.id + '_1h', kDue = t.id + '_due';
+    if (diff > 0 && diff < 3600000 && !notifiedIds.includes(k1h)) {
+      notifiedIds.push(k1h);
+      showToast('⏰ "' + t.title + '" vence en menos de 1 hora', 'warning');
+      if (Notification.permission === 'granted') new Notification('⏰ Deadline próximo', { body: '"' + t.title + '" vence en menos de 1 hora' });
     }
-    if (diff < 0 && diff > -300000 && !notifiedIds.includes(keyDue)) {
-      notifiedIds.push(keyDue);
-      showToast(`🚨 VENCIDA: "${t.title}"`, 'error');
+    if (diff < 0 && diff > -300000 && !notifiedIds.includes(kDue)) {
+      notifiedIds.push(kDue);
+      showToast('🚨 VENCIDA: "' + t.title + '"', 'error');
       if (Notification.permission === 'granted') new Notification('🚨 Deadline vencido', { body: t.title });
     }
   });
   persist();
 }
 
-// ══════════════════════════════════════════
-//  EXPORT / IMPORT
-// ══════════════════════════════════════════
+// ── EXPORT / IMPORT ──
 function exportData() {
   const data = { tasks, projects, ideas, points, exportedAt: new Date().toISOString() };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href = url;
-  a.download = `asistente_pro_${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
+  a.href = url; a.download = 'asistente_pro_' + new Date().toISOString().slice(0,10) + '.json'; a.click();
   URL.revokeObjectURL(url);
-  showToast('📤 Datos exportados correctamente', 'success');
+  showToast('📤 Datos exportados', 'success');
 }
 
 function importData(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+  const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
     try {
       const data = JSON.parse(e.target.result);
       if (!data.tasks) { showToast('Archivo no válido', 'error'); return; }
-      tasks    = data.tasks    || [];
-      projects = data.projects || [];
-      ideas    = data.ideas    || [];
-      points   = data.points   || 0;
-      persist();
-      renderAll();
+      tasks = data.tasks || []; projects = data.projects || [];
+      ideas = data.ideas || []; points  = data.points  || 0;
+      persist(); renderAll();
       showToast('📥 Datos importados correctamente', 'success');
     } catch { showToast('Error al leer el archivo', 'error'); }
   };
-  reader.readAsText(file);
-  event.target.value = '';
+  reader.readAsText(file); event.target.value = '';
 }
 
-// ══════════════════════════════════════════
-//  TOASTS
-// ══════════════════════════════════════════
-function showToast(msg, type = 'info') {
-  const colors = {
-    success: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',
-    error:   'bg-red-500/15 border-red-500/30 text-red-300',
-    warning: 'bg-yellow-500/15 border-yellow-500/30 text-yellow-300',
-    info:    'bg-sky-500/15 border-sky-500/30 text-sky-300',
-  };
-  const toast = document.createElement('div');
-  toast.className = `toast pointer-events-auto ${colors[type]||colors.info} border backdrop-blur-sm rounded-xl px-4 py-3 text-sm font-medium shadow-xl`;
-  toast.textContent = msg;
-  document.getElementById('toasts').appendChild(toast);
-  setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 400); }, 4000);
+// ── TOASTS ──
+function showToast(msg, type) {
+  const c = { success:'bg-emerald-500/15 border-emerald-500/30 text-emerald-300', error:'bg-red-500/15 border-red-500/30 text-red-300', warning:'bg-yellow-500/15 border-yellow-500/30 text-yellow-300', info:'bg-sky-500/15 border-sky-500/30 text-sky-300' };
+  const t = document.createElement('div');
+  t.className = 'toast pointer-events-auto ' + (c[type]||c.info) + ' border backdrop-blur-sm rounded-xl px-4 py-3 text-sm font-medium shadow-xl';
+  t.textContent = msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(() => { t.classList.add('hide'); setTimeout(() => t.remove(), 400); }, 4000);
 }
 
-// ══════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════
+// ── HELPERS ──
 function timeRemaining(deadline) {
   const diff = new Date(deadline).getTime() - Date.now();
   if (diff < 0) return '⚠ Vencida';
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff % 86400000) / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  if (d > 0) return `${d}d ${h}h restante${d > 1 ? 's' : ''}`;
-  if (h > 0) return `${h}h ${m}m restante${h > 1 ? 's' : ''}`;
-  return `${m}m restantes`;
+  const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000), m = Math.floor((diff % 3600000) / 60000);
+  if (d > 0) return d + 'd ' + h + 'h restantes';
+  if (h > 0) return h + 'h ' + m + 'm restantes';
+  return m + 'm restantes';
 }
-function formatDate(dt) {
-  if (!dt) return '—';
-  return new Date(dt).toLocaleString('es-ES', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-}
-function formatDateShort(ts) {
-  return new Date(ts).toLocaleDateString('es-ES', { day:'2-digit', month:'short' });
-}
-function esc(str) {
-  return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function shake(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.remove('shake');
-  void el.offsetWidth;
-  el.classList.add('shake');
-  el.addEventListener('animationend', () => el.classList.remove('shake'), { once: true });
-  el.focus();
-}
+function formatDate(dt) { if (!dt) return '—'; return new Date(dt).toLocaleString('es-ES', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }); }
+function formatDateShort(ts) { return new Date(ts).toLocaleDateString('es-ES', { day:'2-digit', month:'short' }); }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function shake(id) { const el = document.getElementById(id); if (!el) return; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); el.addEventListener('animationend', () => el.classList.remove('shake'), { once: true }); el.focus(); }
 
-// ══════════════════════════════════════════
-//  KEYBOARD SHORTCUTS
-// ══════════════════════════════════════════
+// ── KEYBOARD SHORTCUTS ──
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeModal('modal-task'); closeModal('modal-project'); }
   if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); openModal('modal-task'); }
 });
 
-// ══════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════
-// Apply active tab style
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.classList.add('text-slate-500');
-});
-const activeTab = document.querySelector('[data-tab="kanban"]');
-if (activeTab) {
-  activeTab.classList.remove('text-slate-500');
-  activeTab.classList.add('bg-slate-800', 'text-white');
-}
-
+// ── INIT ──
+document.getElementById('task-title').addEventListener('input', onTextChange);
+document.getElementById('task-desc').addEventListener('input', onTextChange);
+if (Notification.permission === 'granted') document.getElementById('notif-btn').classList.add('text-sky-400');
 renderAll();
 checkDeadlineNotifications();
 setInterval(() => { checkDeadlineNotifications(); updateHeader(); renderKanban(); }, 30000);
-
-if (Notification.permission === 'granted') {
-  document.getElementById('notif-btn').classList.add('text-sky-400');
-}
 </script>
 </body>
 </html>
