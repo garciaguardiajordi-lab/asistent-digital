@@ -864,38 +864,7 @@ function dbD(col, id) {
 
 /* ── initFB: registra onValue permanente para todos los dispositivos ── */
 function initFB() {
-  console.log("🔄 Iniciando conexión automática...");
-  _fw = 0; // RESET TOTAL: Forzamos la apertura del semáforo de datos
   
-  if (!FB_OK) { 
-    console.warn("⚠️ Firebase no configurado. Usando memoria local.");
-    lsLoad(); rAll(); return; 
-  }
-
-  // Escucha activa de TAREAS (Sincronización PC-Móvil-PC)
-  DB.ref(fbp('tareas')).on('value', s => {
-    // Si _fw es mayor a 0, significa que este dispositivo está guardando algo
-    // y no queremos que la respuesta del servidor nos interrumpa el tipeo.
-    if (_fw > 0) return; 
-    
-    const raw = s.val() || {};
-    T = Object.entries(raw).map(([id,v]) => ({...v,id})).sort((a,b) => (a.creadoEn||0)-(b.creadoEn||0));
-    
-    console.log("✅ Datos recibidos de la nube:", T.length, "tareas.");
-    lsSave(); 
-    rAll(); // Esta función refresca toda la interfaz automáticamente
-  }, (error) => {
-    console.error("❌ Error de lectura en Firebase:", error);
-  });
-
-  // Escucha activa de PROYECTOS
-  DB.ref(fbp('proyectos')).on('value', s => {
-    if (_fw > 0) return;
-    const raw = s.val() || {};
-    P = Object.entries(raw).map(([id,v]) => ({...v,id}));
-    rAll();
-  });
-}
   if (!FB_OK) { lsLoad(); setFB('of'); rAll(); setTimeout(openRadar, 700); return; }
   setFB('ok');
   ['tareas','proyectos','ideas','vacaciones','reagendados'].forEach(c => DB.ref(fbp(c)).off());
