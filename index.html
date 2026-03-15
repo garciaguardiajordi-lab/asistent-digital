@@ -894,9 +894,7 @@ function initFB() {
     lsSave(); rVac();
   });
   DB.ref(fbp('reagendados')).on('value', s => {
-    function initFB() {
-  _fw = 0; // <--- Añade esto para desbloquear la escucha
-  if (!FB_OK) { ... }
+  
     if (_fw > 0) return;
     const raw = s.val() || {};
     R = Object.entries(raw).map(([id,v]) => ({...v,id})).sort((a,b) => (b.ts||0)-(a.ts||0));
@@ -1452,4 +1450,3 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){['m-radar','m-t','m
 </script>
 </body>
 </html>
-
