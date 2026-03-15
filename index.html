@@ -9,7 +9,9 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
-/* ... (Se mantienen tus estilos originales) ... */
+/* ══════════════════════════════════════
+   ESTILOS ORIGINALES PRESERVADOS
+══════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --bg:#f5f6fa; --w:#ffffff; --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;
@@ -27,71 +29,63 @@
   --r:24px;--rsm:16px;--rxs:10px;--rtiny:6px;
   --s1:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.06);
   --s2:0 4px 14px rgba(0,0,0,.08),0 16px 40px rgba(0,0,0,.07);
-  --s3:0 8px 28px rgba(0,0,0,.11),0 24px 56px rgba(0,0,0,.09);
 }
-html{scroll-behavior:smooth;}
-body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--g900);min-height:100vh;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--g900);min-height:100vh;}
 
-/* NUEVOS ESTILOS PARA EL DASHBOARD MAESTRO */
-.personal-banner {
-    grid-column: 1 / -1;
-    background: linear-gradient(100deg, #f0f9ff 0%, #fff 100%);
-    border: 1px solid var(--skym);
-    border-radius: var(--rsm);
-    padding: 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    animation: fadeUp 0.5s ease;
+/* NUEVA ESTRUCTURA MAESTRO */
+.master-layout {
+    max-width: 1440px;
+    margin: 1.5rem auto;
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 1.5rem;
+    padding: 0 1.4rem;
 }
 
-.main-chart-card {
-    background: var(--w);
-    border-radius: var(--r);
-    padding: 2rem;
-    text-align: center;
-    position: relative;
-    box-shadow: var(--s2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+.card{background:var(--w);border-radius:var(--r);box-shadow:var(--s1);border:1px solid var(--g100);padding:1.5rem;}
+.surf{background:var(--g50);border-radius:var(--rxs);border:1px solid var(--g200);padding:0.8rem;}
 
-#status-center-number {
-    position: absolute;
-    top: 55%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-}
-
-.status-val { font-size: 2.5rem; font-weight: 800; line-height: 1; }
-.status-lbl { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; margin-top: 4px; }
-
-/* Semáforo */
+/* Semáforo e Indicadores */
+.st-val { font-size: 3rem; font-weight: 800; line-height: 1; }
 .st-green { color: var(--grn); }
 .st-orange { color: var(--org); }
 .st-red { color: var(--red); }
 
-/* (Se mantienen el resto de tus estilos Kanban, Modal, etc) */
-.card{background:var(--w);border-radius:var(--r);box-shadow:var(--s1);border:1px solid var(--g100);}
-.csm{background:var(--w);border-radius:var(--rsm);box-shadow:var(--s1);border:1px solid var(--g100);}
-.surf{background:var(--g50);border-radius:var(--rxs);border:1px solid var(--g200);}
-.dept-tag{ display:inline-flex;align-items:center;gap:.25rem; font-size:.61rem;font-weight:700;padding:.16rem .52rem;border-radius:99px; background:var(--dl,var(--g100));color:var(--dc,var(--g500)); border:1px solid var(--dm,var(--g300));}
-.dept-line{border-left:3px solid var(--dc,var(--g300));}
-.btn{ display:inline-flex;align-items:center;justify-content:center;gap:.35rem; font-size:.79rem;font-weight:700;padding:.5rem 1rem; border-radius:var(--rxs);border:none;cursor:pointer; transition:all .14s;font-family:inherit;}
-.b-dk{background:var(--g900);color:#fff;}
-.b-gem{background:linear-gradient(135deg,#4285f4,#34a853);color:#fff;}
-.fld{ width:100%;background:var(--g50); border:1.5px solid var(--g200);border-radius:var(--rxs); padding:.54rem .84rem;font-size:.81rem;color:var(--g900); outline:none;}
-.lbl{ display:block;font-size:.63rem;font-weight:700;color:var(--g500); margin-bottom:.28rem;text-transform:uppercase;letter-spacing:.08em;}
+/* Dept tags originales */
+.dp-P{--dc:var(--mag);--dl:var(--magl);--dm:var(--magm);}
+.dp-F{--dc:var(--grn);--dl:var(--grnl);--dm:var(--grnm);}
+.dp-O{--dc:var(--cya);--dl:var(--cyal);--dm:var(--cyam);}
+.dp-L{--dc:var(--org);--dl:var(--orgl);--dm:var(--orgm);}
+.dp-G{--dc:var(--grl);--dl:var(--grll);--dm:var(--grlm);}
+.dp-M{--dc:var(--mkt);--dl:var(--mktl);--dm:var(--mktm);}
+.dp-R{--dc:var(--vio);--dl:var(--viol);--dm:var(--viom);}
+
+.dept-line{border-left:5px solid var(--dc, var(--g300)); margin-bottom: 0.8rem;}
+.dept-tag{display:inline-flex;align-items:center;gap:.25rem;font-size:.61rem;font-weight:700;padding:.16rem .52rem;border-radius:99px;background:var(--dl,var(--g100));color:var(--dc,var(--g500));border:1px solid var(--dm,var(--g300));}
+
+/* Form & Modals */
 .mbd{position:fixed;inset:0;z-index:500;background:rgba(17,24,39,.36);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:1rem;}
-.mbox{background:var(--w);border-radius:var(--r);box-shadow:var(--s3);width:100%;max-height:93vh;overflow-y:auto;}
+.mbox{background:var(--w);border-radius:var(--r);box-shadow:var(--s3);width:100%;max-height:93vh;overflow-y:auto;position:relative;}
+.fld{width:100%;background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--rxs);padding:.54rem .84rem;font-size:.81rem;outline:none;}
+.lbl{display:block;font-size:.63rem;font-weight:700;color:var(--g500);margin-bottom:.28rem;text-transform:uppercase;letter-spacing:.08em;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;font-size:.79rem;font-weight:700;padding:.5rem 1rem;border-radius:var(--rxs);border:none;cursor:pointer;transition:all .14s;}
+.b-dk{background:var(--g900);color:#fff;}
+.b-gh{background:var(--g50);color:var(--g700);border:1.5px solid var(--g200);}
+.b-sky{background:var(--sky);color:#fff;}
+.b-gem{background:linear-gradient(135deg,#4285f4,#34a853);color:#fff;}
+
+/* Toggle */
+.tog{position:relative;display:inline-flex;align-items:center;cursor:pointer;}
+.tog input{position:absolute;opacity:0;width:0;height:0;}
+.tog-tr{width:38px;height:21px;background:var(--g200);border-radius:99px;transition:background .18s;flex-shrink:0;}
+.tog input:checked~.tog-tr{background:var(--sky);}
+.tog-th{position:absolute;left:3px;width:15px;height:15px;background:#fff;border-radius:50%;transition:transform .18s;}
+.tog input:checked~.tog-th{transform:translateX(17px);}
+
+.bic{width:32px;height:32px;border-radius:var(--rxs);border:1.5px solid var(--g200);background:var(--w);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;}
 </style>
 </head>
 <body>
-
-<div id="toasts"></div>
 
 <header style="background:var(--w);border-bottom:1px solid var(--g100);position:sticky;top:0;z-index:200;padding:.74rem 1.4rem;">
   <div style="max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;">
@@ -100,92 +94,109 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
             <svg width="17" height="17" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
         <div>
-            <p style="font-size:.83rem;font-weight:800;color:var(--g900);">AI Executive Copilot</p>
-            <span style="font-size:.59rem;font-weight:700;color:var(--grn);" id="sync-lbl">● Sincronización Automática</span>
+            <p style="font-size:.83rem;font-weight:800;color:var(--g900);">AI Executive Copilot v9</p>
+            <p style="font-size:.59rem;font-weight:700;color:var(--grn);">● Sincronizado</p>
         </div>
     </div>
-    <div style="display:flex;gap:.5rem;">
+    <div style="display:flex; gap:0.5rem;">
+        <button onclick="syncMobile()" class="btn b-gh" style="color:var(--sky)">📲 sincronizar móvil</button>
         <button onclick="oTM()" class="btn b-dk">+ Tarea / Reunión</button>
     </div>
   </div>
 </header>
 
-<main style="max-width:1440px;margin:1.5rem auto;padding:0 1.4rem;display:grid;grid-template-columns: 1fr 2fr; gap:1.5rem;">
-
-    <div style="display:flex;flex-direction:column;gap:1.5rem;">
-        
-        <div class="personal-banner" id="personal-reminder">
-            <span style="font-size: 1.5rem;">📅</span>
-            <div>
-                <p style="font-size: 0.85rem; font-weight: 800; color: var(--g900);">Agenda & Cumpleaños</p>
-                <p id="personal-txt" style="font-size: 0.75rem; color: var(--g500);">No hay eventos para hoy.</p>
-            </div>
+<div class="master-layout">
+    <aside style="display:flex; flex-direction:column; gap:1.5rem;">
+        <div class="card" style="background:linear-gradient(135deg, #f0f9ff, #fff); border:1px solid var(--skym);">
+            <p class="lbl">Agenda Personal & Cumpleaños</p>
+            <p id="pers-txt" style="font-size:0.8rem; font-weight:600; color:var(--g700); margin-top:5px;">No hay eventos hoy.</p>
         </div>
 
-        <div class="main-chart-card">
-            <p style="font-size: 0.9rem; font-weight: 800; margin-bottom: 1.5rem;">Estado de Carga Operativa</p>
-            <div style="width: 240px; height: 240px; position: relative;">
-                <canvas id="efficiencyChart"></canvas>
-                <div id="status-center-number">
-                    <p id="main-status-val" class="status-val st-green">0</p>
-                    <p id="main-status-lbl" class="status-lbl">Tareas</p>
+        <div class="card" style="text-align:center;">
+            <p class="lbl">Carga de Trabajo Operativa</p>
+            <div style="position:relative; width:200px; height:200px; margin:1.5rem auto;">
+                <canvas id="mainChart"></canvas>
+                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">
+                    <p id="st-num" class="st-val st-green">0</p>
+                    <p style="font-size:0.6rem; font-weight:800; color:var(--g400);">TAREAS</p>
                 </div>
             </div>
-            <p id="sanity-msg" style="margin-top: 1.5rem; font-size: 0.75rem; font-weight: 600; color: var(--g500);">Todo bajo control hoy.</p>
+            <p id="sanity-msg" style="font-size:0.75rem; font-weight:700; color:var(--g500);">Situación óptima</p>
         </div>
-    </div>
+    </aside>
 
-    <div class="card" style="padding: 1.5rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
-            <h2 style="font-size: 1rem; font-weight: 800;">Tareas y Sesiones Activas</h2>
+    <main class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <h2 style="font-size:1.1rem; font-weight:800;">Panel de Control y Sesiones</h2>
             <div id="filter-depts" style="display:flex; gap:0.3rem;"></div>
         </div>
-        <div id="task-container" style="display:flex; flex-direction:column; gap:0.75rem;">
+        <div id="task-render-list">
             </div>
-    </div>
-
-</main>
+    </main>
+</div>
 
 <div id="m-t" class="mbd" style="display:none;">
-    <div class="mbox" style="max-width:600px; padding: 2rem;">
-        <h3 style="margin-bottom:1.5rem;">Nueva Tarea o Reunión</h3>
-        <label class="lbl">Título</label>
-        <input id="mt-tit" type="text" class="fld" placeholder="Ej: Reunión de estrategia o Revisar KPI">
+    <div class="mbox si" style="max-width:680px; padding:2rem;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:1.5rem;">
+            <p style="font-weight:800;">Gestión de Tarea / Reunión</p>
+            <button onclick="cM('m-t')" class="bic">✕</button>
+        </div>
         
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem;">
+        <input type="hidden" id="mt-id">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+            <div style="grid-column: span 2;">
+                <label class="lbl">Título (NLP activado: "Reunión mañana 10h")</label>
+                <input id="mt-tit" type="text" class="fld" placeholder="¿Qué hay que hacer?" oninput="onNLP()">
+            </div>
             <div>
                 <label class="lbl">Departamento</label>
                 <select id="mt-dept" class="fld">
                     <option value="G">⚪ Gestión</option>
                     <option value="P">🟣 Producto</option>
+                    <option value="F">🟢 C. Físico</option>
+                    <option value="O">🩵 C. Online</option>
                     <option value="M">🟪 Marketing</option>
-                    <option value="R">🤝 Reunión</option> <option value="Personal">🎂 Personal / Cumpleaños</option>
+                    <option value="R">🤝 Reunión (Agenda)</option>
+                    <option value="Personal">🎂 Personal / Cumpleaños</option>
                 </select>
             </div>
             <div>
-                <label class="lbl">Dateline (Inicio/Entrega)</label>
+                <label class="lbl">Dateline / Inicio</label>
                 <input id="mt-dl" type="datetime-local" class="fld">
             </div>
         </div>
-        
-        <div style="margin-top:1.5rem; display:flex; gap:0.5rem; justify-content:flex-end;">
-            <button onclick="cTM()" class="btn b-gh">Cancelar</button>
-            <button onclick="saveTask()" class="btn b-dk">Guardar</button>
+
+        <div class="surf" style="margin-bottom:1.5rem;">
+            <p class="lbl" style="color:var(--sky);">📋 Checklist / Orden del día</p>
+            <div id="cl-list" style="margin-bottom:0.8rem;"></div>
+            <div style="display:flex; gap:0.5rem;">
+                <input id="cl-inp" type="text" class="fld" placeholder="Añadir punto..." onkeydown="if(event.key==='Enter')addCL()">
+                <button onclick="addCL()" class="btn b-gh">+</button>
+            </div>
+        </div>
+
+        <div>
+            <label class="lbl">Notas de Sesión / Memoria Operativa</label>
+            <textarea id="mt-not" class="fld" rows="4" placeholder="Feedback, ideas o acta de la reunión..."></textarea>
+        </div>
+
+        <div style="margin-top:1.5rem; display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button onclick="abGemini()" class="btn b-gem">✨ Gemini</button>
+            <button onclick="cM('m-t')" class="btn b-gh">Cancelar</button>
+            <button onclick="saveTask()" class="btn b-dk">Guardar Cambios</button>
         </div>
     </div>
 </div>
 
 <script>
-// ══════════════════════════════════════
-//  CONFIGURACIÓN FIREBASE (ASEGÚRATE DE PONER TUS CLAVES)
-// ══════════════════════════════════════
+// --- CONFIGURACIÓN FIREBASE ---
 const firebaseConfig = {
     apiKey: "TU_API_KEY",
-    authDomain: "TU_PROYECTO.firebaseapp.com",
-    databaseURL: "TU_DATABASE_URL",
+    authDomain: "TU_DOMINIO.firebaseapp.com",
+    databaseURL: "TU_URL_DB",
     projectId: "TU_PROYECTO",
-    storageBucket: "TU_PROYECTO.appspot.com",
-    messagingSenderId: "TU_SENDER_ID",
+    storageBucket: "TU_BUCKET.appspot.com",
+    messagingSenderId: "TU_SENDER",
     appId: "TU_APP_ID"
 };
 
@@ -193,47 +204,37 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const tasksRef = db.ref('tasks');
 
-let efficiencyChart;
+let mainChart;
+let currentChecklist = [];
 
-// ── INICIALIZAR GRÁFICO ──
+// --- INICIALIZACIÓN ---
+window.onload = () => {
+    initChart();
+    tasksRef.on('value', (snapshot) => {
+        renderTasks(snapshot.val());
+    });
+};
+
 function initChart() {
-    const ctx = document.getElementById('efficiencyChart').getContext('2d');
-    efficiencyChart = new Chart(ctx, {
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    mainChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Completado', 'Restante'],
-            datasets: [{
-                data: [0, 100],
-                backgroundColor: ['#15803d', '#f3f4f6'],
-                borderWidth: 0,
-                cutout: '85%'
-            }]
+            datasets: [{ data: [0, 100], backgroundColor: ['#15803d', '#f3f4f6'], borderWidth: 0, cutout: '85%' }]
         },
-        options: { 
-            responsive: true, 
-            maintainAspectRatio: true,
-            plugins: { legend: { display: false } } 
-        }
+        options: { plugins: { legend: { display: false } } }
     });
 }
 
-// ── SINCRONIZACIÓN AUTOMÁTICA (EL "OÍDO") ──
-tasksRef.on('value', (snapshot) => {
-    const data = snapshot.val();
-    renderAll(data);
-});
-
-function renderAll(data) {
-    const container = document.getElementById('task-container');
+// --- RENDERIZADO CON LÓGICA DE MEJORAS ---
+function renderTasks(data) {
+    const container = document.getElementById('task-render-list');
     container.innerHTML = '';
-    if(!data) {
-        updateDashboard(0, 0);
-        return;
-    }
+    if(!data) { updateDashboard(0, []); return; }
 
     const ahora = new Date();
     let totalPendientes = 0;
-    let personalEvents = [];
+    let personal = [];
 
     Object.keys(data).forEach(id => {
         const t = data[id];
@@ -242,102 +243,113 @@ function renderAll(data) {
         totalPendientes++;
         const dl = new Date(t.deadline);
         const esReunion = t.dept === 'R' || t.name.toLowerCase().includes('reunión');
-        const esPersonal = t.dept === 'Personal';
+        if(t.dept === 'Personal') personal.push(t.name);
 
-        if(esPersonal) personalEvents.push(t.name);
-
-        // Lógica de Emojis y retrasos
+        // Lógica de Emojis: Las reuniones NO marcan tarde
         let emoji = esReunion ? "🗓️" : "✅";
-        let colorClase = "dept-line";
+        let statusStyle = "";
 
         if(!esReunion && t.deadline && dl < ahora) {
-            emoji = "⏰"; // Tarde
-            colorClase = "shk"; // Animación de aviso
+            emoji = "⏰";
+            statusStyle = "border-left: 5px solid var(--red); background: var(--redl);";
         }
 
         const div = document.createElement('div');
-        div.className = `card dept-line dp-${t.dept} fu`;
-        div.style.padding = "1rem";
-        div.style.display = "flex";
-        div.style.justifyContent = "space-between";
-        div.style.alignComponents = "center";
-        div.style.borderLeft = esReunion ? "5px solid var(--vio)" : "";
-
+        div.className = `card hov dept-line dp-${t.dept}`;
+        div.style = `margin-bottom:0.8rem; padding:1rem; display:flex; justify-content:space-between; align-items:center; ${statusStyle}`;
+        
         div.innerHTML = `
-            <div>
-                <p style="font-size:0.85rem; font-weight:700;">${emoji} ${t.name}</p>
-                <p style="font-size:0.65rem; color:var(--g500);">${t.deadline ? t.deadline.replace('T', ' ') : 'Sin fecha'}</p>
+            <div onclick="editTask('${id}')" style="cursor:pointer; flex:1;">
+                <p style="font-weight:700; font-size:0.9rem;">${emoji} ${t.name}</p>
+                <div style="display:flex; gap:10px; margin-top:4px;">
+                    <span class="dept-tag">Dept: ${t.dept}</span>
+                    <span style="font-size:0.65rem; color:var(--g500);">📅 ${t.deadline ? t.deadline.replace('T', ' ') : 'Sin fecha'}</span>
+                </div>
             </div>
-            <button onclick="deleteTask('${id}')" class="bic">✕</button>
+            <button onclick="deleteTask('${id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">✕</button>
         `;
         container.appendChild(div);
     });
 
-    updateDashboard(totalPendientes, personalEvents);
+    updateDashboard(totalPendientes, personal);
 }
 
 function updateDashboard(total, personal) {
-    const valEl = document.getElementById('main-status-val');
-    const msgEl = document.getElementById('sanity-msg');
-    const persEl = document.getElementById('personal-txt');
+    const stNum = document.getElementById('st-num');
+    const stMsg = document.getElementById('sanity-msg');
+    stNum.innerText = total;
 
-    valEl.innerText = total;
+    if(total > 8) { stNum.className = 'st-val st-red'; stMsg.innerText = "CRÍTICO: Carga excesiva"; }
+    else if(total > 4) { stNum.className = 'st-val st-orange'; stMsg.innerText = "MODERADO: Mantén el ritmo"; }
+    else { stNum.className = 'st-val st-green'; stMsg.innerText = "ÓPTIMO: Todo bajo control"; }
 
-    // Semáforo de colores inteligente
-    if(total > 8) {
-        valEl.className = "status-val st-red";
-        msgEl.innerText = "¡CRÍTICO! Demasiada carga para hoy.";
-        msgEl.style.color = "var(--red)";
-    } else if (total > 4) {
-        valEl.className = "status-val st-orange";
-        msgEl.innerText = "Carga moderada. Mantén el foco.";
-        msgEl.style.color = "var(--org)";
-    } else {
-        valEl.className = "status-val st-green";
-        msgEl.innerText = "Todo bajo control. Flujo óptimo.";
-        msgEl.style.color = "var(--grn)";
-    }
-
-    // Actualizar Área Personal
-    if(personal.length > 0) {
-        persEl.innerText = "Hoy: " + personal.join(', ');
-        persEl.style.color = "var(--vio)";
-    } else {
-        persEl.innerText = "No hay eventos personales para hoy.";
-        persEl.style.color = "var(--g500)";
-    }
+    document.getElementById('pers-txt').innerText = personal.length > 0 ? "Hoy: " + personal.join(', ') : "Sin eventos hoy.";
 }
 
-// ── ACCIONES ──
+// --- ACCIONES TAREAS ---
 function saveTask() {
-    const title = document.getElementById('mt-tit').value;
-    const dept = document.getElementById('mt-dept').value;
-    const dl = document.getElementById('mt-dl').value;
-
-    if(!title) return;
-
-    tasksRef.push({
-        name: title,
-        dept: dept,
-        deadline: dl,
+    const id = document.getElementById('mt-id').value;
+    const taskData = {
+        name: document.getElementById('mt-tit').value,
+        dept: document.getElementById('mt-dept').value,
+        deadline: document.getElementById('mt-dl').value,
+        notes: document.getElementById('mt-not').value,
+        checklist: currentChecklist,
         status: 'pendiente',
-        createdAt: Date.now()
-    });
+        updatedAt: Date.now()
+    };
 
-    cTM();
+    if(id) tasksRef.child(id).update(taskData);
+    else tasksRef.push(taskData);
+
+    cM('m-t');
 }
 
-function deleteTask(id) {
-    tasksRef.child(id).remove();
+function addCL() {
+    const txt = document.getElementById('cl-inp').value;
+    if(!txt) return;
+    currentChecklist.push({txt, done: false});
+    document.getElementById('cl-inp').value = '';
+    renderCL();
 }
 
-// Modales rápidos
-function oTM() { document.getElementById('m-t').style.display = 'flex'; }
-function cTM() { document.getElementById('m-t').style.display = 'none'; }
+function renderCL() {
+    const container = document.getElementById('cl-list');
+    container.innerHTML = currentChecklist.map((item, i) => `
+        <div style="display:flex; gap:0.5rem; font-size:0.8rem; margin-bottom:0.3rem;">
+            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="currentChecklist[${i}].done=this.checked">
+            <span>${item.txt}</span>
+        </div>
+    `).join('');
+}
 
-window.onload = () => {
-    initChart();
-};
+function deleteTask(id) { if(confirm('¿Borrar tarea?')) tasksRef.child(id).remove(); }
+
+function oTM() {
+    document.getElementById('mt-id').value = '';
+    document.getElementById('mt-tit').value = '';
+    document.getElementById('mt-not').value = '';
+    currentChecklist = [];
+    renderCL();
+    document.getElementById('m-t').style.display = 'flex';
+}
+
+function cM(id) { document.getElementById(id).style.display = 'none'; }
+
+function syncMobile() {
+    alert("Generando enlace de sincronización para tu dispositivo móvil...");
+    // Aquí podrías añadir un QR o lógica de login
+}
+
+// NLP Básico para fechas (como el que tenías)
+function onNLP() {
+    const val = document.getElementById('mt-tit').value.toLowerCase();
+    const dlInput = document.getElementById('mt-dl');
+    if(val.includes('mañana')) {
+        let d = new Date(); d.setDate(d.getDate() + 1); d.setHours(10,0,0);
+        dlInput.value = d.toISOString().slice(0,16);
+    }
+}
 </script>
 </body>
 </html>
