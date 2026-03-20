@@ -1165,14 +1165,15 @@ function setFB(s) {
   const dot = ge('fb-dot'), lbl = ge('fb-lbl');
   if (!dot || !lbl) return;
   const m = {
-    ok: {c:'#15803d', t:'Firebase OK'},
-    er: {c:'#b91c1c', t:'Sin conexión'},
-    of: {c:'#9ca3af', t:'Offline'}
+    ok: {c:'ok',  t:'Sincronizado',  tc:'var(--grn)'},
+    er: {c:'er',  t:'Sin conexión',  tc:'var(--red)'},
+    of: {c:'er',  t:'Offline',       tc:'var(--g400)'},
+    sy: {c:'sy',  t:'Guardando…', tc:'#f59e0b'},
   };
-  const x = m[s] || m.of;
-  dot.style.background = x.c;
+  const x = m[s] || m.er;
+  dot.className = `sync-led ${x.c}`;
   lbl.textContent = x.t;
-  lbl.style.color = x.c;
+  lbl.style.color = x.tc;
 }
 function dbW(col, id, data) {
   lsSave(); if (!FB_OK) return;
@@ -1303,6 +1304,7 @@ function oTM(id) {
     clItems=(t.checklist||[]).map(c=>({...c})); rCLF();
     ge('mth').textContent='Editar Tarea'; ge('mt-lbl').textContent='Guardar';
   }
+  const dupBtn=ge('mt-dup'); if(dupBtn)dupBtn.style.display=id?'':'none';
   oM('m-t');
 }
 function cTM() { cM('m-t'); rTF(); }
@@ -1399,6 +1401,7 @@ function notaAT() { const nota=ge('mt-not').value.trim(); if(!nota){toast('Escri
    GUARDAR TAREA — OPTIMISTIC UI (preservado v8)
 ══════════════════════════════════════ */
 function gT() {
+  if (!rlCheck()) return;
   const titulo=ge('mt-tit').value.trim(); if(!titulo){shk('mt-tit');toast('El título es obligatorio','red');return;}
   const eid=ge('mt-id').value, ahora=Date.now();
   const urgente=ge('mt-urg').checked, aviso24=ge('mt-a24').checked;
@@ -1419,7 +1422,7 @@ function gT() {
     if(urgente&&nuevoEst==='pendiente'){const fp=T.findIndex(t=>t.estado==='pendiente');fp===-1?T.push(nt):T.splice(fp,0,nt);const n=apUrg(tId);toast(`🚨 URGENTE${n>0?`. +2d en ${n}`:''}`,'red');}
     else{T.push(nt);toast('✅ Tarea creada','grn');}
   }
-  cTM(); rAll(); dbW('tareas',tId,T.find(t=>t.id===tId));
+  cTM(); rAll(); dbW('tareas',tId,sanitizeTask(T.find(t=>t.id===tId)));
 }
 function _crSig(orig,ahora) {
   const nId=uid(); const nxt={...orig,id:nId,titulo:orig.titulo+' (Siguiente)',estado:'pendiente',deadline:new Date(ahora+orig.frecDias*MS_D).toISOString().slice(0,16),original_deadline:new Date(ahora+orig.frecDias*MS_D).toISOString().slice(0,16),completadoEn:null,excelente:false,aTiempo:undefined,creadoEn:ahora,actualizadoEn:ahora,historial:[],checklist:(orig.checklist||[]).map(c=>({...c,done:false}))};
@@ -1566,6 +1569,8 @@ function bCard(t) {
         ${t.ciclica?'<span class="bdg b-s">🔁</span>':''}
         ${vRes?`<span class="bdg b-y" title="Deadline ajustado por vacaciones">📅</span>`:''}
         ${esR&&t.estado!=='finalizado'?'<span class="bdg b-s">🗓️ Evento</span>':''}
+        ${t.estado==='espera'?'<span class="bdg bdg-wf">⏳ WF</span>':''}
+        ${hasHotPoint(t)&&t.estado!=='finalizado'?'<div class="hot-point" title="Requiere acción"></div>':''}
       </div>
       ${dl?`<div style="display:flex;align-items:center;gap:.27rem;margin-bottom:.44rem;">
         <svg width="10" height="10" fill="none" stroke="${dlC}" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -1743,7 +1748,7 @@ function openRadar(){const h=new Date().getHours();ge('rg').textContent=h<12?'¡
 function cpRadar(){const h=new Date().getHours();const sal=h<12?'Buenos días':h<20?'Buenas tardes':'Buenas noches';const urg=T.filter(t=>t.urgente&&t.estado!=='finalizado');const hoyT=T.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).toDateString()===new Date().toDateString());let txt=`${sal.toUpperCase()} — ${new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).toUpperCase()}\n${'═'.repeat(48)}\n\n`;if(urg.length){txt+=`🚨 URGENTES (${urg.length})\n${'─'.repeat(26)}\n`;urg.forEach(t=>{txt+=`  • ${t.titulo}${t.deadline?' ['+fDT(t.deadline)+']':''}\n`;});txt+='\n';}if(hoyT.length){txt+=`📅 PARA HOY (${hoyT.length})\n${'─'.repeat(26)}\n`;hoyT.forEach(t=>{txt+=`  • ${t.titulo}\n`;});txt+='\n';}if(P.length){txt+=`📊 PROYECTOS\n${'─'.repeat(26)}\n`;P.forEach(p=>{const pt=T.filter(t=>t.proyecto===p.id);const d=pt.filter(t=>t.estado==='finalizado').length;txt+=`  • ${p.nombre}: ${pt.length?Math.round(d/pt.length*100):0}% (${d}/${pt.length})\n`;});}txt+=`\n${'═'.repeat(48)}\nAI Executive Copilot v9\n`;navigator.clipboard.writeText(txt).then(()=>toast('📋 Email copiado','grn')).catch(()=>toast('Error','red'));}
 
 /* ── TABS ── */
-function sT(n){tabA=n;document.querySelectorAll('.tab-p').forEach(el=>el.style.display='none');ge('tab-'+n).style.display='';document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.toggle('act',btn.dataset.tab===n));const rs={home:rHome,kanban:()=>{rKanban();rFP();},proyectos:rProyectos,ideas:rIdeas,stats:rStats};if(rs[n])rs[n]();}
+function sT(n){tabA=n;document.querySelectorAll('.tab-p').forEach(el=>el.style.display='none');ge('tab-'+n).style.display='';document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.toggle('act',btn.dataset.tab===n));const rs={home:rHome,kanban:()=>{rKanban();rFP();},proyectos:rProyectos,ideas:rIdeas,stats:()=>{rStats();rStatsWidgets();}};if(rs[n])rs[n]();}
 
 /* ══════════════════════════════════════
    RENDER ALL — Entry point principal
@@ -1753,13 +1758,28 @@ function sT(n){tabA=n;document.querySelectorAll('.tab-p').forEach(el=>el.style.d
 function rAll(){
   updKPI();
   rFP();
-  rDashboard(); /* ← NUEVO: aside se actualiza en cada ciclo */
+  rDashboard();
+  rStressMeter();
+  const vAct=getVacActiva();
+  const vacBanner=ge('vac-active-banner');
+  if(vAct){
+    if(!vacBanner){
+      const b=document.createElement('div');
+      b.id='vac-active-banner';
+      b.style.cssText='background:linear-gradient(90deg,#0369a1,#0e7490);color:#fff;text-align:center;padding:.45rem 1.4rem;font-size:.72rem;font-weight:600;position:sticky;top:60px;z-index:190;';
+      b.textContent=String.fromCharCode(55356,57398)+' Vacaciones activas: '+esc(vAct.motivo)+' hasta '+vAct.hasta;
+      const lg=document.querySelector('.layout-grid');
+      if(lg)lg.parentNode.insertBefore(b,lg);
+    }
+  } else {
+    if(vacBanner)vacBanner.remove();
+  }
   switch(tabA){
     case'home':rHome();break;
     case'kanban':rKanban();break;
     case'proyectos':rProyectos();break;
     case'ideas':rIdeas();break;
-    case'stats':rStats();break;
+    case'stats':rStats();rStatsWidgets();break;
   }
 }
 
@@ -2143,97 +2163,17 @@ function rStatsWidgets() {
 /* ═══════════════════════════════════════
    OVERRIDE: setFB con nuevo LED
 ═══════════════════════════════════════ */
-function setFB(s) {
-  const dot = ge('fb-dot'), lbl = ge('fb-lbl');
-  if (!dot || !lbl) return;
-  const m = {
-    ok:  {c:'ok',  t:'Sincronizado',  tc:'var(--grn)'},
-    er:  {c:'er',  t:'Sin conexión',  tc:'var(--red)'},
-    of:  {c:'er',  t:'Offline',       tc:'var(--g400)'},
-    sy:  {c:'sy',  t:'Guardando…',    tc:'#f59e0b'},
-  };
-  const x = m[s] || m.er;
-  dot.className = `sync-led ${x.c}`;
-  lbl.textContent = x.t;
-  lbl.style.color = x.tc;
-}
 
-/* ═══════════════════════════════════════
-   OVERRIDE: oTM — mostrar botón duplicar en edición
-═══════════════════════════════════════ */
-const _oTM_orig = oTM;
-function oTM(id) {
-  _oTM_orig(id);
-  const dupBtn = ge('mt-dup');
-  if (dupBtn) dupBtn.style.display = id ? '' : 'none';
-}
 
-/* ═══════════════════════════════════════
-   OVERRIDE: gT — añadir sanitización y rate limit
-═══════════════════════════════════════ */
-const _gT_orig = gT;
-function gT() {
-  if (!rlCheck()) return;
-  _gT_orig();
-}
 
-/* ═══════════════════════════════════════
-   OVERRIDE: bCard — añadir hot point y badge WF
-═══════════════════════════════════════ */
-const _bCard_orig = bCard;
-function bCard(t) {
-  let html = _bCard_orig(t);
-  // Inject hot point dot if needed
-  if (hasHotPoint(t) && t.estado !== 'finalizado') {
-    html = html.replace(
-      `id="dc${t.id}"`,
-      `id="dc${t.id}"`
-    );
-    // Add hot point to badge row
-    html = html.replace(
-      `${t.ciclica?'<span class="bdg b-s">🔁</span>':''}`,
-      `${t.ciclica?'<span class="bdg b-s">🔁</span>':''}<div class="hot-point" title="Hot point: acción requerida"></div>`
-    );
-  }
-  // Inject WF badge
-  if (t.estado === 'espera') {
-    html = html.replace('</div>\n      ${dl?', '<span class="bdg bdg-wf">⏳ WF</span></div>\n      ${dl?');
-  }
-  return html;
-}
 
-/* ═══════════════════════════════════════
-   OVERRIDE: rAll — include stress + stats widgets
-═══════════════════════════════════════ */
-const _rAll_orig = rAll;
-function rAll() {
-  _rAll_orig();
-  rStressMeter();
-  if (tabA === 'stats') rStatsWidgets();
-  // Vacaciones escudo visual
-  const vAct = getVacActiva();
-  const vacBanner = ge('vac-active-banner');
-  if (vAct) {
-    if (!vacBanner) {
-      const b = document.createElement('div');
-      b.id = 'vac-active-banner';
-      b.style.cssText = 'background:linear-gradient(90deg,#0369a1,#0e7490);color:#fff;text-align:center;padding:.45rem 1.4rem;font-size:.72rem;font-weight:600;position:sticky;top:60px;z-index:190;';
-      b.innerHTML = `🏖️ Período de vacaciones activo: <b>${vAct.motivo}</b> hasta ${vAct.hasta} — Agenda bloqueada`;
-      document.body.insertBefore(b, document.querySelector('.layout-grid'));
-    }
-  } else {
-    if (vacBanner) vacBanner.remove();
-  }
-}
 
-/* ═══════════════════════════════════════
-   OVERRIDE: sT — render stats widgets on tab switch
-═══════════════════════════════════════ */
-const _sT_orig = sT;
-function sT(n) {
-  _sT_orig(n);
-  if (n === 'stats') rStatsWidgets();
-}
+
+
+
+
+
+
 
 /* ── INIT ── */
 (function init(){
