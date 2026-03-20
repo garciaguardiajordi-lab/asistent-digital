@@ -179,6 +179,37 @@ textarea.fld{resize:vertical;min-height:64px;}
   gap:.85rem;
 }
 
+/* Módulo personal — degradado suave */
+.dash-personal{
+  background:linear-gradient(140deg,#f0f9ff 0%,#fdf4ff 55%,#f0fdf4 100%);
+  border-radius:var(--r);
+  border:1px solid var(--g100);
+  box-shadow:var(--s1);
+  overflow:hidden;
+}
+.dash-personal-hdr{
+  padding:1rem 1.15rem .6rem;
+}
+.dash-personal-body{
+  padding:0 1.15rem 1rem;
+  display:flex;
+  flex-direction:column;
+  gap:.42rem;
+  max-height:230px;
+  overflow-y:auto;
+}
+.dash-personal-item{
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  padding:.46rem .6rem;
+  background:rgba(255,255,255,.72);
+  border-radius:var(--rxs);
+  border:1px solid rgba(255,255,255,.9);
+  cursor:pointer;
+  transition:background .14s;
+}
+.dash-personal-item:hover{background:rgba(255,255,255,.95);}
 
 /* Sanity Check */
 .dash-sanity{
@@ -246,6 +277,132 @@ textarea.fld{resize:vertical;min-height:64px;}
   .g5,.g6{grid-template-columns:1fr!important;}
   .mbd{padding:.4rem;}
 }
+
+/* ══════════════════════════════════════
+   V10 NEW STYLES
+══════════════════════════════════════ */
+
+/* ── PIN LOCK SCREEN ── */
+#pin-screen{
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:1.5rem;
+}
+.pin-logo{
+  width:64px;height:64px;border-radius:16px;
+  background:linear-gradient(135deg,#0369a1,#6d28d9);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 32px rgba(3,105,161,.45);
+}
+.pin-dots{display:flex;gap:.75rem;margin:.5rem 0;}
+.pin-dot{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.35);
+  transition:all .2s;
+}
+.pin-dot.filled{background:#38bdf8;border-color:#38bdf8;box-shadow:0 0 8px #38bdf8;}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;max-width:240px;}
+.pin-key{
+  background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);
+  border-radius:12px;padding:.9rem;font-size:1.15rem;font-weight:700;
+  color:#fff;cursor:pointer;transition:all .15s;font-family:inherit;text-align:center;
+}
+.pin-key:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.28);}
+.pin-key:active{transform:scale(.95);}
+.pin-error{color:#f87171;font-size:.78rem;font-weight:600;min-height:1.2rem;}
+
+/* ── HOT POINT ── */
+@keyframes hotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.hot-point{
+  width:8px;height:8px;border-radius:50%;background:#f97316;
+  flex-shrink:0;animation:hotPulse 1.2s ease-in-out infinite;
+  box-shadow:0 0 6px #f97316;
+}
+
+/* ── STRESS THERMOMETER ── */
+.thermo-wrap{position:relative;width:18px;height:80px;flex-shrink:0;}
+.thermo-track{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:10px;height:100%;background:var(--g100);border-radius:99px;overflow:hidden;
+}
+.thermo-fill{
+  position:absolute;bottom:0;left:0;width:100%;
+  border-radius:99px;transition:height .6s cubic-bezier(.4,0,.2,1),background .4s;
+}
+.thermo-bulb{
+  position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+  width:18px;height:18px;border-radius:50%;transition:background .4s;
+}
+
+/* ── STRESS GAUGE NUMBER ── */
+.stress-num{
+  font-size:2.8rem;font-weight:900;line-height:1;
+  transition:color .4s;font-family:'DM Mono',monospace;
+}
+
+/* ── NOTES PRO TOOLBAR ── */
+.notes-toolbar{
+  display:flex;gap:.28rem;padding:.3rem .4rem;
+  background:var(--g50);border:1.5px solid var(--g200);
+  border-bottom:none;border-radius:var(--rxs) var(--rxs) 0 0;
+}
+.notes-toolbar button{
+  width:28px;height:26px;border:1px solid var(--g200);border-radius:5px;
+  background:var(--w);cursor:pointer;font-size:.75rem;font-weight:700;
+  color:var(--g700);display:flex;align-items:center;justify-content:center;
+  transition:all .13s;font-family:inherit;
+}
+.notes-toolbar button:hover{background:var(--sky);color:#fff;border-color:var(--sky);}
+#mt-not.with-toolbar{border-top-left-radius:0;border-top-right-radius:0;border-top:none;}
+
+/* ── RADAR DE LOS LUNES ── */
+#m-lunes .mbox{border-top:4px solid #6d28d9;}
+.lunes-badge{
+  background:linear-gradient(135deg,#6d28d9,#4f46e5);
+  color:#fff;border-radius:99px;
+  padding:.2rem .65rem;font-size:.67rem;font-weight:700;
+  letter-spacing:.04em;display:inline-block;
+}
+
+/* ── STATS WIDGETS V10 ── */
+.stat-widget{
+  background:var(--w);border-radius:var(--rsm);
+  box-shadow:var(--s1);border:1px solid var(--g100);
+  padding:1.1rem;
+}
+.stat-widget-title{
+  font-size:.65rem;font-weight:700;color:var(--g400);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;
+}
+/* Mini bar chart */
+.bar-chart-wrap{display:flex;align-items:flex-end;gap:.4rem;height:60px;padding-bottom:.2rem;}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:.25rem;flex:1;}
+.bar-fill{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height .5s cubic-bezier(.4,0,.2,1);}
+.bar-lbl{font-size:.58rem;font-weight:700;color:var(--g500);}
+
+/* ── SYNC LED ── */
+.sync-led{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+  transition:background .3s,box-shadow .3s;
+}
+.sync-led.ok{background:#22c55e;box-shadow:0 0 6px #22c55e;}
+.sync-led.er{background:#ef4444;box-shadow:0 0 6px #ef4444;}
+.sync-led.sy{background:#f59e0b;box-shadow:0 0 6px #f59e0b;}
+
+/* ── WAITING FOR BADGE ── */
+.bdg-wf{background:#fef3c7;color:#92400e;border:1px solid #fbbf24;}
+
+/* ── TOOLTIP ── */
+[data-tip]{position:relative;}
+[data-tip]::after{
+  content:attr(data-tip);position:absolute;bottom:calc(100% + 5px);left:50%;
+  transform:translateX(-50%);background:var(--g900);color:#fff;
+  font-size:.65rem;padding:.25rem .55rem;border-radius:6px;
+  white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;
+  z-index:999;
+}
+[data-tip]:hover::after{opacity:1;}
 </style>
 </head>
 <body>
@@ -254,8 +411,64 @@ textarea.fld{resize:vertical;min-height:64px;}
 <div id="toasts" style="position:fixed;top:1rem;right:1rem;z-index:800;display:flex;flex-direction:column;gap:.4rem;max-width:300px;width:100%;pointer-events:none;"></div>
 
 <!-- ══════════════════════════════════════
-     MODAL: RADAR (preservado v8)
+     PIN LOCK SCREEN (v10)
 ══════════════════════════════════════ -->
+<div id="pin-screen" style="display:none;">
+  <div class="pin-logo">
+    <svg width="28" height="28" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+  </div>
+  <div style="text-align:center;">
+    <p style="color:#fff;font-size:1rem;font-weight:800;margin-bottom:.3rem;">AI Executive Copilot</p>
+    <p style="color:rgba(255,255,255,.45);font-size:.75rem;">Introduce tu PIN de acceso</p>
+  </div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <p id="pin-err" class="pin-error"></p>
+  <div class="pin-pad">
+    <button class="pin-key" onclick="pinKey('1')">1</button>
+    <button class="pin-key" onclick="pinKey('2')">2</button>
+    <button class="pin-key" onclick="pinKey('3')">3</button>
+    <button class="pin-key" onclick="pinKey('4')">4</button>
+    <button class="pin-key" onclick="pinKey('5')">5</button>
+    <button class="pin-key" onclick="pinKey('6')">6</button>
+    <button class="pin-key" onclick="pinKey('7')">7</button>
+    <button class="pin-key" onclick="pinKey('8')">8</button>
+    <button class="pin-key" onclick="pinKey('9')">9</button>
+    <button class="pin-key" onclick="pinKey('C')" style="font-size:.8rem;">⌫</button>
+    <button class="pin-key" onclick="pinKey('0')">0</button>
+    <button class="pin-key" onclick="pinKey('OK')" style="background:rgba(56,189,248,.25);border-color:#38bdf8;font-size:.8rem;">✓</button>
+  </div>
+  <p style="color:rgba(255,255,255,.22);font-size:.62rem;margin-top:.5rem;">PIN por defecto: 1234 · Cámbialo en ajustes</p>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODAL: RADAR DE LOS LUNES (v10)
+══════════════════════════════════════ -->
+<div id="m-lunes" class="mbd" style="display:none;z-index:610;">
+  <div class="mbox si" id="m-lunes" style="max-width:560px;">
+    <div style="background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:24px 24px 0 0;padding:1.5rem 1.8rem 1.1rem;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;">
+        <div>
+          <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem;">
+            <span style="font-size:1.4rem;">🎯</span>
+            <p style="font-size:1.15rem;font-weight:800;color:#fff;">Radar de los Lunes</p>
+          </div>
+          <p style="font-size:.74rem;color:rgba(255,255,255,.6);">Revisión estratégica semanal</p>
+        </div>
+        <button onclick="cM('m-lunes')" class="bic" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff;flex-shrink:0;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div id="lunes-fecha" style="font-size:.63rem;color:rgba(255,255,255,.4);"></div>
+    </div>
+    <div id="lunes-body" style="padding:.9rem 1.8rem;display:flex;flex-direction:column;gap:.65rem;max-height:400px;overflow-y:auto;"></div>
+    <div style="padding:.9rem 1.8rem 1.4rem;border-top:1px solid var(--g100);display:flex;gap:.5rem;">
+      <button onclick="cM('m-lunes')" class="btn b-dk" style="flex:1;">Comenzar semana →</button>
+    </div>
+  </div>
+</div>
 <div id="m-radar" class="mbd" style="display:none;z-index:600;">
   <div class="mbox si" style="max-width:560px;">
     <div style="background:linear-gradient(135deg,#f0f9ff,#fdf4ff,#f0fdf4);border-radius:24px 24px 0 0;padding:1.6rem 1.8rem 1.1rem;">
@@ -328,7 +541,7 @@ textarea.fld{resize:vertical;min-height:64px;}
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
         <div><label class="lbl">Estado</label>
-          <select id="mt-est" class="fld"><option value="pendiente">Pendiente</option><option value="proceso">En Proceso</option><option value="finalizado">Finalizado</option></select>
+          <select id="mt-est" class="fld"><option value="pendiente">Pendiente</option><option value="proceso">En Proceso</option><option value="espera">⏳ En Espera (WF)</option><option value="finalizado">Finalizado</option></select>
         </div>
         <div><label class="lbl">Inicio / Deadline</label><input id="mt-dl" type="datetime-local" class="fld"></div>
       </div>
@@ -365,7 +578,15 @@ textarea.fld{resize:vertical;min-height:64px;}
             <label class="lbl" style="margin:0;">Notas / Feedback de sesión</label>
             <button type="button" onclick="notaAT()" class="btn b-sky" style="font-size:.64rem;padding:.18rem .52rem;">+ Nota → Tarea</button>
           </div>
-          <textarea id="mt-not" rows="3" placeholder="Ideas, feedback, observaciones..." class="fld"></textarea>
+          <div class="notes-toolbar">
+            <button type="button" onclick="fmtNota('bold')" title="Negrita"><b>B</b></button>
+            <button type="button" onclick="fmtNota('italic')" title="Cursiva"><i>I</i></button>
+            <button type="button" onclick="fmtNota('star')" title="Punto importante">★</button>
+            <button type="button" onclick="fmtNota('check')" title="Check">✓</button>
+            <button type="button" onclick="fmtNota('warn')" title="Revisar">!</button>
+            <button type="button" onclick="fmtNota('call')" title="Llamar">📞</button>
+          </div>
+          <textarea id="mt-not" rows="4" placeholder="Ideas, feedback, observaciones… Usa * o ! para Hot Points" class="fld with-toolbar"></textarea>
         </div>
       </div>
       <div><label class="lbl">➡️ Siguiente Paso</label><textarea id="mt-sig" rows="2" placeholder="Próxima acción acordada..." class="fld"></textarea></div>
@@ -373,7 +594,9 @@ textarea.fld{resize:vertical;min-height:64px;}
     </div>
     <div style="padding:.9rem 1.4rem;border-top:1px solid var(--g100);display:flex;gap:.42rem;flex-wrap:wrap;justify-content:flex-end;">
       <button onclick="cpActa()" class="btn b-gh" style="font-size:.73rem;">📋 Copiar Acta</button>
-      <button onclick="abGemini()" class="btn b-gem" style="font-size:.73rem;">✨ Gemini</button>
+      <button onclick="abGeminiSmartCat()" class="btn b-gem" style="font-size:.73rem;" data-tip="Prompt en català per a Gemini">✨ Resum Reunió</button>
+      <button onclick="abGemini()" class="btn b-gh" style="font-size:.73rem;">✨ Gemini</button>
+      <button onclick="dupTarea()" id="mt-dup" class="btn b-gh" style="font-size:.73rem;display:none;">⧉ Duplicar</button>
       <button onclick="cTM()" class="btn b-gh">Cancelar</button>
       <button onclick="gT()" id="mt-btn" class="btn b-dk"><span id="mt-lbl">Crear Tarea</span></button>
     </div>
@@ -495,8 +718,8 @@ textarea.fld{resize:vertical;min-height:64px;}
       <div>
         <p style="font-size:.83rem;font-weight:800;color:var(--g900);line-height:1.25;">AI Executive Copilot</p>
         <div style="display:flex;align-items:center;gap:.26rem;">
-          <span id="fb-dot" class="pd" style="width:5px;height:5px;border-radius:50%;background:var(--grn);display:inline-block;flex-shrink:0;"></span>
-          <span id="fb-lbl" style="font-size:.59rem;font-weight:700;color:var(--grn);">Firebase OK</span>
+          <span id="fb-dot" class="sync-led ok"></span>
+          <span id="fb-lbl" style="font-size:.59rem;font-weight:700;color:var(--grn);">Sincronizado</span>
         </div>
       </div>
     </div>
@@ -537,20 +760,58 @@ textarea.fld{resize:vertical;min-height:64px;}
   ═══════════════════════════════ -->
   <aside id="dashboard-aside">
 
-  
-
-    <!-- SANITY CHECK -->
-    <div class="dash-sanity">
-      <p style="font-size:.71rem;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.07em;">Sanity Check</p>
-      <p style="font-size:.62rem;color:var(--g400);margin-top:.1rem;">Tareas pendientes activas</p>
-      <p id="sanity-number" class="sanity-grn">0</p>
-      <p id="sanity-label" style="font-size:.73rem;font-weight:600;color:var(--grn);">✅ Carga controlada</p>
-      <div style="margin-top:.9rem;">
-        <div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--g400);margin-bottom:.28rem;">
-          <span>0</span><span style="color:var(--org);">5</span><span style="color:var(--red);">8+</span>
+    <!-- MÓDULO PERSONAL -->
+    <div class="dash-personal">
+      <div class="dash-personal-hdr">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.2rem;">
+          <p style="font-size:.78rem;font-weight:800;color:var(--g900);">👤 Área Personal</p>
+          <span id="personal-cnt" class="bdg b-n">0</span>
         </div>
-        <div class="pt" style="height:6px;">
-          <div id="sanity-bar" class="pf" style="width:0%;background:var(--grn);height:100%;"></div>
+        <p style="font-size:.62rem;color:var(--g500);">Tareas de tu ámbito personal</p>
+      </div>
+      <div class="dash-personal-body" id="personal-list">
+        <p style="font-size:.71rem;color:var(--g400);text-align:center;padding:.5rem 0;">Sin tareas personales.</p>
+      </div>
+    </div>
+
+    <!-- SANITY CHECK / MOTOR DE ESTRÉS v10 -->
+    <div class="dash-sanity">
+      <div style="display:flex;align-items:flex-start;gap:.9rem;">
+        <!-- Termómetro visual -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:.35rem;flex-shrink:0;">
+          <div class="thermo-wrap">
+            <div class="thermo-track">
+              <div id="thermo-fill" class="thermo-fill" style="height:0%;background:var(--grn);"></div>
+            </div>
+            <div id="thermo-bulb" class="thermo-bulb" style="background:var(--grn);"></div>
+          </div>
+          <p style="font-size:.55rem;color:var(--g400);font-weight:600;">ESTRÉS</p>
+        </div>
+        <!-- Número y descripción -->
+        <div style="flex:1;min-width:0;">
+          <p style="font-size:.71rem;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.07em;">Motor de Estrés</p>
+          <p id="stress-num" class="stress-num" style="color:var(--grn);">0.0</p>
+          <p id="stress-label" style="font-size:.72rem;font-weight:600;color:var(--grn);">✅ Carga controlada</p>
+          <p style="font-size:.6rem;color:var(--g400);margin-top:.3rem;">pts ponderados activos</p>
+        </div>
+      </div>
+      <!-- Desglose por peso -->
+      <div style="margin-top:.85rem;display:flex;flex-direction:column;gap:.3rem;">
+        <div style="display:flex;justify-content:space-between;font-size:.62rem;">
+          <span style="color:var(--red);">🔴 Crítico ≤3d (×1.0)</span>
+          <span id="st-w1" style="font-weight:700;color:var(--red);">0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.62rem;">
+          <span style="color:var(--org);">🟠 Próximo 3-10d (×0.5)</span>
+          <span id="st-w05" style="font-weight:700;color:var(--org);">0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.62rem;">
+          <span style="color:var(--yel);">⏳ En Espera WF (×0.25)</span>
+          <span id="st-w025" style="font-weight:700;color:var(--yel);">0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.62rem;">
+          <span style="color:var(--g400);">⚪ Invisible (0)</span>
+          <span id="st-w0" style="font-weight:700;color:var(--g400);">0</span>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.85rem;">
@@ -740,6 +1001,72 @@ textarea.fld{resize:vertical;min-height:64px;}
           <span id="st-sbd" class="bdg b-n">–</span>
         </div>
       </div>
+      <!-- 4 WIDGETS v10 -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem;margin-bottom:1rem;" class="g2">
+        <!-- Widget 1: Movimiento Semanal -->
+        <div class="stat-widget">
+          <p class="stat-widget-title">📈 Movimiento Semanal</p>
+          <div style="display:flex;gap:1.2rem;margin-bottom:.65rem;">
+            <div style="text-align:center;"><p id="sw-creadas" style="font-size:1.4rem;font-weight:900;color:var(--sky);">0</p><p style="font-size:.6rem;color:var(--g400);">Creadas</p></div>
+            <div style="text-align:center;"><p id="sw-cerradas" style="font-size:1.4rem;font-weight:900;color:var(--grn);">0</p><p style="font-size:.6rem;color:var(--g400);">Cerradas</p></div>
+            <div style="text-align:center;"><p id="sw-wf" style="font-size:1.4rem;font-weight:900;color:var(--yel);">0</p><p style="font-size:.6rem;color:var(--g400);">En Espera</p></div>
+          </div>
+          <div class="pt" style="height:5px;"><div id="sw-ratio-bar" class="pf" style="width:0%;background:var(--grn);height:100%;"></div></div>
+          <p id="sw-ratio-lbl" style="font-size:.62rem;color:var(--g400);margin-top:.28rem;">Ratio cierre/apertura: –</p>
+        </div>
+        <!-- Widget 2: Horizonte de Deadlines -->
+        <div class="stat-widget">
+          <p class="stat-widget-title">🔭 Horizonte de Deadlines</p>
+          <div style="display:flex;flex-direction:column;gap:.4rem;">
+            <div style="display:flex;align-items:center;gap:.6rem;">
+              <span style="font-size:.62rem;color:var(--red);font-weight:700;min-width:52px;">Hoy</span>
+              <div class="pt" style="flex:1;height:5px;"><div id="hd-hoy" class="pf" style="width:0%;background:var(--red);height:100%;"></div></div>
+              <span id="hd-hoy-n" style="font-size:.64rem;font-weight:700;color:var(--red);min-width:20px;text-align:right;">0</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:.6rem;">
+              <span style="font-size:.62rem;color:var(--org);font-weight:700;min-width:52px;">3 días</span>
+              <div class="pt" style="flex:1;height:5px;"><div id="hd-3d" class="pf" style="width:0%;background:var(--org);height:100%;"></div></div>
+              <span id="hd-3d-n" style="font-size:.64rem;font-weight:700;color:var(--org);min-width:20px;text-align:right;">0</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:.6rem;">
+              <span style="font-size:.62rem;color:var(--yel);font-weight:700;min-width:52px;">10 días</span>
+              <div class="pt" style="flex:1;height:5px;"><div id="hd-10d" class="pf" style="width:0%;background:var(--yelm);height:100%;"></div></div>
+              <span id="hd-10d-n" style="font-size:.64rem;font-weight:700;color:var(--yel);min-width:20px;text-align:right;">0</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:.6rem;">
+              <span style="font-size:.62rem;color:var(--sky);font-weight:700;min-width:52px;">+10 días</span>
+              <div class="pt" style="flex:1;height:5px;"><div id="hd-mas" class="pf" style="width:0%;background:var(--sky);height:100%;"></div></div>
+              <span id="hd-mas-n" style="font-size:.64rem;font-weight:700;color:var(--sky);min-width:20px;text-align:right;">0</span>
+            </div>
+          </div>
+        </div>
+        <!-- Widget 3: Salud del Flujo (Local vs WF) -->
+        <div class="stat-widget">
+          <p class="stat-widget-title">🌊 Salud del Flujo · Local vs WF</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+            <div style="text-align:center;padding:.75rem;background:var(--grnl);border-radius:var(--rxs);border:1px solid var(--grnm);">
+              <p id="flujo-local" style="font-size:1.5rem;font-weight:900;color:var(--grn);">0</p>
+              <p style="font-size:.61rem;color:var(--grn);font-weight:600;">Acción local</p>
+              <p style="font-size:.58rem;color:var(--g400);margin-top:.1rem;">(pendiente+proceso)</p>
+            </div>
+            <div style="text-align:center;padding:.75rem;background:var(--yell);border-radius:var(--rxs);border:1px solid var(--yelm);">
+              <p id="flujo-wf" style="font-size:1.5rem;font-weight:900;color:var(--yel);">0</p>
+              <p style="font-size:.61rem;color:var(--yel);font-weight:600;">En Espera (WF)</p>
+              <p style="font-size:.58rem;color:var(--g400);margin-top:.1rem;">(esperando a otros)</p>
+            </div>
+          </div>
+          <div class="pt" style="height:6px;margin-top:.75rem;">
+            <div id="flujo-bar" class="pf" style="width:0%;background:var(--grn);height:100%;"></div>
+          </div>
+          <p id="flujo-lbl" style="font-size:.61rem;color:var(--g400);margin-top:.25rem;"></p>
+        </div>
+        <!-- Widget 4: Mapa de Peso por Dept (barras) -->
+        <div class="stat-widget">
+          <p class="stat-widget-title">⚖️ Mapa de Peso por Departamento</p>
+          <div id="dept-peso-chart" class="bar-chart-wrap"></div>
+          <p style="font-size:.59rem;color:var(--g400);margin-top:.4rem;">Peso ponderado: urgente×1.5 · alta×1.2 · media×1 · baja×0.5</p>
+        </div>
+      </div>
       <div id="st-dep" class="g6" style="display:grid;grid-template-columns:repeat(6,1fr);gap:.62rem;margin-bottom:1rem;"></div>
       <div id="st-ps"></div>
     </div>
@@ -864,7 +1191,6 @@ function dbD(col, id) {
 
 /* ── initFB: registra onValue permanente para todos los dispositivos ── */
 function initFB() {
-  
   if (!FB_OK) { lsLoad(); setFB('of'); rAll(); setTimeout(openRadar, 700); return; }
   setFB('ok');
   ['tareas','proyectos','ideas','vacaciones','reagendados'].forEach(c => DB.ref(fbp(c)).off());
@@ -895,7 +1221,6 @@ function initFB() {
     lsSave(); rVac();
   });
   DB.ref(fbp('reagendados')).on('value', s => {
-  
     if (_fw > 0) return;
     const raw = s.val() || {};
     R = Object.entries(raw).map(([id,v]) => ({...v,id})).sort((a,b) => (b.ts||0)-(a.ts||0));
@@ -1439,14 +1764,486 @@ function rAll(){
 }
 
 /* ── KEYBOARD ── */
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){['m-radar','m-t','m-p','m-inf','m-sp','m-vac'].forEach(id=>cM(id));}if((e.ctrlKey||e.metaKey)&&e.key==='n'){e.preventDefault();oTM();}if((e.ctrlKey||e.metaKey)&&e.key==='p'){e.preventDefault();oPM();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['m-radar','m-t','m-p','m-inf','m-sp','m-vac','m-lunes'].forEach(id=>cM(id));}if((e.ctrlKey||e.metaKey)&&e.key==='n'){e.preventDefault();oTM();}if((e.ctrlKey||e.metaKey)&&e.key==='p'){e.preventDefault();oPM();}});
+
+/* ══════════════════════════════════════════
+   V10 — CAPAS NUEVAS
+══════════════════════════════════════════ */
+
+/* ── INPUT SANITIZER (XSS protection, client-side layer) ──
+   Strips HTML tags and dangerous chars from any user text.
+   Server-side sanitization must also be applied if using an API.
+*/
+function sanitize(str) {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/javascript:/gi,'')
+    .replace(/on\w+\s*=/gi,'')
+    .replace(/\x00/g,'');
+}
+function sanitizeTask(datos) {
+  const textFields = ['titulo','notas','siguiente','como','asistentes','cat'];
+  const out = {...datos};
+  textFields.forEach(f => { if (typeof out[f] === 'string') out[f] = sanitize(out[f]); });
+  if (Array.isArray(out.checklist)) {
+    out.checklist = out.checklist.map(c => ({...c, txt: sanitize(c.txt||'')}));
+  }
+  return out;
+}
+
+/* ── CLIENT-SIDE RATE LIMITER ──
+   Prevents UI-level spam. Logs a warning if > 30 actions/min.
+   Real rate limiting must be enforced server-side (Vercel/Supabase middleware).
+*/
+const _rl = {count:0, ts:Date.now()};
+function rlCheck() {
+  const now = Date.now();
+  if (now - _rl.ts > 60000) { _rl.count=0; _rl.ts=now; }
+  _rl.count++;
+  if (_rl.count > 30) {
+    toast('⚠️ Demasiadas acciones por minuto. Espera un momento.','yel');
+    return false;
+  }
+  return true;
+}
+
+/* ═══════════════════════════════════════
+   PIN LOCK SYSTEM
+═══════════════════════════════════════ */
+const PIN_KEY = 'copilot_pin';
+const INACTIVITY_MS = 10 * 60 * 1000; // 10 min
+let _pinBuffer = '', _inactTimer = null, _pinActive = false;
+
+function getPin() { return localStorage.getItem(PIN_KEY) || '1234'; }
+function setPin(p) { localStorage.setItem(PIN_KEY, p); }
+
+function lockScreen() {
+  if (_pinActive) return;
+  _pinActive = true;
+  _pinBuffer = '';
+  updatePinDots();
+  ge('pin-err').textContent = '';
+  ge('pin-screen').style.display = 'flex';
+}
+function unlockScreen() {
+  _pinActive = false;
+  ge('pin-screen').style.display = 'none';
+  resetInactivity();
+}
+function pinKey(k) {
+  if (k === 'C') { _pinBuffer = _pinBuffer.slice(0,-1); }
+  else if (k === 'OK' || _pinBuffer.length >= 4) {
+    if (k !== 'OK' && k !== 'C') _pinBuffer += k;
+    checkPin();
+    return;
+  } else { _pinBuffer += k; }
+  updatePinDots();
+  if (_pinBuffer.length === 4) checkPin();
+}
+function updatePinDots() {
+  for (let i=0;i<4;i++) {
+    const d = ge('pd'+i);
+    if (d) d.classList.toggle('filled', i < _pinBuffer.length);
+  }
+}
+function checkPin() {
+  if (_pinBuffer === getPin()) { unlockScreen(); }
+  else {
+    ge('pin-err').textContent = '❌ PIN incorrecto';
+    ge('pin-screen').style.animation = 'shk .38s';
+    setTimeout(() => { ge('pin-screen').style.animation = ''; }, 400);
+    _pinBuffer = ''; updatePinDots();
+  }
+}
+function resetInactivity() {
+  clearTimeout(_inactTimer);
+  _inactTimer = setTimeout(lockScreen, INACTIVITY_MS);
+}
+['click','keydown','mousemove','touchstart'].forEach(ev => {
+  document.addEventListener(ev, () => { if (!_pinActive) resetInactivity(); }, {passive:true});
+});
+
+/* ═══════════════════════════════════════
+   MOTOR DE ESTRÉS PONDERADO (Sanity Check 2.0)
+   · Peso 1.0: pendiente con DL ≤ 3 días
+   · Peso 0.5: pendiente con DL 3-10 días
+   · Peso 0.25: estado 'espera' (Waiting For)
+   · Peso 0:   reuniones y DL > 10 días
+═══════════════════════════════════════ */
+function calcStress() {
+  const ahora = Date.now();
+  const D3 = 3 * 86400000, D10 = 10 * 86400000;
+  let s1=0, s05=0, s025=0, s0=0, total=0;
+  T.forEach(t => {
+    if (t.estado === 'finalizado') return;
+    if (esReunion(t)) { s0++; return; }
+    if (t.estado === 'espera') { s025++; total += 0.25; return; }
+    if (!t.deadline) { s0++; return; }
+    const diff = new Date(t.deadline).getTime() - ahora;
+    if (diff <= D3) { s1++; total += 1.0; }
+    else if (diff <= D10) { s05++; total += 0.5; }
+    else { s0++; }
+  });
+  return {total: Math.round(total*10)/10, s1, s05, s025, s0};
+}
+
+function rStressMeter() {
+  const {total,s1,s05,s025,s0} = calcStress();
+  const sn = ge('stress-num'), sl = ge('stress-label');
+  const tf = ge('thermo-fill'), tb = ge('thermo-bulb');
+  const sp = ge('sanity-proc'), su = ge('sanity-urg');
+  const w1 = ge('st-w1'), w05 = ge('st-w05'), w025 = ge('st-w025'), w0 = ge('st-w0');
+  if (w1) w1.textContent = s1;
+  if (w05) w05.textContent = s05;
+  if (w025) w025.textContent = s025;
+  if (w0) w0.textContent = s0;
+  if (sp) sp.textContent = T.filter(t=>t.estado==='proceso').length;
+  if (su) su.textContent = T.filter(t=>t.urgente&&t.estado!=='finalizado').length;
+  if (!sn) return;
+  sn.textContent = total.toFixed(1);
+  const maxStress = 15;
+  const pct = Math.min(total / maxStress * 100, 100);
+  let col, label;
+  if (total <= 3) { col='var(--grn)'; label='✅ Carga controlada'; }
+  else if (total <= 7) { col='#f59e0b'; label='⚠️ Carga moderada'; }
+  else if (total <= 12) { col='var(--org)'; label='🔶 Carga elevada'; }
+  else { col='var(--red)'; label='🚨 Saturación Crítica'; }
+  sn.style.color = col;
+  if (sl) { sl.textContent = label; sl.style.color = col; }
+  if (tf) { tf.style.height = pct+'%'; tf.style.background = col; }
+  if (tb) tb.style.background = col;
+}
+
+/* ═══════════════════════════════════════
+   HOT POINTS — detecta * ! revisar llamar en notas
+═══════════════════════════════════════ */
+function hasHotPoint(t) {
+  if (!t.notas && !t.siguiente) return false;
+  const text = ((t.notas||'') + ' ' + (t.siguiente||'')).toLowerCase();
+  return /[*!]|revisar|llamar|urgent|crítico|bloqueado/.test(text);
+}
+
+/* ═══════════════════════════════════════
+   NOTES PRO TOOLBAR
+═══════════════════════════════════════ */
+function fmtNota(type) {
+  const ta = ge('mt-not');
+  if (!ta) return;
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const sel = ta.value.substring(start, end);
+  const map = {
+    bold: `**${sel||'texto'}**`,
+    italic: `_${sel||'texto'}_`,
+    star: `* `,
+    check: `✓ `,
+    warn: `! REVISAR: `,
+    call: `📞 LLAMAR: `
+  };
+  const ins = map[type] || '';
+  ta.value = ta.value.substring(0,start) + ins + ta.value.substring(end);
+  ta.focus();
+  ta.selectionStart = ta.selectionEnd = start + ins.length;
+}
+
+/* ═══════════════════════════════════════
+   SMART PROMPT GEMINI (CATALÀ)
+═══════════════════════════════════════ */
+function abGeminiSmartCat() {
+  const notas = ge('mt-not')?.value || '';
+  const checklist = clItems.map(c=>`${c.done?'✅':'⬜'} ${c.txt}`).join('\n');
+  const tit = ge('mt-tit')?.value || 'Reunió';
+  const prompt = `Redacta una nota resum de la reunió "${tit}" amb un paràgraf fàcil de llegir i que quedi clar. Ordena i no dupliquis contingut:\n\nCHECKLIST:\n${checklist}\n\nNOTES:\n${notas}`;
+  navigator.clipboard.writeText(prompt)
+    .then(() => {
+      window.open('https://gemini.google.com','_blank');
+      toast('✨ Prompt en català copiat. Gemini obert.','sky');
+    })
+    .catch(() => window.open('https://gemini.google.com','_blank'));
+}
+
+/* ═══════════════════════════════════════
+   DUPLICAR TAREA — checklist copia independiente
+═══════════════════════════════════════ */
+function dupTarea() {
+  const eid = ge('mt-id').value; if (!eid) return;
+  const orig = T.find(t=>t.id===eid); if (!orig) return;
+  const nId = uid();
+  const copia = {
+    ...orig,
+    id: nId,
+    titulo: orig.titulo + ' (copia)',
+    estado: 'pendiente',
+    creadoEn: Date.now(),
+    actualizadoEn: Date.now(),
+    completadoEn: null,
+    excelente: false,
+    aTiempo: undefined,
+    historial: [],
+    _autoS: false,
+    /* Checklist completamente independiente — JSON nuevo */
+    checklist: (orig.checklist||[]).map(c=>({id:uid(), txt:c.txt, done:false})),
+  };
+  T.push(sanitizeTask(copia));
+  cTM(); rAll(); dbW('tareas',nId,copia);
+  toast('⧉ Tarea duplicada con checklist independiente','grn');
+}
+
+/* ═══════════════════════════════════════
+   RADAR DE LOS LUNES
+   Solo aparece si hoy es lunes (getDay()===1)
+═══════════════════════════════════════ */
+function checkRadarLunes() {
+  const hoy = new Date();
+  if (hoy.getDay() !== 1) return; // Solo lunes
+  const key = 'copilot_lunes_' + hoy.toDateString();
+  if (localStorage.getItem(key)) return; // Ya mostrado hoy
+  localStorage.setItem(key, '1');
+  setTimeout(() => openRadarLunes(), 1200);
+}
+function openRadarLunes() {
+  const ahora = Date.now();
+  const hoyStr = new Date().toDateString();
+  const lbl = ge('lunes-fecha');
+  if (lbl) lbl.textContent = new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  // Categorías: WF, Reuniones, Críticas
+  const wf = T.filter(t=>t.estado==='espera');
+  const reuniones = T.filter(t=>esReunion(t)&&t.estado!=='finalizado'&&t.deadline);
+  const criticas = T.filter(t=>!esReunion(t)&&t.estado!=='finalizado'&&t.deadline&&new Date(t.deadline).getTime()-ahora<3*86400000);
+  let html = '';
+  const sec = (tit,col,bg,items) => {
+    if (!items.length) return '';
+    const rows = items.map(t=>`<div style="display:flex;align-items:center;gap:.38rem;padding:.22rem 0;border-bottom:1px solid rgba(0,0,0,.05);">
+      <span style="font-size:.7rem;color:${col};flex-shrink:0;">${t.urgente?'🚨':esReunion(t)?'🗓️':'•'}</span>
+      <span style="font-size:.72rem;color:var(--g900);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.titulo)}</span>
+      ${t.deadline?`<span style="font-size:.6rem;color:${col};flex-shrink:0;font-weight:700;">${tR(t.deadline)}</span>`:''}
+    </div>`).join('');
+    return `<div style="background:${bg};border-radius:var(--rxs);padding:.82rem;">
+      <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.44rem;">
+        <span style="font-size:.63rem;font-weight:700;color:${col};text-transform:uppercase;letter-spacing:.07em;">${tit}</span>
+        <span class="bdg" style="background:${col}22;color:${col};border:1px solid ${col}44;">${items.length}</span>
+      </div>${rows}</div>`;
+  };
+  html += sec('⏳ Waiting For — Esperando respuesta','#d97706','#fffbeb',wf);
+  html += sec('🗓️ Reuniones esta semana','#0369a1','#f0f9ff',reuniones.slice(0,5));
+  html += sec('🔴 Críticas (≤3 días)','#b91c1c','#fef2f2',criticas.slice(0,5));
+  if (!html) html = `<p style="font-size:.78rem;color:var(--g400);text-align:center;padding:1.5rem;">🎉 Semana limpia. ¡A por ello!</p>`;
+  const rb = ge('lunes-body'); if (rb) rb.innerHTML = html;
+  oM('m-lunes');
+}
+
+/* ═══════════════════════════════════════
+   BLOQUE DE LOS JUEVES
+   Autogenera tarea "Gestión de Alternativos (3h)"
+   cada jueves a las 10:00
+═══════════════════════════════════════ */
+function checkBloqueJueves() {
+  const hoy = new Date();
+  if (hoy.getDay() !== 4) return; // Solo jueves
+  const key = 'copilot_jueves_' + hoy.toDateString();
+  if (localStorage.getItem(key)) return;
+  localStorage.setItem(key, '1');
+  // Crear tarea si no existe ya una igual hoy
+  const todayStr = hoy.toDateString();
+  const yaExiste = T.some(t => t.titulo === 'Gestión de Alternativos (3h)' &&
+    new Date(t.creadoEn).toDateString() === todayStr);
+  if (yaExiste) return;
+  const dl = new Date(hoy); dl.setHours(10,0,0,0);
+  const dlFin = new Date(hoy); dlFin.setHours(13,0,0,0);
+  const nId = uid();
+  const nt = {
+    id: nId, titulo: 'Gestión de Alternativos (3h)',
+    dept: 'G', cat: 'Administración', estado: 'pendiente',
+    prioridad: 'media', deadline: dl.toISOString().slice(0,16),
+    deadlineFin: dlFin.toISOString().slice(0,16),
+    notas: '🔄 Bloque automático de los jueves. Revisar tareas alternativas, pendientes bloqueadas y reprogramar si es necesario.',
+    urgente: false, aviso24: false, ciclica: false, keepProceso: false,
+    frecDias: 0, asistentes: '', checklist: [], siguiente: '', como: '',
+    creadoEn: Date.now(), actualizadoEn: Date.now(), completadoEn: null,
+    excelente: false, aTiempo: undefined, historial: [],
+    original_deadline: dl.toISOString().slice(0,16),
+  };
+  T.push(nt); rAll(); dbW('tareas',nId,nt);
+  toast('🗓️ Bloque jueves creado: Gestión de Alternativos 10-13h','sky');
+}
+
+/* ═══════════════════════════════════════
+   ESCUDO DE VACACIONES
+   Durante el período de vacaciones, si el usuario
+   intenta crear una tarea con DL dentro del rango,
+   muestra aviso. Además marca las cards afectadas.
+═══════════════════════════════════════ */
+function enPeriodoVacaciones() {
+  const ahora = new Date().toDateString();
+  return V.some(v => {
+    const d = new Date(v.desde), h = new Date(v.hasta);
+    const hoyD = new Date(); hoyD.setHours(0,0,0,0);
+    return hoyD >= d && hoyD <= h;
+  });
+}
+function getVacActiva() {
+  const hoyD = new Date(); hoyD.setHours(0,0,0,0);
+  return V.find(v => hoyD >= new Date(v.desde) && hoyD <= new Date(v.hasta));
+}
+
+/* ═══════════════════════════════════════
+   STATS WIDGETS v10 RENDER
+═══════════════════════════════════════ */
+function rStatsWidgets() {
+  const ahora = Date.now();
+  const semanaMs = 7*86400000;
+  const D3 = 3*86400000, D10 = 10*86400000;
+  // Widget 1: Movimiento semanal
+  const creadas = T.filter(t=>(t.creadoEn||0) > ahora-semanaMs).length;
+  const cerradas = T.filter(t=>t.completadoEn && t.completadoEn > ahora-semanaMs).length;
+  const enEspera = T.filter(t=>t.estado==='espera').length;
+  const swc = ge('sw-creadas'), swcl = ge('sw-cerradas'), sww = ge('sw-wf');
+  if(swc) swc.textContent=creadas; if(swcl) swcl.textContent=cerradas; if(sww) sww.textContent=enEspera;
+  const ratio = creadas > 0 ? cerradas/creadas : 0;
+  const ratioBar = ge('sw-ratio-bar'); if(ratioBar){ratioBar.style.width=Math.min(ratio*100,100)+'%';ratioBar.style.background=ratio>=1?'var(--grn)':ratio>=.5?'#f59e0b':'var(--red)';}
+  const ratioLbl = ge('sw-ratio-lbl'); if(ratioLbl) ratioLbl.textContent=`Ratio cierre/apertura: ${creadas>0?(ratio*100).toFixed(0)+'%':'–'}`;
+  // Widget 2: Horizonte de deadlines
+  const activas = T.filter(t=>t.estado!=='finalizado'&&!esReunion(t)&&t.deadline);
+  const hdHoy = activas.filter(t=>new Date(t.deadline).getTime()-ahora<=0).length;
+  const hd3 = activas.filter(t=>{const d=new Date(t.deadline).getTime()-ahora;return d>0&&d<=D3;}).length;
+  const hd10 = activas.filter(t=>{const d=new Date(t.deadline).getTime()-ahora;return d>D3&&d<=D10;}).length;
+  const hdMas = activas.filter(t=>new Date(t.deadline).getTime()-ahora>D10).length;
+  const mx = Math.max(hdHoy,hd3,hd10,hdMas,1);
+  const setHD = (id,nId,v)=>{ const b=ge(id),n=ge(nId); if(b)b.style.width=Math.round(v/mx*100)+'%'; if(n)n.textContent=v; };
+  setHD('hd-hoy','hd-hoy-n',hdHoy); setHD('hd-3d','hd-3d-n',hd3); setHD('hd-10d','hd-10d-n',hd10); setHD('hd-mas','hd-mas-n',hdMas);
+  // Widget 3: Flujo Local vs WF
+  const localN = T.filter(t=>t.estado==='pendiente'||t.estado==='proceso').length;
+  const wfN = T.filter(t=>t.estado==='espera').length;
+  const fl=ge('flujo-local'),fw=ge('flujo-wf'),fb=ge('flujo-bar'),flbl=ge('flujo-lbl');
+  if(fl)fl.textContent=localN; if(fw)fw.textContent=wfN;
+  const tot=localN+wfN||1; const pctL=Math.round(localN/tot*100);
+  if(fb){fb.style.width=pctL+'%';fb.style.background=pctL>70?'var(--grn)':pctL>40?'#f59e0b':'var(--org)';}
+  if(flbl)flbl.textContent=`${pctL}% acción local · ${100-pctL}% bloqueado en WF`;
+  // Widget 4: Mapa de peso por dept (bar chart)
+  const dchart = ge('dept-peso-chart');
+  if (dchart) {
+    const depts = ['P','F','O','L','G','M'];
+    const pesos = depts.map(k=>{
+      const ts = T.filter(t=>t.dept===k&&t.estado!=='finalizado');
+      return ts.reduce((sum,t)=>{ const w=t.urgente?1.5:t.prioridad==='alta'?1.2:t.prioridad==='baja'?0.5:1; return sum+w; },0);
+    });
+    const maxP = Math.max(...pesos, 1);
+    const depColors = {P:'var(--mag)',F:'var(--grn)',O:'var(--cya)',L:'var(--org)',G:'var(--grl)',M:'var(--mkt)'};
+    dchart.innerHTML = depts.map((k,i)=>{
+      const h = Math.max(Math.round(pesos[i]/maxP*60),4);
+      return `<div class="bar-col">
+        <span style="font-size:.6rem;font-weight:700;color:${depColors[k]}">${pesos[i].toFixed(1)}</span>
+        <div class="bar-fill" style="height:${h}px;background:${depColors[k]};opacity:.85;"></div>
+        <span class="bar-lbl">${k}</span>
+      </div>`;
+    }).join('');
+  }
+}
+
+/* ═══════════════════════════════════════
+   OVERRIDE: setFB con nuevo LED
+═══════════════════════════════════════ */
+function setFB(s) {
+  const dot = ge('fb-dot'), lbl = ge('fb-lbl');
+  if (!dot || !lbl) return;
+  const m = {
+    ok:  {c:'ok',  t:'Sincronizado',  tc:'var(--grn)'},
+    er:  {c:'er',  t:'Sin conexión',  tc:'var(--red)'},
+    of:  {c:'er',  t:'Offline',       tc:'var(--g400)'},
+    sy:  {c:'sy',  t:'Guardando…',    tc:'#f59e0b'},
+  };
+  const x = m[s] || m.er;
+  dot.className = `sync-led ${x.c}`;
+  lbl.textContent = x.t;
+  lbl.style.color = x.tc;
+}
+
+/* ═══════════════════════════════════════
+   OVERRIDE: oTM — mostrar botón duplicar en edición
+═══════════════════════════════════════ */
+const _oTM_orig = oTM;
+function oTM(id) {
+  _oTM_orig(id);
+  const dupBtn = ge('mt-dup');
+  if (dupBtn) dupBtn.style.display = id ? '' : 'none';
+}
+
+/* ═══════════════════════════════════════
+   OVERRIDE: gT — añadir sanitización y rate limit
+═══════════════════════════════════════ */
+const _gT_orig = gT;
+function gT() {
+  if (!rlCheck()) return;
+  _gT_orig();
+}
+
+/* ═══════════════════════════════════════
+   OVERRIDE: bCard — añadir hot point y badge WF
+═══════════════════════════════════════ */
+const _bCard_orig = bCard;
+function bCard(t) {
+  let html = _bCard_orig(t);
+  // Inject hot point dot if needed
+  if (hasHotPoint(t) && t.estado !== 'finalizado') {
+    html = html.replace(
+      `id="dc${t.id}"`,
+      `id="dc${t.id}"`
+    );
+    // Add hot point to badge row
+    html = html.replace(
+      `${t.ciclica?'<span class="bdg b-s">🔁</span>':''}`,
+      `${t.ciclica?'<span class="bdg b-s">🔁</span>':''}<div class="hot-point" title="Hot point: acción requerida"></div>`
+    );
+  }
+  // Inject WF badge
+  if (t.estado === 'espera') {
+    html = html.replace('</div>\n      ${dl?', '<span class="bdg bdg-wf">⏳ WF</span></div>\n      ${dl?');
+  }
+  return html;
+}
+
+/* ═══════════════════════════════════════
+   OVERRIDE: rAll — include stress + stats widgets
+═══════════════════════════════════════ */
+const _rAll_orig = rAll;
+function rAll() {
+  _rAll_orig();
+  rStressMeter();
+  if (tabA === 'stats') rStatsWidgets();
+  // Vacaciones escudo visual
+  const vAct = getVacActiva();
+  const vacBanner = ge('vac-active-banner');
+  if (vAct) {
+    if (!vacBanner) {
+      const b = document.createElement('div');
+      b.id = 'vac-active-banner';
+      b.style.cssText = 'background:linear-gradient(90deg,#0369a1,#0e7490);color:#fff;text-align:center;padding:.45rem 1.4rem;font-size:.72rem;font-weight:600;position:sticky;top:60px;z-index:190;';
+      b.innerHTML = `🏖️ Período de vacaciones activo: <b>${vAct.motivo}</b> hasta ${vAct.hasta} — Agenda bloqueada`;
+      document.body.insertBefore(b, document.querySelector('.layout-grid'));
+    }
+  } else {
+    if (vacBanner) vacBanner.remove();
+  }
+}
+
+/* ═══════════════════════════════════════
+   OVERRIDE: sT — render stats widgets on tab switch
+═══════════════════════════════════════ */
+const _sT_orig = sT;
+function sT(n) {
+  _sT_orig(n);
+  if (n === 'stats') rStatsWidgets();
+}
 
 /* ── INIT ── */
 (function init(){
   uCats('P','');
   initFB();
+  resetInactivity();
+  checkRadarLunes();
+  checkBloqueJueves();
   setInterval(checkAuto,30000);
-  setInterval(()=>{updKPI();checkAuto();rDashboard();},60000); /* Dashboard se refresca también en el timer */
+  setInterval(()=>{ updKPI(); checkAuto(); rDashboard(); rStressMeter(); },60000);
 })();
 </script>
 </body>
