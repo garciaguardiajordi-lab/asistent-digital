@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nil — Ops Dashboard</title>
+<title>CLAUDINA — Ops Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ══════════════════════════════════════════════
-   NIL — DESIGN SYSTEM v10.5  |  Light + Vivid
+   CLAUDINA — DESIGN SYSTEM v10.5  |  Light + Vivid
 ══════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -689,7 +689,7 @@ textarea.fld{resize:vertical;min-height:72px;line-height:1.6;}
         <svg width="17" height="17" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       </div>
       <div>
-        <p style="font-size:.88rem;font-weight:900;color:var(--tx);line-height:1.2;letter-spacing:-.01em;">Nil <span style="font-size:.58rem;font-weight:500;color:var(--tx3);">v10.5</span></p>
+        <p style="font-size:.88rem;font-weight:900;color:var(--tx);line-height:1.2;letter-spacing:-.01em;">CLAUDINA <span style="font-size:.58rem;font-weight:500;color:var(--tx3);">v10.5</span></p>
         <div style="display:flex;align-items:center;gap:.26rem;">
           <span id="fb-dot" class="sync-led ok"></span>
           <span id="fb-lbl" style="font-size:.59rem;font-weight:700;color:var(--grn);">Sincronizado</span>
@@ -1055,7 +1055,7 @@ let SB = null, SB_OK = false, _sbCh = null;
 try {
   SB = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   SB_OK = true;
-} catch(e) { console.warn('[Nil v10.5] Supabase offline. localStorage.', e); }
+} catch(e) { console.warn('[CLAUDINA v10.5] Supabase offline. localStorage.', e); }
 
 /* ── CONSTANTS ── */
 const MS_D = 86400000, MS_2D = 172800000;
@@ -1134,89 +1134,126 @@ function setFB(s) {
   if(fst){fst.textContent=x.t;fst.style.color=x.tc;}
 }
 async function dbW(col,id,data){
-  lsSave(); if(!SB_OK)return;
+  /* Always persist locally first — this is the primary storage */
+  lsSave();
+  /* Only attempt Supabase if properly configured */
+  const configured = SUPABASE_URL && SUPABASE_URL !== 'TU_SUPABASE_URL';
+  if(!configured||!SB_OK) return;
   setFB('sy');
-  const row=sanitizeTask({...data,id});
-  delete row._autoS;
-  if(Array.isArray(row.checklist))row.checklist=JSON.stringify(row.checklist);
-  if(Array.isArray(row.historial))row.historial=JSON.stringify(row.historial);
-  const{error}=await SB.from(col).upsert(row,{onConflict:'id'});
-  if(error){console.error(error);setFB('er');toast('Error Supabase','red');}
-  else setFB('ok');
+  try {
+    const row=sanitizeTask({...data,id});
+    delete row._autoS;
+    if(Array.isArray(row.checklist))row.checklist=JSON.stringify(row.checklist);
+    if(Array.isArray(row.historial))row.historial=JSON.stringify(row.historial);
+    const{error}=await SB.from(col).upsert(row,{onConflict:'id'});
+    if(error){console.error(error);setFB('er');}
+    else setFB('ok');
+  } catch(e){console.error('[CLAUDINA] dbW error:',e);setFB('er');}
 }
 async function dbD(col,id){
-  lsSave(); if(!SB_OK)return;
+  /* Always persist locally first */
+  lsSave();
+  const configured = SUPABASE_URL && SUPABASE_URL !== 'TU_SUPABASE_URL';
+  if(!configured||!SB_OK) return;
   setFB('sy');
-  const{error}=await SB.from(col).delete().eq('id',id);
-  if(error){console.error(error);setFB('er');}
-  else setFB('ok');
+  try {
+    const{error}=await SB.from(col).delete().eq('id',id);
+    if(error){console.error(error);setFB('er');}
+    else setFB('ok');
+  } catch(e){console.error('[CLAUDINA] dbD error:',e);setFB('er');}
 }
 
 /* ── initFB: registra onValue permanente para todos los dispositivos ── */
 function initFB() {
-  if (!FB_OK) { lsLoad(); setFB('of'); rAll(); setTimeout(()=>{ if(T.length>0)openRadar(); else setTimeout(openRadar,1500); },400); return; }
-  setFB('ok');
-  ['tareas','proyectos','ideas','vacaciones','reagendados'].forEach(c => DB.ref(fbp(c)).off());
+  /* ── STEP 1: Always load from localStorage immediately ──
+     Data persists across sessions without any server.
+     This is the primary persistence layer. */
+  lsLoad();
+  rAll();
 
-  DB.ref(fbp('tareas')).on('value', s => {
-    if (_fw > 0) return;
-    const raw = s.val() || {};
-    T = Object.entries(raw).map(([id,v]) => ({...v,id})).sort((a,b) => (a.creadoEn||0)-(b.creadoEn||0));
-    lsSave(); rAll(); /* rAll actualiza TAMBIÉN el aside */
-  }, () => setFB('er'));
+  /* ── STEP 2: Show morning radar after data is ready ── */
+  setTimeout(() => {
+    if (T.length > 0) openRadar();
+    else setTimeout(openRadar, 1500);
+  }, 300);
 
-  DB.ref(fbp('proyectos')).on('value', s => {
-    if (_fw > 0) return;
-    const raw = s.val() || {};
-    P = Object.entries(raw).map(([id,v]) => ({...v,id})).sort((a,b) => (a.creadoEn||0)-(b.creadoEn||0));
-    lsSave(); rAll();
-  });
-  DB.ref(fbp('ideas')).on('value', s => {
-    if (_fw > 0) return;
-    const raw = s.val() || {};
-    I = Object.entries(raw).map(([id,v]) => ({...v,id})).sort((a,b) => (b.creadoEn||0)-(a.creadoEn||0));
-    lsSave(); rIdeas();
-  });
-  DB.ref(fbp('vacaciones')).on('value', s => {
-    if (_fw > 0) return;
-    const raw = s.val() || {};
-    V = Object.entries(raw).map(([id,v]) => ({...v,id}));
-    lsSave(); rVac();
-  });
-  DB.ref(fbp('reagendados')).on('value', s => {
-    if (_fw > 0) return;
-    const raw = s.val() || {};
-    R = Object.entries(raw).map(([id,v]) => ({...v,id})).sort((a,b) => (b.ts||0)-(a.ts||0));
-    lsSave(); rReag();
-  });
+  /* ── STEP 3: Connect Supabase only if configured ──
+     If SUPABASE_URL is still the placeholder, skip entirely.
+     Data will live in localStorage. */
+  const isConfigured = SUPABASE_URL && SUPABASE_URL !== 'TU_SUPABASE_URL';
+  if (!isConfigured || !SB_OK) {
+    setFB('of');
+    const dot = ge('fb-dot'), lbl = ge('fb-lbl');
+    if (dot) dot.className = 'sync-led sy';
+    if (lbl) { lbl.textContent = 'Solo local'; lbl.style.color = '#d97706'; }
+    const fdot = ge('footer-led'), fst = ge('footer-status');
+    if (fdot) fdot.className = 'sync-led sy';
+    if (fst) { fst.textContent = 'Local — sin servidor'; fst.style.color = '#d97706'; }
+    return;
+  }
 
-  lsLoad(); rAll();
-  // Show radar only once, after first real data arrives
-  let _radarShown=false;
-  const _showRadarOnce=()=>{ if(!_radarShown){_radarShown=true;setTimeout(openRadar,350);} };
-  // If we already have cached tasks, show immediately
-  if(T.length>0){ _showRadarOnce(); }
-  // Also hook: first tareas snapshot triggers it
-  const _origTRef=DB.ref(fbp('tareas'));
-  _origTRef.once('value',()=>{ lsLoad(); _showRadarOnce(); });
+  /* ── STEP 4: Supabase configured — load from server and subscribe ── */
+  setFB('sy');
+  (async () => {
+    try {
+      const [tr, pr, vr] = await Promise.all([
+        SB.from('tareas').select('*').order('created_at', {ascending:true}),
+        SB.from('proyectos').select('*').order('created_at', {ascending:true}),
+        SB.from('vacaciones').select('*').order('desde', {ascending:true}),
+      ]);
+      if (!tr.error) T = tr.data.map(mapRow);
+      if (!pr.error) P = pr.data.map(mapRow);
+      if (!vr.error) V = vr.data.map(mapRow);
+      lsSave(); rAll(); setFB('ok');
+    } catch(e) { console.error('[CLAUDINA] Supabase load error:', e); setFB('er'); }
+
+    /* Realtime subscription */
+    try {
+      if (_sbCh) SB.removeChannel(_sbCh);
+      _sbCh = SB.channel('CLAUDINA-rt')
+        .on('postgres_changes',{event:'*',schema:'public',table:'tareas'}, async () => {
+          const {data,error} = await SB.from('tareas').select('*').order('created_at',{ascending:true});
+          if (!error) { T=data.map(mapRow); lsSave(); rAll(); }
+        })
+        .on('postgres_changes',{event:'*',schema:'public',table:'proyectos'}, async () => {
+          const {data,error} = await SB.from('proyectos').select('*').order('created_at',{ascending:true});
+          if (!error) { P=data.map(mapRow); lsSave(); rAll(); }
+        })
+        .on('postgres_changes',{event:'*',schema:'public',table:'vacaciones'}, async () => {
+          const {data,error} = await SB.from('vacaciones').select('*').order('desde',{ascending:true});
+          if (!error) { V=data.map(mapRow); lsSave(); rVac(); }
+        })
+        .subscribe();
+    } catch(e) { console.error('[CLAUDINA] Realtime error:', e); }
+  })();
 }
 
+
+function mapRow(r) {
+  if (!r) return r;
+  const o = {...r};
+  if (r.created_at && !r.creadoEn) o.creadoEn = new Date(r.created_at).getTime();
+  if (r.updated_at && !r.actualizadoEn) o.actualizadoEn = new Date(r.updated_at).getTime();
+  if (typeof r.checklist==='string'){try{o.checklist=JSON.parse(r.checklist);}catch(e){o.checklist=[];}}
+  if (typeof r.historial==='string'){try{o.historial=JSON.parse(r.historial);}catch(e){o.historial=[];}}
+  return o;
+}
 function lsSave() {
   try {
-    localStorage.setItem('nil_t', JSON.stringify(T));
-    localStorage.setItem('nil_p', JSON.stringify(P));
-    localStorage.setItem('nil_i', JSON.stringify(I));
-    localStorage.setItem('nil_v', JSON.stringify(V));
-    localStorage.setItem('nil_r', JSON.stringify(R));
+    localStorage.setItem('CLAUDINA_t', JSON.stringify(T));
+    localStorage.setItem('CLAUDINA_p', JSON.stringify(P));
+    localStorage.setItem('CLAUDINA_i', JSON.stringify(I));
+    localStorage.setItem('CLAUDINA_v', JSON.stringify(V));
+    localStorage.setItem('CLAUDINA_r', JSON.stringify(R));
   } catch(e) {}
 }
 function lsLoad() {
   try {
-    T = JSON.parse(localStorage.getItem('nil_t')||'[]');
-    P = JSON.parse(localStorage.getItem('nil_p')||'[]');
-    I = JSON.parse(localStorage.getItem('nil_i')||'[]');
-    V = JSON.parse(localStorage.getItem('nil_v')||'[]');
-    R = JSON.parse(localStorage.getItem('nil_r')||'[]');
+    T = JSON.parse(localStorage.getItem('CLAUDINA_t')||'[]');
+    P = JSON.parse(localStorage.getItem('CLAUDINA_p')||'[]');
+    I = JSON.parse(localStorage.getItem('CLAUDINA_i')||'[]');
+    V = JSON.parse(localStorage.getItem('CLAUDINA_v')||'[]');
+    R = JSON.parse(localStorage.getItem('CLAUDINA_r')||'[]');
   } catch(e) { T=[];P=[];I=[];V=[];R=[]; }
 }
 
@@ -1695,7 +1732,7 @@ function openRadar(){const h=new Date().getHours();ge('rg').textContent=h<12?'¡
   /* ── ALERTA PESO CRECIENTE ──
      Tareas en pendiente que en <4 días cambiarán de zona de peso
      (de "lejano >7d" → "medio 3-7d", o de "medio" → "crítico <3d")
-     Nil avisa pro-activamente para que puedas priorizar. */
+     CLAUDINA avisa pro-activamente para que puedas priorizar. */
   const D3=3*86400000, D7=7*86400000;
   const subiranACritico=T.filter(t=>{
     if(t.estado!=='pendiente'||!t.deadline||esReunion(t))return false;
@@ -1809,9 +1846,9 @@ function rAll(){
 function exportData() {
   const ts = new Date();
   const pad = n => String(n).padStart(2,'0');
-  const fname = `nil_backup_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}.json`;
+  const fname = `CLAUDINA_backup_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}.json`;
   const payload = {
-    version: 'nil_v10_5',
+    version: 'CLAUDINA_v10_5',
     exportedAt: ts.toISOString(),
     exportedAtHuman: ts.toLocaleString('es-ES'),
     counts: { tareas: T.length, proyectos: P.length, ideas: I.length, vacaciones: V.length },
@@ -1914,7 +1951,7 @@ function rlCheck() {
 /* ═══════════════════════════════════════
    PIN LOCK SYSTEM
 ═══════════════════════════════════════ */
-const PIN_KEY = 'nil_pin';
+const PIN_KEY = 'CLAUDINA_pin';
 const INACTIVITY_MS = 10 * 60 * 1000; // 10 min
 let _pinBuffer = '', _inactTimer = null, _pinActive = false;
 
@@ -2186,7 +2223,7 @@ function dupTarea() {
 function checkRadarLunes() {
   const hoy = new Date();
   if (hoy.getDay() !== 1) return; // Solo lunes
-  const key = 'nil_lunes_' + hoy.toDateString();
+  const key = 'CLAUDINA_lunes_' + hoy.toDateString();
   if (localStorage.getItem(key)) return; // Ya mostrado hoy
   localStorage.setItem(key, '1');
   setTimeout(() => openRadarLunes(), 1200);
@@ -2237,7 +2274,7 @@ function openRadarLunes() {
 function checkBloqueJueves() {
   const hoy = new Date();
   if (hoy.getDay() !== 4) return; // Solo jueves
-  const key = 'nil_jueves_' + hoy.toDateString();
+  const key = 'CLAUDINA_jueves_' + hoy.toDateString();
   if (localStorage.getItem(key)) return;
   localStorage.setItem(key, '1');
   // Crear tarea si no existe ya una igual hoy
@@ -2363,9 +2400,7 @@ function rStatsWidgets() {
 /* ── INIT ── */
 (function init(){
   uCats('P','');
-  initFB();
-  // Preload from localStorage while Supabase loads
-  lsLoad(); rAll();
+  initFB(); /* initFB() handles lsLoad() + rAll() + radar internally */
   resetInactivity();
   checkRadarLunes();
   checkBloqueJueves();
@@ -2380,7 +2415,7 @@ function rStatsWidgets() {
     <span style="font-size:.63rem;color:var(--tx3);">Supabase · <span id="footer-status">Conectado</span></span>
   </div>
   <div style="display:flex;align-items:center;gap:.65rem;">
-    <span style="font-size:.62rem;color:var(--tx3);">Nil v10.5 — AI Ops Dashboard</span>
+    <span style="font-size:.62rem;color:var(--tx3);">CLAUDINA v10.5 — AI Ops Dashboard</span>
 <button onclick="exportData()" class="btn b-ind" style="font-size:.7rem;padding:.32rem .7rem;">
       <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       💾 Guardar Backup
