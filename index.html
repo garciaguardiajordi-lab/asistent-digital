@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ══════════════════════════════════════════════
-   NIL — DESIGN SYSTEM v10.5  |  Light + Vivid
+   CLAUDINA — DESIGN SYSTEM v10.5  |  Light + Vivid
 ══════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -354,6 +354,8 @@ textarea.fld{resize:vertical;min-height:72px;line-height:1.6;}
 <body>
 
 <!-- TOASTS -->
+<!-- Hidden file input for import -->
+<input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
 <div id="toasts" style="position:fixed;top:1rem;right:1rem;z-index:800;display:flex;flex-direction:column;gap:.4rem;max-width:300px;width:100%;pointer-events:none;"></div>
 
 <!-- ══════════════════════════════════════
@@ -707,7 +709,14 @@ textarea.fld{resize:vertical;min-height:72px;line-height:1.6;}
         <span id="b-dot" style="display:none;position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:#c2410c;border:2px solid #fff;"></span>
       </button>
       <button onclick="oM('m-vac')" class="bic" title="Vacaciones" style="font-size:14px;">🏖️</button>
-      <button onclick="syncMobile()" class="sync-mobile-btn hmob" data-tip="Fuerza refresco"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Sincronizar</button>
+<button onclick="exportData()" class="btn b-gh hmob" data-tip="Descargar backup JSON">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        💾 Backup
+      </button>
+      <button onclick="triggerImport()" class="btn b-gh hmob" data-tip="Cargar backup JSON">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        📂 Cargar
+      </button>
       <button onclick="oTM()" class="btn b-ind"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tarea</button>
       <button onclick="oPM()" class="btn b-gh hmob"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>Proyecto</button>
     </div>
@@ -1515,9 +1524,9 @@ function bCard(t) {
         ${t.ciclica?'<span class="bdg b-s">🔁</span>':''}
         ${vRes?`<span class="bdg b-y" title="Deadline ajustado por vacaciones">📅</span>`:''}
         ${esR&&t.estado!=='finalizado'?'<span class="bdg b-s">🗓️ Evento</span>':''}
-        \${t.estado==='espera'?'<span class="bdg bdg-wf">⏳ WF</span>':''}
-        \${hasHotPoint(t)&&t.estado!=='finalizado'?'<div class="hot-point" title="Hot point: revisar/llamar"></div>':''}
-        \${hasInfoPending(t)&&t.estado!=='finalizado'?('<span class="info-icon" title="Falta info" onclick="event.stopPropagation();oTM(\''+(t.id)+'\')">'+(t.notas&&/correo|email/.test((t.notas||'').toLowerCase())?'\u2709\ufe0f':'\U0001F4DE')+'</span>'):''}
+        ${t.estado==='espera'?'<span class="bdg bdg-wf">⏳ WF</span>':''}
+        ${hasHotPoint(t)&&t.estado!=='finalizado'?'<div class="hot-point" title="Hot point: revisar/llamar"></div>':''}
+        ${hasInfoPending(t)&&t.estado!=='finalizado'?'<span class="info-icon" title="Falta info / Esperando respuesta">'+((t.notas&&/correo|email/.test((t.notas||'').toLowerCase()))?'✉️':'📞')+'</span>':''}
       </div>
       ${dl?`<div style="display:flex;align-items:center;gap:.27rem;margin-bottom:.44rem;">
         <svg width="10" height="10" fill="none" stroke="${dlC}" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -1699,6 +1708,73 @@ function rAll(){
     case'ideas':rIdeas();break;
     case'stats':rStats();rStatsWidgets();break;
   }
+}
+
+
+/* ════════════════════════════════════════════════
+   EXPORT / IMPORT — Backup del sistema
+   Exporta: Tareas, Proyectos, Ideas, Vacaciones
+   Importa: Fusiona datos del JSON descargado
+   Uso: Descargar → enviar al asistente → continuar
+════════════════════════════════════════════════ */
+function exportData() {
+  const ts = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const fname = `nil_backup_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}.json`;
+  const payload = {
+    version: 'nil_v10_5',
+    exportedAt: ts.toISOString(),
+    exportedAtHuman: ts.toLocaleString('es-ES'),
+    counts: { tareas: T.length, proyectos: P.length, ideas: I.length, vacaciones: V.length },
+    tareas: T,
+    proyectos: P,
+    ideas: I,
+    vacaciones: V,
+    reagendados: R,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = fname; a.click();
+  URL.revokeObjectURL(url);
+  toast(`💾 Backup guardado: ${fname}`, 'grn');
+}
+
+function triggerImport() {
+  const inp = ge('import-file');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.tareas) { toast('❌ Archivo no válido. Falta campo tareas.', 'red'); return; }
+      // Merge strategy: import overwrites by id, new items are added
+      const mergeById = (existing, incoming) => {
+        const map = {};
+        existing.forEach(x => { map[x.id] = x; });
+        incoming.forEach(x => { map[x.id] = x; }); // incoming wins
+        return Object.values(map);
+      };
+      T = mergeById(T, data.tareas || []);
+      P = mergeById(P, data.proyectos || []);
+      I = mergeById(I, data.ideas || []);
+      V = mergeById(V, data.vacaciones || []);
+      R = mergeById(R, data.reagendados || []);
+      lsSave();
+      rAll();
+      const cnt = data.counts || {};
+      toast(`📂 Importado: ${(data.tareas||[]).length} tareas, ${(data.proyectos||[]).length} proyectos`, 'grn');
+    } catch(err) {
+      console.error(err);
+      toast('❌ Error al leer el archivo JSON', 'red');
+    }
+  };
+  reader.readAsText(file);
 }
 
 /* ── KEYBOARD ── */
@@ -2189,9 +2265,13 @@ function rStatsWidgets() {
   </div>
   <div style="display:flex;align-items:center;gap:.65rem;">
     <span style="font-size:.62rem;color:var(--tx3);">Nil v10.5 — AI Ops Dashboard</span>
-    <button onclick="syncMobile()" class="btn b-gh" style="font-size:.7rem;padding:.3rem .7rem;">
-      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-      Sincronizar Móvil
+<button onclick="exportData()" class="btn b-ind" style="font-size:.7rem;padding:.32rem .7rem;">
+      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      💾 Guardar Backup
+    </button>
+    <button onclick="triggerImport()" class="btn b-gh" style="font-size:.7rem;padding:.32rem .7rem;">
+      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      📂 Cargar Backup
     </button>
   </div>
 </div>
