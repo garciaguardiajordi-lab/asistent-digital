@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nil — Ops Dashboard</title>
+<title>CLAUDINA — Ops Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -681,7 +681,7 @@ textarea.fld{resize:vertical;min-height:72px;line-height:1.6;}
         <svg width="17" height="17" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       </div>
       <div>
-        <p style="font-size:.88rem;font-weight:900;color:var(--tx);line-height:1.2;letter-spacing:-.01em;">Nil <span style="font-size:.58rem;font-weight:500;color:var(--tx3);">v10.5</span></p>
+        <p style="font-size:.88rem;font-weight:900;color:var(--tx);line-height:1.2;letter-spacing:-.01em;">CLAUDINA <span style="font-size:.58rem;font-weight:500;color:var(--tx3);">v10.5</span></p>
         <div style="display:flex;align-items:center;gap:.26rem;">
           <span id="fb-dot" class="sync-led ok"></span>
           <span id="fb-lbl" style="font-size:.59rem;font-weight:700;color:var(--grn);">Sincronizado</span>
@@ -1047,7 +1047,7 @@ let SB = null, SB_OK = false, _sbCh = null;
 try {
   SB = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   SB_OK = true;
-} catch(e) { console.warn('[Nil v10.5] Supabase offline. localStorage.', e); }
+} catch(e) { console.warn('[CLAUDINA v10.5] Supabase offline. localStorage.', e); }
 
 /* ── CONSTANTS ── */
 const MS_D = 86400000, MS_2D = 172800000;
@@ -1187,20 +1187,20 @@ function initFB() {
 
 function lsSave() {
   try {
-    localStorage.setItem('nil_t', JSON.stringify(T));
-    localStorage.setItem('nil_p', JSON.stringify(P));
-    localStorage.setItem('nil_i', JSON.stringify(I));
-    localStorage.setItem('nil_v', JSON.stringify(V));
-    localStorage.setItem('nil_r', JSON.stringify(R));
+    localStorage.setItem('CLAUDINA_t', JSON.stringify(T));
+    localStorage.setItem('CLAUDINA_p', JSON.stringify(P));
+    localStorage.setItem('CLAUDINA_i', JSON.stringify(I));
+    localStorage.setItem('CLAUDINA_v', JSON.stringify(V));
+    localStorage.setItem('CLAUDINA_r', JSON.stringify(R));
   } catch(e) {}
 }
 function lsLoad() {
   try {
-    T = JSON.parse(localStorage.getItem('nil_t')||'[]');
-    P = JSON.parse(localStorage.getItem('nil_p')||'[]');
-    I = JSON.parse(localStorage.getItem('nil_i')||'[]');
-    V = JSON.parse(localStorage.getItem('nil_v')||'[]');
-    R = JSON.parse(localStorage.getItem('nil_r')||'[]');
+    T = JSON.parse(localStorage.getItem('CLAUDINA_t')||'[]');
+    P = JSON.parse(localStorage.getItem('CLAUDINA_p')||'[]');
+    I = JSON.parse(localStorage.getItem('CLAUDINA_i')||'[]');
+    V = JSON.parse(localStorage.getItem('CLAUDINA_v')||'[]');
+    R = JSON.parse(localStorage.getItem('CLAUDINA_r')||'[]');
   } catch(e) { T=[];P=[];I=[];V=[];R=[]; }
 }
 
@@ -1720,9 +1720,9 @@ function rAll(){
 function exportData() {
   const ts = new Date();
   const pad = n => String(n).padStart(2,'0');
-  const fname = `nil_backup_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}.json`;
+  const fname = `CLAUDINA_backup_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}.json`;
   const payload = {
-    version: 'nil_v10_5',
+    version: 'CLAUDINA_v10_5',
     exportedAt: ts.toISOString(),
     exportedAtHuman: ts.toLocaleString('es-ES'),
     counts: { tareas: T.length, proyectos: P.length, ideas: I.length, vacaciones: V.length },
@@ -1825,7 +1825,7 @@ function rlCheck() {
 /* ═══════════════════════════════════════
    PIN LOCK SYSTEM
 ═══════════════════════════════════════ */
-const PIN_KEY = 'nil_pin';
+const PIN_KEY = 'CLAUDINA_pin';
 const INACTIVITY_MS = 10 * 60 * 1000; // 10 min
 let _pinBuffer = '', _inactTimer = null, _pinActive = false;
 
@@ -2070,7 +2070,7 @@ function dupTarea() {
 function checkRadarLunes() {
   const hoy = new Date();
   if (hoy.getDay() !== 1) return; // Solo lunes
-  const key = 'nil_lunes_' + hoy.toDateString();
+  const key = 'CLAUDINA_lunes_' + hoy.toDateString();
   if (localStorage.getItem(key)) return; // Ya mostrado hoy
   localStorage.setItem(key, '1');
   setTimeout(() => openRadarLunes(), 1200);
@@ -2121,7 +2121,7 @@ function openRadarLunes() {
 function checkBloqueJueves() {
   const hoy = new Date();
   if (hoy.getDay() !== 4) return; // Solo jueves
-  const key = 'nil_jueves_' + hoy.toDateString();
+  const key = 'CLAUDINA_jueves_' + hoy.toDateString();
   if (localStorage.getItem(key)) return;
   localStorage.setItem(key, '1');
   // Crear tarea si no existe ya una igual hoy
@@ -2264,7 +2264,7 @@ function rStatsWidgets() {
     <span style="font-size:.63rem;color:var(--tx3);">Supabase · <span id="footer-status">Conectado</span></span>
   </div>
   <div style="display:flex;align-items:center;gap:.65rem;">
-    <span style="font-size:.62rem;color:var(--tx3);">Nil v10.5 — AI Ops Dashboard</span>
+    <span style="font-size:.62rem;color:var(--tx3);">CLAUDINA v10.5 — AI Ops Dashboard</span>
 <button onclick="exportData()" class="btn b-ind" style="font-size:.7rem;padding:.32rem .7rem;">
       <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       💾 Guardar Backup
