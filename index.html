@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CLAUDINA — Ops Dashboard</title>
+<title>Nil — Ops Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ══════════════════════════════════════════════
-   CLAUDINA — DESIGN SYSTEM v10.5  |  Light + Vivid
+   NIL — DESIGN SYSTEM v10.5  |  Light + Vivid
 ══════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -49,6 +49,14 @@
   --glass-border:rgba(99,102,241,.12);
   /* Transition */
   --tr:.3s cubic-bezier(.4,0,.2,1);
+  /* ── Compatibility aliases for inline JS-rendered HTML ── */
+  --g50:#f8faff; --g100:#eef2ff; --g200:#e0e7ff; --g300:#c7d2fe;
+  --g400:#818cf8; --g500:#6366f1; --g600:#4f46e5; --g700:#4338ca; --g900:#1e1b4b;
+  --grn:#16a34a;  --grnl:#f0fdf4; --grnm:#22c55e;
+  --sky:#0284c7;  --skyl:#f0f9ff; --skym:#38bdf8;
+  --yel:#d97706;  --yell:#fffbeb; --yelm:#fbbf24;
+  --vio:#7c3aed;  --viol:#f5f3ff; --viom:#a78bfa;
+  --orgl:#fff7ed; --orgm:#fb923c;
 }
 html{scroll-behavior:smooth;}
 body{
@@ -551,7 +559,7 @@ textarea.fld{resize:vertical;min-height:72px;line-height:1.6;}
             <button type="button" onclick="fmtNota('warn')" title="Revisar">!</button>
             <button type="button" onclick="fmtNota('call')" title="Llamar">📞</button>
           </div>
-          <textarea id="mt-not" rows="4" placeholder="Ideas, feedback, observaciones… Usa * o ! para Hot Points" class="fld with-toolbar"></textarea>
+          <textarea id="mt-not" rows="4" placeholder="Ideas, feedback, observaciones… Usa * o ! para Hot Points" class="fld with-toolbar" oninput="renderNotasPreview()"></textarea>
         </div>
       </div>
       <div><label class="lbl">➡️ Siguiente Paso</label><textarea id="mt-sig" rows="2" placeholder="Próxima acción acordada..." class="fld"></textarea></div>
@@ -681,7 +689,7 @@ textarea.fld{resize:vertical;min-height:72px;line-height:1.6;}
         <svg width="17" height="17" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       </div>
       <div>
-        <p style="font-size:.88rem;font-weight:900;color:var(--tx);line-height:1.2;letter-spacing:-.01em;">CLAUDINA <span style="font-size:.58rem;font-weight:500;color:var(--tx3);">v10.5</span></p>
+        <p style="font-size:.88rem;font-weight:900;color:var(--tx);line-height:1.2;letter-spacing:-.01em;">Nil <span style="font-size:.58rem;font-weight:500;color:var(--tx3);">v10.5</span></p>
         <div style="display:flex;align-items:center;gap:.26rem;">
           <span id="fb-dot" class="sync-led ok"></span>
           <span id="fb-lbl" style="font-size:.59rem;font-weight:700;color:var(--grn);">Sincronizado</span>
@@ -1047,7 +1055,7 @@ let SB = null, SB_OK = false, _sbCh = null;
 try {
   SB = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   SB_OK = true;
-} catch(e) { console.warn('[CLAUDINA v10.5] Supabase offline. localStorage.', e); }
+} catch(e) { console.warn('[Nil v10.5] Supabase offline. localStorage.', e); }
 
 /* ── CONSTANTS ── */
 const MS_D = 86400000, MS_2D = 172800000;
@@ -1146,7 +1154,7 @@ async function dbD(col,id){
 
 /* ── initFB: registra onValue permanente para todos los dispositivos ── */
 function initFB() {
-  if (!FB_OK) { lsLoad(); setFB('of'); rAll(); setTimeout(openRadar, 700); return; }
+  if (!FB_OK) { lsLoad(); setFB('of'); rAll(); setTimeout(()=>{ if(T.length>0)openRadar(); else setTimeout(openRadar,1500); },400); return; }
   setFB('ok');
   ['tareas','proyectos','ideas','vacaciones','reagendados'].forEach(c => DB.ref(fbp(c)).off());
 
@@ -1182,25 +1190,33 @@ function initFB() {
     lsSave(); rReag();
   });
 
-  lsLoad(); rAll(); setTimeout(openRadar, 800);
+  lsLoad(); rAll();
+  // Show radar only once, after first real data arrives
+  let _radarShown=false;
+  const _showRadarOnce=()=>{ if(!_radarShown){_radarShown=true;setTimeout(openRadar,350);} };
+  // If we already have cached tasks, show immediately
+  if(T.length>0){ _showRadarOnce(); }
+  // Also hook: first tareas snapshot triggers it
+  const _origTRef=DB.ref(fbp('tareas'));
+  _origTRef.once('value',()=>{ lsLoad(); _showRadarOnce(); });
 }
 
 function lsSave() {
   try {
-    localStorage.setItem('CLAUDINA_t', JSON.stringify(T));
-    localStorage.setItem('CLAUDINA_p', JSON.stringify(P));
-    localStorage.setItem('CLAUDINA_i', JSON.stringify(I));
-    localStorage.setItem('CLAUDINA_v', JSON.stringify(V));
-    localStorage.setItem('CLAUDINA_r', JSON.stringify(R));
+    localStorage.setItem('nil_t', JSON.stringify(T));
+    localStorage.setItem('nil_p', JSON.stringify(P));
+    localStorage.setItem('nil_i', JSON.stringify(I));
+    localStorage.setItem('nil_v', JSON.stringify(V));
+    localStorage.setItem('nil_r', JSON.stringify(R));
   } catch(e) {}
 }
 function lsLoad() {
   try {
-    T = JSON.parse(localStorage.getItem('CLAUDINA_t')||'[]');
-    P = JSON.parse(localStorage.getItem('CLAUDINA_p')||'[]');
-    I = JSON.parse(localStorage.getItem('CLAUDINA_i')||'[]');
-    V = JSON.parse(localStorage.getItem('CLAUDINA_v')||'[]');
-    R = JSON.parse(localStorage.getItem('CLAUDINA_r')||'[]');
+    T = JSON.parse(localStorage.getItem('nil_t')||'[]');
+    P = JSON.parse(localStorage.getItem('nil_p')||'[]');
+    I = JSON.parse(localStorage.getItem('nil_i')||'[]');
+    V = JSON.parse(localStorage.getItem('nil_v')||'[]');
+    R = JSON.parse(localStorage.getItem('nil_r')||'[]');
   } catch(e) { T=[];P=[];I=[];V=[];R=[]; }
 }
 
@@ -1671,7 +1687,80 @@ function updKPI(){const total=T.length,done=T.filter(t=>t.estado==='finalizado')
 
 /* ── RADAR (preservado v8) ── */
 const RI=Math.floor(Math.random()*FRASES.length);
-function openRadar(){const h=new Date().getHours();ge('rg').textContent=h<12?'¡Buenos días! ☀️':h<20?'¡Buenas tardes! 🌤️':'¡Buenas noches! 🌙';ge('rm').textContent='"'+FRASES[RI]+'"';ge('rd').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});const ahora=Date.now();const urg=T.filter(t=>t.urgente&&t.estado!=='finalizado');const en48=T.filter(t=>t.deadline&&t.estado!=='finalizado'&&!esReunion(t)&&new Date(t.deadline).getTime()-ahora>0&&new Date(t.deadline).getTime()-ahora<MS_2D);const alertas=T.filter(t=>t.aviso24&&t.estado!=='finalizado');ge('r-u').textContent=urg.length;ge('r-4').textContent=en48.length;ge('r-d').textContent=T.filter(t=>t.estado==='finalizado').length;const sec=(tit,co,bg,bdr,html)=>`<div style="background:${bg};border:1.5px solid ${bdr};border-radius:var(--rxs);padding:.82rem;"><p style="font-size:.61rem;font-weight:700;color:${co};text-transform:uppercase;letter-spacing:.08em;margin-bottom:.44rem;">${tit}</p>${html}</div>`;const fila=t=>{const p=t.proyecto?P.find(x=>x.id===t.proyecto):null;return `<div style="display:flex;align-items:center;gap:.34rem;padding:.24rem 0;border-bottom:1px solid rgba(0,0,0,.04);"><span style="font-size:.69rem;">${t.urgente?'🚨':'·'}</span><span style="font-size:.69rem;color:var(--g900);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.titulo)}</span>${p?`<span class="bdg" style="background:${p.color}18;color:${p.color};flex-shrink:0;">${esc(p.nombre)}</span>`:''}<span style="font-size:.57rem;color:var(--g400);flex-shrink:0;">${tR(t.deadline)}</span></div>`;};let html='';if(alertas.length)html+=sec('🔔 Alertas 24h','var(--org)','var(--orgl)','var(--orgm)',alertas.map(fila).join(''));if(urg.length)html+=sec('🚨 Urgentes','var(--red)','var(--redl)','var(--redm)',urg.map(fila).join(''));if(en48.length){const rows=en48.map(t=>{const d=new Date(t.deadline).getTime()-ahora;const c=d<86400000?'var(--red)':d<MS_2D?'var(--yel)':'var(--grn)';return `<div style="display:flex;align-items:center;gap:.34rem;padding:.24rem 0;border-bottom:1px solid rgba(0,0,0,.04);"><div style="width:6px;height:6px;border-radius:50%;background:${c};flex-shrink:0;"></div><span style="font-size:.69rem;color:var(--g900);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.titulo)}</span><span style="font-size:.57rem;font-weight:700;color:${c};flex-shrink:0;">${tR(t.deadline)}</span></div>`;}).join('');html+=sec('⏱ Radar 72h','var(--yel)','var(--yell)','var(--yelm)',rows);}const venc=T.filter(t=>t.deadline&&t.estado!=='finalizado'&&!esReunion(t)&&new Date(t.deadline).getTime()<ahora).length;let sc='var(--grn)',sm='✅ Agenda bajo control.';if(venc>0||urg.length>2){sc='var(--red)';sm='🚨 Carga crítica. Anticipa o delega.';}else if(en48.length>2||urg.length>0){sc='var(--yel)';sm='⚠️ Carga elevada. Revisa prioridades.';}html+=`<div style="background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--rxs);padding:.77rem;display:flex;align-items:center;gap:.58rem;"><div style="width:9px;height:9px;border-radius:50%;background:${sc};box-shadow:0 0 5px ${sc};flex-shrink:0;"></div><div><p style="font-size:.69rem;font-weight:700;color:var(--g900);">Semáforo Viabilidad</p><p style="font-size:.64rem;color:var(--g500);margin-top:.1rem;">${sm}</p></div></div>`;if(P.length){const rows=P.map(p=>{const pt=T.filter(t=>t.proyecto===p.id);const d=pt.filter(t=>t.estado==='finalizado').length;const pct2=pt.length?Math.round(d/pt.length*100):0;return `<div style="display:flex;align-items:center;gap:.5rem;padding:.24rem 0;border-bottom:1px solid rgba(0,0,0,.04);"><div style="width:5px;height:5px;border-radius:50%;background:${p.color};flex-shrink:0;"></div><span style="font-size:.69rem;color:var(--g900);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(p.nombre)}</span><div style="width:48px;height:3.5px;background:var(--g200);border-radius:99px;overflow:hidden;flex-shrink:0;"><div style="width:${pct2}%;height:100%;background:${p.color};border-radius:99px;"></div></div><span style="font-size:.57rem;font-weight:700;color:${p.color};flex-shrink:0;">${pct2}%</span></div>`;}).join('');html+=sec('📊 Proyectos','var(--sky)','var(--skyl)','var(--skym)',rows);}const mem=T.filter(t=>t.como&&t.estado==='finalizado').slice(0,3);if(mem.length){const rows=mem.map(t=>`<div style="padding:.24rem 0;border-bottom:1px solid rgba(0,0,0,.04);"><p style="font-size:.69rem;font-weight:700;color:var(--g900);">${esc(t.titulo)}</p><p style="font-size:.63rem;color:var(--g500);margin-top:.08rem;">${esc(t.como.slice(0,100))}${t.como.length>100?'…':''}</p></div>`).join('');html+=sec('💡 Memoria Operativa','var(--vio)','var(--viol)','var(--viom)',rows);}ge('rb').innerHTML=html;oM('m-radar');}
+/* ════════════════════════════════════════════════════
+   RADAR MATUTINO — Enhanced v10.5
+   Adds: urgents history + rising-weight alert
+════════════════════════════════════════════════════ */
+function openRadar(){const h=new Date().getHours();ge('rg').textContent=h<12?'¡Buenos días! ☀️':h<20?'¡Buenas tardes! 🌤️':'¡Buenas noches! 🌙';ge('rm').textContent='"'+FRASES[RI]+'"';ge('rd').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});const ahora=Date.now();const urg=T.filter(t=>t.urgente&&t.estado!=='finalizado');const en48=T.filter(t=>t.deadline&&t.estado!=='finalizado'&&!esReunion(t)&&new Date(t.deadline).getTime()-ahora>0&&new Date(t.deadline).getTime()-ahora<MS_2D);const alertas=T.filter(t=>t.aviso24&&t.estado!=='finalizado');ge('r-u').textContent=urg.length;ge('r-4').textContent=en48.length;ge('r-d').textContent=T.filter(t=>t.estado==='finalizado').length;const sec=(tit,co,bg,bdr,html)=>`<div style="background:${bg};border:1.5px solid ${bdr};border-radius:var(--rxs);padding:.82rem;"><p style="font-size:.61rem;font-weight:700;color:${co};text-transform:uppercase;letter-spacing:.08em;margin-bottom:.44rem;">${tit}</p>${html}</div>`;const fila=t=>{const p=t.proyecto?P.find(x=>x.id===t.proyecto):null;return `<div style="display:flex;align-items:center;gap:.34rem;padding:.24rem 0;border-bottom:1px solid rgba(0,0,0,.04);"><span style="font-size:.69rem;">${t.urgente?'🚨':'·'}</span><span style="font-size:.69rem;color:var(--g900);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.titulo)}</span>${p?`<span class="bdg" style="background:${p.color}18;color:${p.color};flex-shrink:0;">${esc(p.nombre)}</span>`:''}<span style="font-size:.57rem;color:var(--g400);flex-shrink:0;">${tR(t.deadline)}</span></div>`;};let html='';if(alertas.length)html+=sec('🔔 Alertas 24h','var(--org)','var(--orgl)','var(--orgm)',alertas.map(fila).join(''));if(urg.length)html+=sec('🚨 Urgentes','var(--red)','var(--redl)','var(--redm)',urg.map(fila).join(''));if(en48.length){const rows=en48.map(t=>{const d=new Date(t.deadline).getTime()-ahora;const c=d<86400000?'var(--red)':d<MS_2D?'var(--yel)':'var(--grn)';return `<div style="display:flex;align-items:center;gap:.34rem;padding:.24rem 0;border-bottom:1px solid rgba(0,0,0,.04);"><div style="width:6px;height:6px;border-radius:50%;background:${c};flex-shrink:0;"></div><span style="font-size:.69rem;color:var(--g900);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.titulo)}</span><span style="font-size:.57rem;font-weight:700;color:${c};flex-shrink:0;">${tR(t.deadline)}</span></div>`;}).join('');html+=sec('⏱ Radar 72h','var(--yel)','var(--yell)','var(--yelm)',rows);}const venc=T.filter(t=>t.deadline&&t.estado!=='finalizado'&&!esReunion(t)&&new Date(t.deadline).getTime()<ahora).length;let sc='var(--grn)',sm='✅ Agenda bajo control.';if(venc>0||urg.length>2){sc='var(--red)';sm='🚨 Carga crítica. Anticipa o delega.';}else if(en48.length>2||urg.length>0){sc='var(--yel)';sm='⚠️ Carga elevada. Revisa prioridades.';}html+=`<div style="background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--rxs);padding:.77rem;display:flex;align-items:center;gap:.58rem;"><div style="width:9px;height:9px;border-radius:50%;background:${sc};box-shadow:0 0 5px ${sc};flex-shrink:0;"></div><div><p style="font-size:.69rem;font-weight:700;color:var(--g900);">Semáforo Viabilidad</p><p style="font-size:.64rem;color:var(--g500);margin-top:.1rem;">${sm}</p></div></div>`;if(P.length){const rows=P.map(p=>{const pt=T.filter(t=>t.proyecto===p.id);const d=pt.filter(t=>t.estado==='finalizado').length;const pct2=pt.length?Math.round(d/pt.length*100):0;return `<div style="display:flex;align-items:center;gap:.5rem;padding:.24rem 0;border-bottom:1px solid rgba(0,0,0,.04);"><div style="width:5px;height:5px;border-radius:50%;background:${p.color};flex-shrink:0;"></div><span style="font-size:.69rem;color:var(--g900);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(p.nombre)}</span><div style="width:48px;height:3.5px;background:var(--g200);border-radius:99px;overflow:hidden;flex-shrink:0;"><div style="width:${pct2}%;height:100%;background:${p.color};border-radius:99px;"></div></div><span style="font-size:.57rem;font-weight:700;color:${p.color};flex-shrink:0;">${pct2}%</span></div>`;}).join('');html+=sec('📊 Proyectos','var(--sky)','var(--skyl)','var(--skym)',rows);}const mem=T.filter(t=>t.como&&t.estado==='finalizado').slice(0,3);if(mem.length){const rows=mem.map(t=>`<div style="padding:.24rem 0;border-bottom:1px solid rgba(0,0,0,.04);"><p style="font-size:.69rem;font-weight:700;color:var(--g900);">${esc(t.titulo)}</p><p style="font-size:.63rem;color:var(--g500);margin-top:.08rem;">${esc(t.como.slice(0,100))}${t.como.length>100?'…':''}</p></div>`).join('');html+=sec('💡 Memoria Operativa','var(--vio)','var(--viol)','var(--viom)',rows);}
+  /* ── ALERTA PESO CRECIENTE ──
+     Tareas en pendiente que en <4 días cambiarán de zona de peso
+     (de "lejano >7d" → "medio 3-7d", o de "medio" → "crítico <3d")
+     Nil avisa pro-activamente para que puedas priorizar. */
+  const D3=3*86400000, D7=7*86400000;
+  const subiranACritico=T.filter(t=>{
+    if(t.estado!=='pendiente'||!t.deadline||esReunion(t))return false;
+    const diff=new Date(t.deadline).getTime()-ahora;
+    return diff>0 && diff<=D7 && diff>D3; // En zona media, a punto de ser crítica
+  }).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
+  const subiranAMedia=T.filter(t=>{
+    if(t.estado!=='pendiente'||!t.deadline||esReunion(t))return false;
+    const diff=new Date(t.deadline).getTime()-ahora;
+    // In 3 days they'll cross from "lejano" to "medio"
+    return diff>D7 && diff<=(D7+4*86400000);
+  }).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
+  if(subiranACritico.length||subiranAMedia.length){
+    let alertRows='';
+    subiranACritico.forEach(t=>{
+      const diff=new Date(t.deadline).getTime()-ahora;
+      const dias=Math.ceil(diff/86400000);
+      alertRows+=`<div style="display:flex;align-items:center;gap:.38rem;padding:.24rem 0;border-bottom:1px solid rgba(220,38,38,.08);">
+        <span style="font-size:.7rem;flex-shrink:0;">🔴</span>
+        <span style="font-size:.7rem;color:#1e1b4b;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.titulo)}</span>
+        <span style="font-size:.6rem;font-weight:700;color:#dc2626;flex-shrink:0;">→ CRÍTICO en ${dias}d</span>
+      </div>`;
+    });
+    subiranAMedia.forEach(t=>{
+      const diff=new Date(t.deadline).getTime()-ahora;
+      const dias=Math.ceil(diff/86400000);
+      alertRows+=`<div style="display:flex;align-items:center;gap:.38rem;padding:.24rem 0;border-bottom:1px solid rgba(217,119,6,.08);">
+        <span style="font-size:.7rem;flex-shrink:0;">🟠</span>
+        <span style="font-size:.7rem;color:#1e1b4b;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.titulo)}</span>
+        <span style="font-size:.6rem;font-weight:700;color:#d97706;flex-shrink:0;">→ media en ${dias}d</span>
+      </div>`;
+    });
+    html+=`<div style="background:#fff7ed;border:1.5px solid #fb923c;border-radius:var(--rxs);padding:.82rem;">
+      <p style="font-size:.61rem;font-weight:700;color:#ea580c;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.44rem;">
+        ⚡ Prioriza ahora — subirán de carga pronto
+      </p>${alertRows}
+    </div>`;
+  }
+
+  /* ── HISTÓRICO URGENTES (últimos 7 días) ──
+     Muestra tareas urgentes completadas recientemente
+     para tener contexto de qué se cerró. */
+  const hace7d=ahora-7*86400000;
+  const urgCompletadas=T.filter(t=>
+    t.urgente && t.estado==='finalizado' &&
+    t.completadoEn && t.completadoEn>=hace7d
+  ).sort((a,b)=>(b.completadoEn||0)-(a.completadoEn||0)).slice(0,5);
+  if(urgCompletadas.length){
+    const histRows=urgCompletadas.map(t=>{
+      const fecha=new Date(t.completadoEn).toLocaleDateString('es-ES',{weekday:'short',day:'2-digit',month:'short'});
+      const enTiempo=t.aTiempo!==false;
+      return `<div style="display:flex;align-items:center;gap:.38rem;padding:.24rem 0;border-bottom:1px solid rgba(22,163,74,.08);">
+        <span style="font-size:.7rem;flex-shrink:0;">${enTiempo?'✅':'⏰'}</span>
+        <span style="font-size:.7rem;color:#1e1b4b;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-decoration:line-through;color:#6366f1;">${esc(t.titulo)}</span>
+        <span style="font-size:.59rem;color:#6366f1;flex-shrink:0;font-weight:600;">${fecha}</span>
+      </div>`;
+    }).join('');
+    html+=`<div style="background:#f0fdf4;border:1.5px solid #22c55e;border-radius:var(--rxs);padding:.82rem;">
+      <p style="font-size:.61rem;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.44rem;">
+        📋 Urgentes cerradas — últimos 7 días
+      </p>${histRows}
+    </div>`;
+  }
+
+  ge('rb').innerHTML=html;oM('m-radar');}
 function cpRadar(){const h=new Date().getHours();const sal=h<12?'Buenos días':h<20?'Buenas tardes':'Buenas noches';const urg=T.filter(t=>t.urgente&&t.estado!=='finalizado');const hoyT=T.filter(t=>t.deadline&&t.estado!=='finalizado'&&new Date(t.deadline).toDateString()===new Date().toDateString());let txt=`${sal.toUpperCase()} — ${new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).toUpperCase()}\n${'═'.repeat(48)}\n\n`;if(urg.length){txt+=`🚨 URGENTES (${urg.length})\n${'─'.repeat(26)}\n`;urg.forEach(t=>{txt+=`  • ${t.titulo}${t.deadline?' ['+fDT(t.deadline)+']':''}\n`;});txt+='\n';}if(hoyT.length){txt+=`📅 PARA HOY (${hoyT.length})\n${'─'.repeat(26)}\n`;hoyT.forEach(t=>{txt+=`  • ${t.titulo}\n`;});txt+='\n';}if(P.length){txt+=`📊 PROYECTOS\n${'─'.repeat(26)}\n`;P.forEach(p=>{const pt=T.filter(t=>t.proyecto===p.id);const d=pt.filter(t=>t.estado==='finalizado').length;txt+=`  • ${p.nombre}: ${pt.length?Math.round(d/pt.length*100):0}% (${d}/${pt.length})\n`;});}txt+=`\n${'═'.repeat(48)}\nAI Executive Copilot v9\n`;navigator.clipboard.writeText(txt).then(()=>toast('📋 Email copiado','grn')).catch(()=>toast('Error','red'));}
 
 /* ── TABS ── */
@@ -1720,9 +1809,9 @@ function rAll(){
 function exportData() {
   const ts = new Date();
   const pad = n => String(n).padStart(2,'0');
-  const fname = `CLAUDINA_backup_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}.json`;
+  const fname = `nil_backup_${ts.getFullYear()}${pad(ts.getMonth()+1)}${pad(ts.getDate())}_${pad(ts.getHours())}${pad(ts.getMinutes())}.json`;
   const payload = {
-    version: 'CLAUDINA_v10_5',
+    version: 'nil_v10_5',
     exportedAt: ts.toISOString(),
     exportedAtHuman: ts.toLocaleString('es-ES'),
     counts: { tareas: T.length, proyectos: P.length, ideas: I.length, vacaciones: V.length },
@@ -1825,7 +1914,7 @@ function rlCheck() {
 /* ═══════════════════════════════════════
    PIN LOCK SYSTEM
 ═══════════════════════════════════════ */
-const PIN_KEY = 'CLAUDINA_pin';
+const PIN_KEY = 'nil_pin';
 const INACTIVITY_MS = 10 * 60 * 1000; // 10 min
 let _pinBuffer = '', _inactTimer = null, _pinActive = false;
 
@@ -2006,18 +2095,45 @@ function fmtNota(type) {
   if (!ta) return;
   const start = ta.selectionStart, end = ta.selectionEnd;
   const sel = ta.value.substring(start, end);
+  /* Negrita/Cursiva: envuelve la seleccion y mantiene el cursor sobre el texto */
+  if ((type==='bold'||type==='italic') && sel.length > 0) {
+    const wrap = type==='bold' ? '**' : '_';
+    const ins = wrap + sel + wrap;
+    ta.value = ta.value.substring(0,start) + ins + ta.value.substring(end);
+    ta.focus();
+    ta.selectionStart = start + wrap.length;
+    ta.selectionEnd   = start + wrap.length + sel.length;
+    renderNotasPreview(); return;
+  }
   const map = {
-    bold: `**${sel||'texto'}**`,
-    italic: `_${sel||'texto'}_`,
-    star: `* `,
-    check: `✓ `,
-    warn: `! REVISAR: `,
-    call: `📞 LLAMAR: `
+    bold:   `**${sel||'negrita'}**`,
+    italic: `_${sel||'cursiva'}_`,
+    star:   '* ',
+    check:  '✓ ',
+    warn:   '! REVISAR: ',
+    call:   '📞 LLAMAR: '
   };
   const ins = map[type] || '';
   ta.value = ta.value.substring(0,start) + ins + ta.value.substring(end);
   ta.focus();
   ta.selectionStart = ta.selectionEnd = start + ins.length;
+  renderNotasPreview();
+}
+
+/* Preview en vivo: renderiza **negrita** y _cursiva_ debajo del textarea */
+function renderNotasPreview() {
+  const ta = ge('mt-not'), pv = ge('notas-preview');
+  if (!ta || !pv) return;
+  const txt = ta.value;
+  if (!txt.trim()) { pv.style.display='none'; return; }
+  let html = txt
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong style="font-weight:700;color:#4338ca">$1</strong>')
+    .replace(/_([^_\n]+)_/g,'<em style="font-style:italic;color:#7c3aed">$1</em>')
+    .replace(/^\* (.+)/gm,'<span style="color:#6366f1">&#x25CF;</span> $1')
+    .replace(/\n/g,'<br>');
+  pv.innerHTML = html;
+  pv.style.display = 'block';
 }
 
 /* ═══════════════════════════════════════
@@ -2070,7 +2186,7 @@ function dupTarea() {
 function checkRadarLunes() {
   const hoy = new Date();
   if (hoy.getDay() !== 1) return; // Solo lunes
-  const key = 'CLAUDINA_lunes_' + hoy.toDateString();
+  const key = 'nil_lunes_' + hoy.toDateString();
   if (localStorage.getItem(key)) return; // Ya mostrado hoy
   localStorage.setItem(key, '1');
   setTimeout(() => openRadarLunes(), 1200);
@@ -2121,7 +2237,7 @@ function openRadarLunes() {
 function checkBloqueJueves() {
   const hoy = new Date();
   if (hoy.getDay() !== 4) return; // Solo jueves
-  const key = 'CLAUDINA_jueves_' + hoy.toDateString();
+  const key = 'nil_jueves_' + hoy.toDateString();
   if (localStorage.getItem(key)) return;
   localStorage.setItem(key, '1');
   // Crear tarea si no existe ya una igual hoy
@@ -2264,7 +2380,7 @@ function rStatsWidgets() {
     <span style="font-size:.63rem;color:var(--tx3);">Supabase · <span id="footer-status">Conectado</span></span>
   </div>
   <div style="display:flex;align-items:center;gap:.65rem;">
-    <span style="font-size:.62rem;color:var(--tx3);">CLAUDINA v10.5 — AI Ops Dashboard</span>
+    <span style="font-size:.62rem;color:var(--tx3);">Nil v10.5 — AI Ops Dashboard</span>
 <button onclick="exportData()" class="btn b-ind" style="font-size:.7rem;padding:.32rem .7rem;">
       <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       💾 Guardar Backup
